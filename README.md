@@ -1,25 +1,26 @@
 # FSE SB2 ESN Project - Base Code
 ## About
-1. A Single Page Application based on hash
-2. Vanilla JS(No Vue, Angular, React, JQuery)
+* A Single Page Application based on hash
+* Vanilla JS(No Vue, Angular, React, JQuery)
 
 ## How to run
-0. Install all packages
+Install all packages
 ```
 npm install
 ```
-1. Start express server
+Start express server
 ```
 npm run server
 ```
-2. Start front-end resource server (support hot module reload)
+Start front-end resource server (support hot module reload)
 ```
 npm start
 ```
-3. Build front-end resource to deploy (no need when develop)
+Build front-end resource to deploy (no need when develop)
 ```
 npm run build
 ```
+Open localhost:3000 in browser
 
 ## Code Structure
 ```
