@@ -7,6 +7,7 @@ import Login from './view/login.html';
 import Register from './view/register.html';
 import initRegisterHandler from './js/register';
 import initRouter from './js/initRouter';
+import jumptoRegisterHandler from './js/home';
 
 initRouter();
 
@@ -15,6 +16,7 @@ const router = new Navigo(null, true, '#');
 
 router.on('/', function () {
     app.innerHTML = About
+    jumptoRegisterHandler();
 }).resolve();
 
 router.on('/register', function () {
