@@ -1,6 +1,7 @@
 import './style/index.less';
 import './style/welcome.less';
 import './style/home.less';
+import './style/register_login.less';
 import Navigo from 'navigo';
 import Welcome from './view/welcome.html';
 import Home from './view/home.html';
