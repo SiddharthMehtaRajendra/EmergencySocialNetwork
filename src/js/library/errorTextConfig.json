@@ -1,0 +1,7 @@
+{
+    "registrationErrors":{
+        "userNameLengthError" : "Username should be 3 or more characters!",
+        "userNameReserved" : "Username is reserved!",
+        "passwordLengthError": "Password does not meet length requirements!"
+    }
+}
