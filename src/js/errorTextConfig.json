@@ -3,5 +3,8 @@
         "userNameLengthError" : "Username should be 3 or more characters!",
         "userNameReserved" : "Username is reserved!",
         "passwordLengthError": "Password does not meet length requirements!"
+    },
+    "exceptions": {
+        "processingError": "There was an error in processing."
     }
 }
