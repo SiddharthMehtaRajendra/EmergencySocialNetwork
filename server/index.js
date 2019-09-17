@@ -5,23 +5,21 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const http = require('http').createServer(app);
 const port = 8000;
-let User = require("../models/user.js");
-let connectDB = require("./connectdb");
-let seedDB = require("./seeds");
-
+const User = require('../models/user.js');
+const connectDB = require('./connectdb');
+const seedDB = require('./seeds');
 
 const removedUser = async () => {
-    return await User.removeOneUserByUsername("siddharthmehta");
-}
+    return await User.removeOneUserByUsername('siddharthmehta');
+};
 
 removedUser().then(() => {
-    console.log("Done")
+    console.log('Done');
 }).catch((error) => {
-    console.log(error)
-})
+    console.log(error);
+});
 
-
-//     const addedUser = await User.addOneUser({ 
+//     const addedUser = await User.addOneUser({
 //     username: "yuanwent",
 //     password: "abcd1234"
 // });
