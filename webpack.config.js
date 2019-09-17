@@ -5,12 +5,12 @@ const HappyPack = require('happypack');
 module.exports = {
     mode: 'production',
     entry: {
-        app: './src/index.js',
+        app: './src/index.js'
     },
     devtool: 'inline-source-map',
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'dist')
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -31,8 +31,13 @@ module.exports = {
                 loaders: ['happypack/loader']
             },
             {
+                test: /\.(js)$/,
+                exclude: [/node_modules/, /dist/],
+                use: ['babel-loader', 'eslint-loader']
+            },
+            {
                 test: /\.html$/,
-                loader: 'html-loader',
+                loader: 'html-loader'
             },
             {
                 test: /\.css$/,
@@ -49,7 +54,8 @@ module.exports = {
                     }, {
                         loader: 'css-loader'
                     }, {
-                        loader: 'less-loader', options: {
+                        loader: 'less-loader',
+                        options: {
                             sourceMap: true
                         }
                     }

@@ -1,10 +1,10 @@
-import axios from 'axios';
+// import axios from 'axios';
 
 function jumptoRegisterHandler() {
-    let registerBtn = document.getElementById('register-btn');
+    const registerBtn = document.getElementById('register-btn');
     registerBtn.addEventListener('click', () => {
-        window.location.hash = "/register";
-        })
-    }
+        window.location.hash = '/register';
+    });
+}
 
-export default jumptoRegisterHandler
+export default jumptoRegisterHandler;
