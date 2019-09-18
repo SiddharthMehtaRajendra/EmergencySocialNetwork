@@ -33,7 +33,9 @@ userSchema.statics.removeOneUserByUsername = async function (username) {
 };
 
 userSchema.statics.addOneUser = async function (userObject) {
-    User.create(userObject, function (err, user) {
+    console.log(userObject);
+    console.log(User);
+    await User.create(userObject, function (err, user) {
         if (err) {
             console.log(err);
         } else {

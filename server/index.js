@@ -10,6 +10,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 
+const User  =require('../models/user');
+
 app.get('/api/test', async function (req, res, next) {
     console.log('/api/test Get Request');
     res.status(200).json({ success: true, message: 'Test OK', data: 'Test OK' });
