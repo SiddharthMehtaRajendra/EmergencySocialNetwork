@@ -3,8 +3,31 @@ const app = express();
 const cors = require('cors');
 const http = require('http').createServer(app);
 const port = 8000;
-let User = require("../models/user.js");
+// let User = require("../models/user.js");
 let connectDB = require("./connectdb");
+
+// ==========================================
+//THE FOLLOWING IS USED FOR DEBUGING PURPOSE
+// ==========================================
+// let seedDB = require("./seeds");
+
+
+// const removedUser = async () => {
+//     return await User.removeOneUserByUsername("siddharthmehta");
+// }
+
+// removedUser().then(() => {
+//     console.log("Done")
+// }).catch((error) => {
+//     console.log(error)
+// })
+
+
+//     const addedUser = await User.addOneUser({ 
+//     username: "yuanwent",
+//     password: "abcd1234"
+// });
+// ==========================================
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

@@ -2,7 +2,10 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs')
 
 var userSchema = new mongoose.Schema({
-    username: String,
+    username: {
+        unique:true,
+        type:String,
+    },
     password: String
     // acknowledgeStatus: {type: Boolean, default: false},
     // acknowledgedAt: {type: Date, default: Date.now}
@@ -46,11 +49,11 @@ userSchema.statics.addOneUser = async function (userObject) {
 
 userSchema.statics.validateCredentials = async function (username, password) {
     const user = await User.findOne({username: username});
+    console.log(user);
     if(!user){
         return false;
     } else {
-        const isMatch = await bcrypt.compare(password, password);
-        return isMatch;
+        return await bcrypt.compare(password, user.password);
     }
 }
 
