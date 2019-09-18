@@ -1,17 +1,17 @@
-var mongoose = require("mongoose");
-var User = require("../models/user");
-var data = [
+const mongoose = require("mongoose");
+const User = require("../models/user");
+const data = [
     { 
-        username: "yuanwentian",
+        username: "yuanwet111",
         password: "abcd1234"
     },
     {
-        username: "siddharthmehta",
+        username: "siddhar111",
         password: "abcd1234"
     }
 ];
 
-         // Add some users
+// Add some users
 const addUsers = async () => data.forEach(function(seed){
     User.create(seed, function(err, user){
         if(err){
@@ -33,10 +33,12 @@ const removeUsers = async () => {
     });
 }
 
-removeUsers().then(()=>{
-    console.log("Success Removal")
-})
+// removeUsers().then(()=>{
+//     console.log("Success Removal")
+// })
+
 addUsers().then(() => {
     console.log("Success Add")
 })
+
 

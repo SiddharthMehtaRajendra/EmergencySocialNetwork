@@ -3,9 +3,8 @@ const app = express();
 const cors = require('cors');
 const http = require('http').createServer(app);
 const port = 8000;
-const bodyParser = require('body-parser');
-const validate = require('./lib/server-validation');
-const { addUser } = require('../database/controller/User');
+let User = require("../models/user.js");
+let connectDB = require("./connectdb");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
