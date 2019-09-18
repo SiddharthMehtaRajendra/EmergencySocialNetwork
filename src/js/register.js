@@ -33,7 +33,9 @@ function register() {
                 Toast('Register Success!', null, null, 1000);
                 setTimeout(() => { window.location.hash = '/welcome'; }, 1000);
             } else {
-                console.log('Failed to create an account');
+                if (res.status && res.data && !res.data.success) {
+                    Toast(res.data.message, '#F41C3B', '#fff', 1000);
+                }
             }
         }).catch((err) => {
             Toast(err.toString(), '#F41C3B');

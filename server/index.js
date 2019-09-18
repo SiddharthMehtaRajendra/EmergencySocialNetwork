@@ -26,7 +26,7 @@ app.post('/api/register', async function (req, res, next) {
         if (result.success) {
             res.status(200).json({ success: true, message: 'Add One User Successfully', data: '' });
         } else {
-            res.status(200).json({ success: false, message: 'Database Error', data: '' });
+            res.status(200).json({ success: false, message: result.res, data: '' });
         }
     } else {
         res.status(200).json({ success: false, message: 'Validate Failed', data: '' });
