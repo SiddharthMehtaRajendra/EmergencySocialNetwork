@@ -1,4 +1,4 @@
-# FSE SB2 ESN Project - Base Code
+# FSE SB2 ESN Project
 ## About
 * A Single Page Application based on hash
 * Vanilla JS(No Vue, Angular, React, JQuery)
