@@ -26,8 +26,8 @@ function register() {
     if (usernameValidation.result && passwordValidation.result && password === confirmPassword) {
         resetHint();
         axios.post(`${SERVER_ADDRESS}${API_PREFIX}/register`, {
-            username: username.value,
-            password: password.value
+            username: username,
+            password: password
         }).then((res) => {
             if (res.status === 200 && res.data && res.data.success) {
                 Toast('Register Success!', null, null, 1000);

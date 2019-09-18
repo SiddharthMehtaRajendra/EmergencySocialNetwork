@@ -1,5 +1,5 @@
-import reservedNameDict from '../constant/reservedUserNames';
-import errorTextConfig from '../constant/errorTextConfig';
+const reservedNameDict = require('../constant/reservedUserNames');
+const errorTextConfig = require('../constant/errorTextConfig');
 
 const validateUserName = (username) => {
     if (reservedNameDict[username]) {
@@ -24,4 +24,4 @@ const validateConfirmPassword = (password, confirmPassword) => {
     return { result: password === confirmPassword, text: errorTextConfig.registrationErrors.passwordConfirmError };
 };
 
-export { validateUserName, validatePassword, validateConfirmPassword };
+module.exports = { validateUserName, validatePassword, validateConfirmPassword };

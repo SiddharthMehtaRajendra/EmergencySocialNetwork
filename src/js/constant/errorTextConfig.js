@@ -12,4 +12,4 @@ const errorTextConfig = {
     }
 };
 
-export default errorTextConfig;
+module.exports = errorTextConfig;

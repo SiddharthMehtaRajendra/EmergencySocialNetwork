@@ -309,4 +309,4 @@ const reservedUsernameDict = {
     yourdomain: true
 };
 
-export default reservedUsernameDict;
+module.exports = reservedUsernameDict;
