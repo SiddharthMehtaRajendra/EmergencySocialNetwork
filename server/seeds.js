@@ -11,7 +11,7 @@ var data = [
     }
 ];
 
-         // Add some campgrounds
+         // Add some users
 const addUsers = async () => data.forEach(function(seed){
     User.create(seed, function(err, user){
         if(err){
@@ -23,7 +23,7 @@ const addUsers = async () => data.forEach(function(seed){
 });
 
 const removeUsers = async () => {
-    // Remove all campgrounds
+    // Remove all  users
     User.remove({}, function(err){
         if(err){
             console.log(err);
