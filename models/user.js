@@ -1,56 +1,65 @@
-const mongoose = require("mongoose");
-const uniqueValidator = require("mongoose-unique-validator")
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs')
 
-let userSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        unique: true,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true
-    }
+var userSchema = new mongoose.Schema({
+    username: String,
+    password: String
     // acknowledgeStatus: {type: Boolean, default: false},
     // acknowledgedAt: {type: Date, default: Date.now}
 });
 
-userSchema.plugin(uniqueValidator, { type: 'mongoose-unique-validator' });
+userSchema.statics.userExists = async function (username) {
+    return await User.exists({ username: username });
+};
 
-userSchema.statics.userExists = async function(username) {
-    return User.exists({username: username});
-}
- 
-userSchema.statics.getOneUserByUsername = async function(username) {
-    return User.findOne({username: username}, function(err, newlyFoundUser){
-        if(err) {
+userSchema.statics.getOneUserByUsername = async function (username) {
+    return await User.findOne({ username: username }, function (err, newlyFoundUser) {
+        if (err) {
             console.log(err);
         } else {
-            // console.log("Found user: " + newlyFoundUser.username);
+            console.log('found User' + newlyFoundUser);
         }
     });
-}
+};
 
-userSchema.statics.removeOneUserByUsername = async function(username) {
-    return User.remove({username: username}, function(err){
-        if(err) {
+userSchema.statics.removeOneUserByUsername = async function (username) {
+    return await User.remove({ username: username }, function (err) {
+        if (err) {
             console.log(err);
         } else {
-            // console.log("Removed " + username + " from the users collections");
-        }
-    })
-}
-
-userSchema.statics.addOneUser = async function(userObject) {
-    User.create(userObject, function(err, user){
-        if(err){
-            console.log(err);
-        } else {
-            // console.log("Added " + user.username + " to the users collections");
+            // console.log("remove");
         }
     });
+};
+
+userSchema.statics.addOneUser = async function (userObject) {
+    User.create(userObject, function (err, user) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log('added' + user + 'to the user collections');
+        }
+    });
+};
+
+userSchema.statics.validateCredentials = async function (username, password) {
+    const user = await User.findOne({username: username});
+    if(!user){
+        return false;
+    } else {
+        const isMatch = await bcrypt.compare(password, password);
+        return isMatch;
+    }
 }
 
-const User = mongoose.model("User", userSchema)
+userSchema.pre('save', async function (next) {
+    const user = this;
+    if (user.isModified('password')) {
+        user.password = await bcrypt.hash(user.password, 8);
+    }
+    next();
+})
+
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;
