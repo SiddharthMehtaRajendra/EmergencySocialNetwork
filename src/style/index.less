@@ -46,7 +46,7 @@
 }
 
 .form-item {
-  margin-bottom: 50px;
+  margin-bottom: 30px;
 
   .title {
     font-size: 16px;
@@ -68,10 +68,19 @@
     width: 280px;
     background-color: #999;
     transform: scaleY(0.5);
+    margin-bottom: 4px;
   }
 
   &.last-item {
     margin-bottom: 60px;
+  }
+
+  .error-hint{
+    width: 280px;
+    color: #F41C3B;
+    font-size: 12px;
+    height: 18px;
+    line-height: 18px;
   }
 }
 
@@ -88,4 +97,19 @@
     text-decoration: none;
     color: #999;
   }
+}
+
+.toast {
+  position: fixed;
+  top: 0;
+  left: -20px;
+  text-align: center;
+  font-size: 16px;
+  line-height: 16px;
+  padding: 20px;
+  width: 100%;
+  color: white;
+  font-weight: 800;
+  background-color: #1983FF;
+  z-index: 150;
 }

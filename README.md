@@ -38,7 +38,7 @@ Open localhost:3000 in browser
 │   ├── index.js            Front-end main 
 │   ├── index.less          All Style
 │   ├── js                  js functions
-│   │   ├── constant.js
+│   │   ├── serverInfo.js
 │   │   ├── initRouter.js
 │   │   └── register.js
 │   └── view                Different Pages

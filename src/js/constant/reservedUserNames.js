@@ -1,5 +1,4 @@
-const reservedUsernameDict =
-{
+const reservedUsernameDict = {
     about: true,
     access: true,
     account: true,
