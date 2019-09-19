@@ -1,9 +1,9 @@
 const express = require('express');
 const app = express();
-const path = require('path');
+// const path = require('path');
 const cors = require('cors');
 const http = require('http').createServer(app);
-const port = 80;
+const port = 8000;
 const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Serve static front-end files, for future use
-app.use(express.static(path.resolve(__dirname, '../dist')));
+// app.use(express.static(path.resolve(__dirname, '../dist')));
 
 app.get('/heartbeat', async function (req, res, next) {
     console.log('Hello ESN Node Server');
