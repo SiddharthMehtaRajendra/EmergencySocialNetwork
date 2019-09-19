@@ -15,7 +15,8 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             title: 'ESN',
-            template: 'index.html'
+            template: 'index.html',
+            favicon: './favicon.ico'
         }),
         new HappyPack({
             cache: true,
