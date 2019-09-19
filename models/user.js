@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 
 var userSchema = new mongoose.Schema({
     username: {
-        unique:true,
-        type:String,
+        unique: true,
+        type: String
     },
     password: String
-    // acknowledgeStatus: {type: Boolean, default: false},
-    // acknowledgedAt: {type: Date, default: Date.now}
 });
 
 userSchema.statics.userExists = async function (username) {
@@ -48,14 +46,14 @@ userSchema.statics.addOneUser = async function (userObject) {
 };
 
 userSchema.statics.validateCredentials = async function (username, password) {
-    const user = await User.findOne({username: username});
+    const user = await User.findOne({ username: username });
     console.log(user);
-    if(!user){
+    if (!user) {
         return false;
     } else {
         return await bcrypt.compare(password, user.password);
     }
-}
+};
 
 userSchema.pre('save', async function (next) {
     const user = this;
@@ -63,7 +61,7 @@ userSchema.pre('save', async function (next) {
         user.password = await bcrypt.hash(user.password, 8);
     }
     next();
-})
+});
 
 const User = mongoose.model('User', userSchema);
 
