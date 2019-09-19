@@ -15,30 +15,50 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
+UserSchema.statics.userExists = async function (username) {
+    const exist = await this.exists({ username: username });
+    return exist;
+};
+
 UserSchema.statics.getOneUserByUsername = async function (username) {
     const res = await this.find({ username: username });
     return res;
 };
 
+UserSchema.statics.addOneUser = async function (userObject) {
+    let res = {};
+    let success = true;
+    try {
+        res = await this.create(userObject);
+    } catch (e) {
+        if (e.errors && e.errors.username && e.errors.username.kind && e.errors.username.kind === 'unique') {
+            res = 'Username already exist';
+        } else {
+            res = e._message;
+        }
+        success = false;
+    }
+    return { success, res };
+};
+
 UserSchema.statics.validateCredentials = async function (username, password) {
-    const user = await this.find({ username: username });
+    const user = await this.findOne({ username: username });
     if (!user) {
         return false;
     } else {
-        const res = await bcrypt.compare(password, password);
-        return res;
+        const isMatch = await bcrypt.compare(password, user.password);
+        return isMatch;
     }
 };
 
 UserSchema.pre('save', async function (next) {
-    const user = this;
-    if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, 8);
+    if (this.isModified('password')) {
+        this.password = await bcrypt.hash(this.password, 8);
     }
     next();
 });
 
 UserSchema.plugin(uniqueValidator);
-
 const User = mongoose.model('User', UserSchema);
+
 module.exports = User;

@@ -12,11 +12,13 @@ function register() {
     const usernameHint = document.getElementById('username-hint');
     const passwordHint = document.getElementById('password-hint');
     const confirmPasswordHint = document.getElementById('confirm-password-hint');
+
     function resetHint() {
         usernameHint.innerText = '';
         passwordHint.innerText = '';
         confirmPasswordHint.innerText = '';
     }
+
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
@@ -30,8 +32,10 @@ function register() {
             password: password
         }).then((res) => {
             if (res.status === 200 && res.data && res.data.success) {
-                Toast('Register Success!', null, null, 1000);
-                setTimeout(() => { window.location.hash = '/welcome'; }, 1000);
+                Toast(res.data.message, null, null, 1000);
+                setTimeout(() => {
+                    window.location.hash = '/welcome';
+                }, 1000);
             } else {
                 if (res.status && res.data && !res.data.success) {
                     Toast(res.data.message, '#F41C3B', '#fff', 1000);
