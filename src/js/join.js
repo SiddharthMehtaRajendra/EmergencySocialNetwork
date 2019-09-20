@@ -2,10 +2,35 @@ import axios from 'axios';
 import { validateUserName, validatePassword } from './lib/validation';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import Toast from './lib/toast';
+import { bottomPopCardSetup, showBottomPopCard, setupContent } from '../components/bottomPopCard';
 
-function initJoinHandler() {
+function initJoinPage() {
     const registerBtn = document.getElementById('register-btn');
     registerBtn.addEventListener('click', join);
+    bottomPopCardSetup('Are you sure to create a new user with this username?', register);
+}
+
+function buildBottomPopCardContent(username) {
+    const usernameDom = document.createElement('div');
+    usernameDom.id = 'join-page-username';
+    usernameDom.innerText = username;
+    return usernameDom;
+}
+
+function register() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    axios.post(`${SERVER_ADDRESS}${API_PREFIX}/join`, {
+        username: username,
+        password: password
+    }).then((res) => {
+        if (res.status === 200 && res.data && res.data.success) {
+            Toast(res.data.message);
+            setTimeout(function () { window.location.hash = '/welcome'; }, 1000);
+        } else {
+            Toast(res.data.message);
+        }
+    });
 }
 
 function join() {
@@ -30,11 +55,12 @@ function join() {
             // TODO: User Exist and pass the validation, should go into system
             if (res.status === 200 && res.data) {
                 if (res.data.success && res.data.exists && res.data.validationPass) {
-                    window.location.hash = '/home';
+                    window.location.hash = '/';
                 } else if (!res.data.success && res.data.exists === false && res.data.validationPass === null) {
-                    console.log('want to create an account');
+                    setupContent(buildBottomPopCardContent(username));
+                    showBottomPopCard();
                 } else if (!res.data.success && res.data.validationPass === false) {
-                    Toast(res.data.message);
+                    Toast(res.data.message, '#F41C3B');
                 }
             }
         }).catch((err) => {
@@ -52,4 +78,4 @@ function join() {
     }
 }
 
-export default initJoinHandler;
+export default initJoinPage;

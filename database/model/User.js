@@ -16,14 +16,8 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.statics.exists = async function (username) {
-    let exist = false;
-    try {
-        exist = await User.exists({ username: username });
-        console.log(exist);
-    } catch (e) {
-        exist = false;
-    }
-    return exist;
+    const findResult = await this.findOne({ username: username });
+    return findResult && true;
 };
 
 UserSchema.statics.getOneUserByUsername = async function (username) {

@@ -21,23 +21,6 @@ app.get('/heartbeat', async function (req, res, next) {
     res.status(200).json({ success: true, message: 'Hello ESN Node Server', data: {} });
 });
 
-app.post('/api/register', async function (req, res, next) {
-    const userObj = {
-        username: req.body.username,
-        password: req.body.password
-    };
-    if (validate(userObj.username, userObj.password)) {
-        const result = await User.addOneUser(userObj);
-        if (result.success) {
-            res.status(200).json({ success: true, message: 'Register Success', data: '' });
-        } else {
-            res.status(200).json({ success: false, message: result.res, data: '' });
-        }
-    } else {
-        res.status(200).json({ success: false, message: 'Validate Failed', data: '' });
-    }
-});
-
 app.post('/api/joinCheck', async function (req, res, next) {
     const userObj = {
         username: req.body.username,
