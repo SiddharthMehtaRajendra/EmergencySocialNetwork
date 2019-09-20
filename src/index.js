@@ -8,8 +8,10 @@ import Home from './view/home.html';
 import Error from './view/error.html';
 import Login from './view/login.html';
 import Register from './view/register.html';
+import Join from './view/join.html';
 import initRegisterHandler from './js/register';
 import initRouter from './js/initRouter';
+import initJoinHandler from './js/join';
 
 initRouter();
 
@@ -27,6 +29,11 @@ router.on('/register', function () {
 
 router.on('/login', function () {
     app.innerHTML = Login;
+}).resolve();
+
+router.on('/join', function () {
+    app.innerHTML = Join;
+    initJoinHandler();
 }).resolve();
 
 router.on('/welcome', function () {

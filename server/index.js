@@ -38,6 +38,57 @@ app.post('/api/register', async function (req, res, next) {
     }
 });
 
+app.post('/api/joinCheck', async function (req, res, next) {
+    const userObj = {
+        username: req.body.username,
+        password: req.body.password
+    };
+    if (validate(userObj.username, userObj.password)) {
+        const exist = await User.exists(userObj.username);
+        if (!exist) {
+            res.status(200).json({
+                success: false,
+                message: 'User Not Exists',
+                exists: false,
+                validationPass: null
+            });
+        } else {
+            if (!await User.validateCredentials(userObj.username, userObj.password)) {
+                res.status(200).json({
+                    success: false,
+                    message: 'Enter the correct username and password',
+                    exists: null,
+                    validationPass: false
+                });
+            } else {
+                res.status(200).json({
+                    success: true,
+                    message: 'Validation Passed',
+                    exists: true,
+                    validationPass: true
+                });
+            }
+        }
+    }
+});
+
+app.post('/api/join', async function (req, res, next) {
+    const userObj = {
+        username: req.body.username,
+        password: req.body.password
+    };
+    if (validate(userObj.username, userObj.password)) {
+        const result = await User.addOneUser(userObj);
+        if (result.success) {
+            res.status(200).json({ success: true, message: 'Register Success', data: '' });
+        } else {
+            res.status(200).json({ success: false, message: result.res, data: '' });
+        }
+    } else {
+        res.status(200).json({ success: false, message: 'Validate Failed', data: '' });
+    }
+});
+
 http.listen(port, function () {
     console.log(`Express server start, listening on port:${port} ...`);
 });
