@@ -1,12 +1,14 @@
-import './index.less';
+import './style/index.less';
+import './style/welcome.less';
+import './style/home.less';
+import './style/join.less';
 import Navigo from 'navigo';
-import About from './view/about.html';
-import ChatList from './view/chatList.html';
+import Welcome from './view/welcome.html';
+import Home from './view/home.html';
 import Error from './view/error.html';
-import Login from './view/login.html';
-import Register from './view/register.html';
-import initRegisterHandler from './js/register';
+import Join from './view/join.html';
 import initRouter from './js/initRouter';
+import initJoinPage from './js/join';
 
 initRouter();
 
@@ -14,18 +16,18 @@ const app = document.getElementById('app');
 const router = new Navigo(null, true, '#');
 
 router.on('/', function () {
-    app.innerHTML = About
+    app.innerHTML = Home;
 }).resolve();
 
-router.on('/register', function () {
-    app.innerHTML = Register;
-    initRegisterHandler();
+router.on('/join', function () {
+    app.innerHTML = Join;
+    initJoinPage();
 }).resolve();
 
-router.on('/login', function () {
-    app.innerHTML = Login;
+router.on('/welcome', function () {
+    app.innerHTML = Welcome;
 }).resolve();
 
 router.notFound(function () {
-    app.innerHTML = Error
+    app.innerHTML = Error;
 }).resolve();
