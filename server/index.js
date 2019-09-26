@@ -10,6 +10,9 @@ const User = require('../database/model/User');
 require('../database/connectdb');
 const io = require('socket.io')(http);
 io.set('origins', '*:*');
+let jwt = require('jsonwebtoken');
+let config = require('./generateToken/config');
+let middleware = require('./generateToken/middleware');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -38,6 +41,7 @@ app.post('/api/joinCheck', async function (req, res, next) {
                 validationPass: null
             });
         } else {
+            //login failed
             if (!await User.validateCredentials(userObj.username, userObj.password)) {
                 res.status(200).json({
                     success: false,
@@ -46,17 +50,36 @@ app.post('/api/joinCheck', async function (req, res, next) {
                     validationPass: false
                 });
             } else {
+                //login successfully
+                let token = jwt.sign({username: req.body.username},
+                  config.secret,
+                  { expiresIn: '24h' // expires in 24 hours
+                  }
+                );
+                jwt.verify(token, config.secret, (err, decoded) => {
+                  if (err) {
+                    return res.json({
+                      success: false,
+                      message: 'Token is not valid'
+                    });
+                  } else {
+                    req.decoded = decoded;
+                    console.log(req.decoded);
+                  }
+                });   
                 res.status(200).json({
                     success: true,
                     message: 'Validation Passed',
                     exists: true,
-                    validationPass: true
+                    validationPass: true,
+                    token: token
                 });
             }
         }
     }
 });
 
+//register
 app.post('/api/join', async function (req, res, next) {
     const userObj = {
         username: req.body.username,
@@ -65,12 +88,19 @@ app.post('/api/join', async function (req, res, next) {
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
         if (result.success) {
-            res.status(200).json({ success: true, message: 'Register Success', data: '' });
+            //Register Success
+            let token = jwt.sign({username: req.body.username},
+              config.secret,
+              { expiresIn: '24h' // expires in 24 hours
+              }
+            );
+            res.status(200).json({ success: true, message: 'Register Success', data: '', token: token });
         } else {
-            res.status(200).json({ success: false, message: result.res, data: '' });
+            //Username already exist
+            res.status(200).json({ success: false, message: result.res, data: ''});
         }
     } else {
-        res.status(200).json({ success: false, message: 'Validate Failed', data: '' });
+        res.status(200).json({ success: false, message: 'Validate Failed', data: ''});
     }
 });
 
