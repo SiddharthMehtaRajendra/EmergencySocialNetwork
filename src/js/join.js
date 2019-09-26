@@ -27,7 +27,8 @@ function register() {
         if (res.status === 200 && res.data && res.data.success) {
             const Cookies = require('js-cookie');
             Cookies.set('token', res.token);
-            let avatar = randomColor({
+            var randomColor = require('randomcolor');
+            var avatar = randomColor({
                 luminosity: 'light'
             });
             console.log(avatar);
