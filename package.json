@@ -52,6 +52,7 @@
     "lodash": "^4.17.15",
     "mongoose": "^5.7.1",
     "mongoose-unique-validator": "^2.0.3",
-    "navigo": "^7.1.2"
+    "navigo": "^7.1.2",
+    "randomcolor": "^0.5.4"
   }
 }

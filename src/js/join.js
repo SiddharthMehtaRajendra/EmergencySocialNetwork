@@ -27,6 +27,10 @@ function register() {
         if (res.status === 200 && res.data && res.data.success) {
             const Cookies = require('js-cookie');
             Cookies.set('token', res.token);
+            let avatar = randomColor({
+                luminosity: 'light'
+            });
+            console.log(avatar);
             Toast(res.data.message);
             setTimeout(function () { window.location.hash = '/welcome'; }, 1000);
         } else {
