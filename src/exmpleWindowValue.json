@@ -1,0 +1,12 @@
+{
+  "window": {
+    "user": {
+      "username": "Test",
+      "status": "OK",
+      "active": true,
+      "avatar": "#00FF00"
+    },
+    "directory": [],
+    "announcement": []
+  }
+}

@@ -17,9 +17,6 @@ import initJoinPage from './js/join';
 import initBottomTab from './components/bottomTab';
 import initChat from './js/chat';
 
-initRouter();
-initBottomTab();
-
 const app = document.getElementById('app');
 const router = new Navigo(null, true, '#');
 
@@ -60,3 +57,7 @@ router.on('/chat/:id', function () {
 router.notFound(function () {
     app.innerHTML = Error;
 }).resolve();
+
+initRouter();
+initBottomTab();
+// TODO: Check User Login, if Login, fetch all data from server, if not, redirect to login page;
