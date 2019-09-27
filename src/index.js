@@ -1,9 +1,11 @@
 import './style/index.less';
 import './style/welcome.less';
+import './style/directory.less';
 import './style/home.less';
 import './style/join.less';
 import Navigo from 'navigo';
 import Welcome from './view/welcome.html';
+import Directory from './view/directory.html';
 import Home from './view/home.html';
 import Error from './view/error.html';
 import Join from './view/join.html';
@@ -26,6 +28,10 @@ router.on('/join', function () {
 
 router.on('/welcome', function () {
     app.innerHTML = Welcome;
+}).resolve();
+
+router.on('/directory', function () {
+    app.innerHTML = Directory;
 }).resolve();
 
 router.notFound(function () {
