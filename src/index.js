@@ -1,14 +1,18 @@
 import './style/index.less';
 import './style/welcome.less';
-import './style/directory.less';
 import './style/home.less';
 import './style/join.less';
+import './style/directory.less';
+import './style/chatlist.less';
+import './style/me.less';
 import Navigo from 'navigo';
 import Welcome from './view/welcome.html';
-import Directory from './view/directory.html';
 import Home from './view/home.html';
 import Error from './view/error.html';
 import Join from './view/join.html';
+import Directory from './view/directory.html';
+import Chatlist from './view/chatlist.html';
+import Me from './view/me.html';
 import initRouter from './js/initRouter';
 import initJoinPage from './js/join';
 
@@ -32,6 +36,14 @@ router.on('/welcome', function () {
 
 router.on('/directory', function () {
     app.innerHTML = Directory;
+}).resolve();
+
+router.on('/chatlist', function () {
+    app.innerHTML = Chatlist;
+}).resolve();
+
+router.on('/me', function () {
+    app.innerHTML = Me;
 }).resolve();
 
 router.notFound(function () {
