@@ -10,10 +10,12 @@ import Join from './view/join.html';
 import Me from './view/_me.html';
 import Directory from './view/_directory.html';
 import Chats from './view/_chats.html';
+import Chat from './view/chat.html';
 import Announcement from './view/_announcement.html';
 import initRouter from './js/initRouter';
 import initJoinPage from './js/join';
 import initBottomTab from './components/bottomTab';
+import initChat from './js/chat';
 
 initRouter();
 initBottomTab();
@@ -48,6 +50,11 @@ router.on('/chats', function () {
 
 router.on('/announcement', function () {
     app.innerHTML = Announcement;
+}).resolve();
+
+router.on('/chat/:id', function () {
+    app.innerHTML = Chat;
+    initChat();
 }).resolve();
 
 router.notFound(function () {

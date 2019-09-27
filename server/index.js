@@ -7,6 +7,9 @@ const port = 8000;
 const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
+const Message = require('../database/model/Message');
+const io = require('socket.io')(http);
+
 require('../database/connectdb');
 let jwt = require('jsonwebtoken');
 let config = require('./generateToken/config');
@@ -18,6 +21,23 @@ app.use(cors());
 
 // Serve static front-end files, for future use
 // app.use(express.static(path.resolve(__dirname, '../dist')));
+
+io.on('connection', function (socket) {
+    socket.on('MSG', async function (msg) {
+        console.log(msg);
+        const res = await Message.insertMessage({
+            chatId: '0',
+            from: 'Wayne',
+            to: 'public chat',
+            type: 'public',
+            content: 'hi there'
+        });
+        if (res.success) {
+            console.log(res);
+            console.log('insert success');
+        }
+    });
+});
 
 app.get('/heartbeat', async function (req, res, next) {
     console.log('Hello ESN Node Server');
