@@ -62,7 +62,6 @@ app.post('/api/joinCheck', async function (req, res, next) {
                     });
                   } else {
                     req.decoded = decoded;
-                    console.log(req.decoded);
                   }
                 });   
                 res.status(200).json({
@@ -79,9 +78,14 @@ app.post('/api/joinCheck', async function (req, res, next) {
 
 //register
 app.post('/api/join', async function (req, res, next) {
+    var randomColor = require('randomcolor');
+    var avatar = randomColor({
+        luminosity: 'light'
+    });
     const userObj = {
         username: req.body.username,
-        password: req.body.password
+        password: req.body.password,
+        avatar: avatar
     };
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
@@ -92,6 +96,8 @@ app.post('/api/join', async function (req, res, next) {
               { expiresIn: '24h' // expires in 24 hours
               }
             );
+            //
+            console.log(userObj);
             res.status(200).json({ success: true, message: 'Register Success', data: '', token: token });
         } else {
             //Username already exist

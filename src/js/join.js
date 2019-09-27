@@ -26,12 +26,7 @@ function register() {
     }).then((res) => {
         if (res.status === 200 && res.data && res.data.success) {
             const Cookies = require('js-cookie');
-            Cookies.set('token', res.token);
-            var randomColor = require('randomcolor');
-            var avatar = randomColor({
-                luminosity: 'light'
-            });
-            console.log(avatar);
+            Cookies.set('token', res.data.token);
             Toast(res.data.message);
             setTimeout(function () { window.location.hash = '/welcome'; }, 1000);
         } else {
