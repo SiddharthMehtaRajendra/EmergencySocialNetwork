@@ -74,6 +74,15 @@ app.post('/api/join', async function (req, res, next) {
     }
 });
 
+app.get('/api/directory', async function (req, res) {
+    try {
+        const all = await User.find().sort({ username: 1 });
+        res.status(200).json({ users: all });
+    } catch (e) {
+        console.log(e);
+    }
+});
+
 http.listen(port, function () {
     console.log(`Express server start, listening on port:${port} ...`);
 });

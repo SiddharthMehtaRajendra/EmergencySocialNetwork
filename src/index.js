@@ -14,6 +14,7 @@ import Directory from './view/directory.html';
 import Chats from './view/chats.html';
 import Me from './view/me.html';
 import initRouter from './js/initRouter';
+import initDirectoryPage from './js/initDirectory';
 import initJoinPage from './js/join';
 
 initRouter();
@@ -36,6 +37,8 @@ router.on('/welcome', function () {
 
 router.on('/directory', function () {
     app.innerHTML = Directory;
+    initDirectoryPage();
+    // renderdirectory;
 }).resolve();
 
 router.on('/chats', function () {
