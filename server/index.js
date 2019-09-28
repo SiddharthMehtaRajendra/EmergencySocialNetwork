@@ -22,9 +22,9 @@ app.use(cors({ credentials: true, origin: true }));
 app.use(cookieParser());
 app.use(checkToken);
 
-function parseCookies(cookirStr) {
+function parseCookies(cookieStr) {
     const list = {};
-    cookirStr && cookirStr.split(';').forEach(function (cookie) {
+    cookieStr && cookieStr.split(';').forEach(function (cookie) {
         const parts = cookie.split('=');
         list[parts.shift().trim()] = decodeURI(parts.join('='));
     });
