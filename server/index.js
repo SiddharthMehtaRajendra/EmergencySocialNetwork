@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
 require('../database/connectdb');
+const io = require('socket.io')(http);
+io.set('origins', '*:*');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
