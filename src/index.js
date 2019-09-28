@@ -11,7 +11,7 @@ import Home from './view/home.html';
 import Error from './view/error.html';
 import Join from './view/join.html';
 import Directory from './view/directory.html';
-import Chatlist from './view/chatlist.html';
+import Chats from './view/chats.html';
 import Me from './view/me.html';
 import initRouter from './js/initRouter';
 import initJoinPage from './js/join';
@@ -38,8 +38,8 @@ router.on('/directory', function () {
     app.innerHTML = Directory;
 }).resolve();
 
-router.on('/chatlist', function () {
-    app.innerHTML = Chatlist;
+router.on('/chats', function () {
+    app.innerHTML = Chats;
 }).resolve();
 
 router.on('/me', function () {
