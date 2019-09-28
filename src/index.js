@@ -3,7 +3,7 @@ import './style/welcome.less';
 import './style/home.less';
 import './style/join.less';
 import './style/directory.less';
-import './style/chatlist.less';
+import './style/chats.less';
 import './style/me.less';
 import Navigo from 'navigo';
 import Welcome from './view/welcome.html';
