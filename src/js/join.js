@@ -3,7 +3,7 @@ import { validateUserName, validatePassword } from './lib/validation';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import Toast from './lib/toast';
 import { bottomPopCardSetup, showBottomPopCard, setupContent } from '../components/bottomPopCard';
-// import Cookies from 'js-cookie';
+import Cookies from 'js-cookie';
 
 function initJoinPage() {
     const registerBtn = document.getElementById('register-btn');
@@ -64,7 +64,7 @@ function join() {
             if (res.status === 200 && res.data) {
                 if (res.data.success && res.data.exists && res.data.validationPass) {
                     console.log(res);
-                    // Cookies.set('token', res.data.token);
+                    Cookies.set('token', res.data.token);
                     window.location.hash = '/directory';
                 } else if (!res.data.success && res.data.exists === false && res.data.validationPass === null) {
                     // ready for registeration

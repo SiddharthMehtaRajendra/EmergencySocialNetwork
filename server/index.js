@@ -22,20 +22,33 @@ app.use(cors({ credentials: true, origin: true }));
 app.use(cookieParser());
 app.use(checkToken);
 
+function parseCookies(cookirStr) {
+    const list = {};
+    cookirStr && cookirStr.split(';').forEach(function (cookie) {
+        const parts = cookie.split('=');
+        list[parts.shift().trim()] = decodeURI(parts.join('='));
+    });
+    return list;
+}
+
 // Serve static front-end files, for future use
 // app.use(express.static(path.resolve(__dirname, '../dist')));
 io.use((socket, next) => {
     console.log('--------');
-    console.log('********');
-    console.log(socket.request);
-    console.log(socket.handshake);
+    // console.log(socket.request);
+    // console.log(socket.handshake);
     console.log(socket.request.headers.cookie);
+    const cookieStr = socket.request.headers.cookie;
+    socket.request.headers.username = parseCookies(cookieStr).token;
+    socket.username = parseCookies(cookieStr).token;
+    console.log(socket.username);
     console.log('-------');
     next();
 });
 
 io.on('connection', function (socket) {
     socket.on('MSG', async function (msg) {
+        console.log(socket.username);
         console.log('Socket Msg here');
         console.log(msg);
         // const res = await Message.insertMessage({
