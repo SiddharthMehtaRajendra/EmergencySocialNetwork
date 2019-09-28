@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
 require('../database/connectdb');
+const io = require('socket.io')(http);
+io.set('origins', '*:*');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -69,6 +71,15 @@ app.post('/api/join', async function (req, res, next) {
         }
     } else {
         res.status(200).json({ success: false, message: 'Validate Failed', data: '' });
+    }
+});
+
+app.get('/api/directory', async function (req, res) {
+    try {
+        const all = await User.find().sort({ username: 1 });
+        res.status(200).json({ users: all });
+    } catch (e) {
+        console.log(e);
     }
 });
 
