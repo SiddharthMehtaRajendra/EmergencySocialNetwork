@@ -53,17 +53,7 @@ app.post('/api/joinCheck', async function (req, res, next) {
                   config.secret,
                   { expiresIn: '24h' // expires in 24 hours
                   }
-                );
-                jwt.verify(token, config.secret, (err, decoded) => {
-                  if (err) {
-                    return res.json({
-                      success: false,
-                      message: 'Token is not valid'
-                    });
-                  } else {
-                    req.decoded = decoded;
-                  }
-                });   
+                );   
                 res.status(200).json({
                     success: true,
                     message: 'Validation Passed',
