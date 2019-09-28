@@ -7,17 +7,41 @@ const port = 8000;
 const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
+const Message = require('../database/model/Message');
+const io = require('socket.io')(http);
+io.set('origins', '*:*');
+const jwt = require('jsonwebtoken');
+const config = require('./auth/config');
+const cookieParser = require('cookie-parser');
+const checkToken = require('./auth/middleware');
 require('../database/connectdb');
-let jwt = require('jsonwebtoken');
-let config = require('./generateToken/config');
-let middleware = require('./generateToken/middleware');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
+app.use(cookieParser());
+app.use(checkToken);
 
-// Serve static front-end files, for future use
-// app.use(express.static(path.resolve(__dirname, '../dist')));
+
+function parseCookies(cookieStr) {
+    const list = {};
+    cookieStr && cookieStr.split(';').forEach(function (cookie) {
+        const parts = cookie.split('=');
+        list[parts.shift().trim()] = decodeURI(parts.join('='));
+    });
+    return list;
+}
+
+io.use((socket, next) => {
+    console.log('--------');
+    console.log(socket.request.headers.cookie);
+    const cookieStr = socket.request.headers.cookie;
+    socket.request.headers.username = parseCookies(cookieStr).token;
+    socket.username = parseCookies(cookieStr).token;
+    console.log(socket.username);
+    console.log('-------');
+    next();
+});
 
 app.get('/heartbeat', async function (req, res, next) {
     console.log('Hello ESN Node Server');
