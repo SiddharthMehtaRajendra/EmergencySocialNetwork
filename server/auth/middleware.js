@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const config = require('./config.js');
-const dateFormat = require('../../utils/dataFormat');
 
 const exclude = {
     '/api/joinCheck': true,
@@ -26,7 +25,6 @@ const checkToken = (req, res, next) => {
                     req.decoded = decoded;
                     console.log(decoded);
                     // note, the exp time here is 10 digit, not 13!
-                    console.log(dateFormat(decoded.exp, 'mm-dd HH:MM:ss'));
                     next();
                 }
             });

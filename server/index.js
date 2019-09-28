@@ -9,6 +9,7 @@ const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
 const Message = require('../database/model/Message');
 const io = require('socket.io')(http);
+io.set('origins', '*:*');
 const jwt = require('jsonwebtoken');
 const config = require('./auth/config');
 const cookieParser = require('cookie-parser');
@@ -23,21 +24,31 @@ app.use(checkToken);
 
 // Serve static front-end files, for future use
 // app.use(express.static(path.resolve(__dirname, '../dist')));
+io.use((socket, next) => {
+    console.log('--------');
+    console.log('********');
+    console.log(socket.request);
+    console.log(socket.handshake);
+    console.log(socket.request.headers.cookie);
+    console.log('-------');
+    next();
+});
 
 io.on('connection', function (socket) {
     socket.on('MSG', async function (msg) {
+        console.log('Socket Msg here');
         console.log(msg);
-        const res = await Message.insertMessage({
-            chatId: '0',
-            from: 'Wayne',
-            to: 'public chat',
-            type: 'public',
-            content: 'hi there'
-        });
-        if (res.success) {
-            console.log(res);
-            console.log('insert success');
-        }
+        // const res = await Message.insertMessage({
+        //     chatId: '0',
+        //     from: 'Wayne',
+        //     to: 'public chat',
+        //     type: 'public',
+        //     content: 'hi there'
+        // });
+        // if (res.success) {
+        //     console.log(res);
+        //     console.log('insert success');
+        // }
     });
 });
 
@@ -72,13 +83,14 @@ app.post('/api/joinCheck', async function (req, res, next) {
                 const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: '24h' });
                 res.cookie('token', token, {
                     maxAge: 60 * 60 * 24,
-                    httpOnly: true
+                    httpOnly: false
                 });
                 res.status(200).json({
                     success: true,
                     message: 'Validation Passed',
                     exists: true,
-                    validationPass: true
+                    validationPass: true,
+                    token: token
                 });
             }
         }
