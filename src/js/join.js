@@ -25,10 +25,10 @@ function register() {
         password: password
     }).then((res) => {
         if (res.status === 200 && res.data && res.data.success) {
-            const Cookies = require('js-cookie');
-            Cookies.set('token', res.data.token);
             Toast(res.data.message);
-            setTimeout(function () { window.location.hash = '/welcome'; }, 1000);
+            setTimeout(function () {
+                window.location.hash = '/welcome';
+            }, 1000);
         } else {
             Toast(res.data.message);
         }
@@ -50,18 +50,20 @@ function join() {
     const passwordValidation = validatePassword(password);
     if (usernameValidation.result && passwordValidation.result) {
         resetHint();
-        axios.post(`${SERVER_ADDRESS}${API_PREFIX}/joinCheck`, {
-            username: username,
-            password: password
+        axios({
+            method: 'post',
+            url: `${SERVER_ADDRESS}${API_PREFIX}/joinCheck`,
+            data: {
+                username: username,
+                password: password
+            },
+            withCredentials: true
         }).then((res) => {
             // TODO: User Exist and pass the validation, should go into system
             if (res.status === 200 && res.data) {
                 if (res.data.success && res.data.exists && res.data.validationPass) {
-                    // login successfully
-                    const Cookies = require('js-cookie');
-                    Cookies.set('token', res.data.token);
-                    window.location.hash = '/';
-                    // TODO change to ESN.html
+                    console.log(res);
+                    window.location.hash = '/directory';
                 } else if (!res.data.success && res.data.exists === false && res.data.validationPass === null) {
                     // ready for registeration
                     setupContent(buildBottomPopCardContent(username));

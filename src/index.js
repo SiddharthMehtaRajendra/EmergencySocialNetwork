@@ -16,6 +16,8 @@ import initRouter from './js/initRouter';
 import initJoinPage from './js/join';
 import initBottomTab from './components/bottomTab';
 import initChat from './js/chat';
+import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 const app = document.getElementById('app');
 const router = new Navigo(null, true, '#');

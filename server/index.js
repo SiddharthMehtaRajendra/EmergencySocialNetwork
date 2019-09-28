@@ -9,15 +9,17 @@ const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
 const Message = require('../database/model/Message');
 const io = require('socket.io')(http);
-
+const jwt = require('jsonwebtoken');
+const config = require('./auth/config');
+const cookieParser = require('cookie-parser');
+const checkToken = require('./auth/middleware');
 require('../database/connectdb');
-let jwt = require('jsonwebtoken');
-let config = require('./generateToken/config');
-let middleware = require('./generateToken/middleware');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
+app.use(cookieParser());
+app.use(checkToken);
 
 // Serve static front-end files, for future use
 // app.use(express.static(path.resolve(__dirname, '../dist')));
@@ -59,7 +61,6 @@ app.post('/api/joinCheck', async function (req, res, next) {
                 validationPass: null
             });
         } else {
-            //login failed
             if (!await User.validateCredentials(userObj.username, userObj.password)) {
                 res.status(200).json({
                     success: false,
@@ -68,38 +69,26 @@ app.post('/api/joinCheck', async function (req, res, next) {
                     validationPass: false
                 });
             } else {
-                //login successfully
-                let token = jwt.sign({username: req.body.username},
-                  config.secret,
-                  { expiresIn: '24h' // expires in 24 hours
-                  }
-                );
-                jwt.verify(token, config.secret, (err, decoded) => {
-                  if (err) {
-                    return res.json({
-                      success: false,
-                      message: 'Token is not valid'
-                    });
-                  } else {
-                    req.decoded = decoded;
-                  }
-                });   
+                const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: '24h' });
+                res.cookie('token', token, {
+                    maxAge: 60 * 60 * 24,
+                    httpOnly: true
+                });
                 res.status(200).json({
                     success: true,
                     message: 'Validation Passed',
                     exists: true,
-                    validationPass: true,
-                    token: token
+                    validationPass: true
                 });
             }
         }
     }
 });
 
-//register
+// register
 app.post('/api/join', async function (req, res, next) {
-    var randomColor = require('randomcolor');
-    var avatar = randomColor({
+    const randomColor = require('randomcolor');
+    const avatar = randomColor({
         luminosity: 'light'
     });
     const userObj = {
@@ -110,21 +99,20 @@ app.post('/api/join', async function (req, res, next) {
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
         if (result.success) {
-            //Register Success
-            let token = jwt.sign({username: req.body.username},
-              config.secret,
-              { expiresIn: '24h' // expires in 24 hours
-              }
+            // Register Success
+            const token = jwt.sign({ username: req.body.username },
+                config.secret,
+                {
+                    expiresIn: '24h' // expires in 24 hours
+                }
             );
-            //
-            console.log(userObj);
             res.status(200).json({ success: true, message: 'Register Success', data: '', token: token });
         } else {
-            //Username already exist
-            res.status(200).json({ success: false, message: result.res, data: ''});
+            // Username already exist
+            res.status(200).json({ success: false, message: result.res, data: '' });
         }
     } else {
-        res.status(200).json({ success: false, message: 'Validate Failed', data: ''});
+        res.status(200).json({ success: false, message: 'Validate Failed', data: '' });
     }
 });
 
