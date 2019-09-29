@@ -13,15 +13,14 @@ io.set('origins', '*:*');
 const jwt = require('jsonwebtoken');
 const config = require('./auth/config');
 const cookieParser = require('cookie-parser');
-const checkToken = require('./auth/middleware');
+var checkToken = require('./auth/middleware');
 require('../database/connectdb');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors({ credentials: true, origin: true }));
 app.use(cookieParser());
-app.use(checkToken);
-<<<<<<< HEAD
+app.use(checkToken());
 
 function parseCookies(cookieStr) {
     const list = {};
@@ -37,27 +36,7 @@ io.use((socket, next) => {
     console.log(socket.request.headers.cookie);
     const cookieStr = socket.request.headers.cookie;
     // socket.request.headers.username = parseCookies(cookieStr).token;
-=======
 
-function parseCookies(cookieStr) {
-    const list = {};
-    cookieStr && cookieStr.split(';').forEach(function (cookie) {
-        const parts = cookie.split('=');
-        list[parts.shift().trim()] = decodeURI(parts.join('='));
-    });
-    return list;
-}
-
-// Serve static front-end files, for future use
-// app.use(express.static(path.resolve(__dirname, '../dist')));
-io.use((socket, next) => {
-    console.log('--------');
-    // console.log(socket.request);
-    // console.log(socket.handshake);
-    console.log(socket.request.headers.cookie);
-    const cookieStr = socket.request.headers.cookie;
-    socket.request.headers.username = parseCookies(cookieStr).token;
->>>>>>> yiwang-dev-iteration1
     socket.username = parseCookies(cookieStr).token;
     console.log(socket.username);
     console.log('-------');
@@ -69,20 +48,6 @@ io.on('connection', function (socket) {
         console.log(socket.username);
         console.log('Socket Msg here');
         console.log(msg);
-<<<<<<< HEAD
-=======
-        // const res = await Message.insertMessage({
-        //     chatId: '0',
-        //     from: 'Wayne',
-        //     to: 'public chat',
-        //     type: 'public',
-        //     content: 'hi there'
-        // });
-        // if (res.success) {
-        //     console.log(res);
-        //     console.log('insert success');
-        // }
->>>>>>> yiwang-dev-iteration1
     });
 });
 
@@ -114,20 +79,13 @@ app.post('/api/joinCheck', async function (req, res, next) {
                     validationPass: false
                 });
             } else {
-<<<<<<< HEAD
                 //login successfully
                 let token = jwt.sign({username: req.body.username},
                   config.secret,
                   { expiresIn: '24h' // expires in 24 hours
                   }
                 );   
-=======
-                const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: '24h' });
-                res.cookie('token', token, {
-                    maxAge: 60 * 60 * 24,
-                    httpOnly: false
-                });
->>>>>>> yiwang-dev-iteration1
+
                 res.status(200).json({
                     success: true,
                     message: 'Validation Passed',
