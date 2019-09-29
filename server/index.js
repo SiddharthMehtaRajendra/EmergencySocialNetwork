@@ -22,7 +22,6 @@ app.use(cors({ credentials: true, origin: true }));
 app.use(cookieParser());
 app.use(checkToken);
 
-
 function parseCookies(cookieStr) {
     const list = {};
     cookieStr && cookieStr.split(';').forEach(function (cookie) {
@@ -36,11 +35,19 @@ io.use((socket, next) => {
     console.log('--------');
     console.log(socket.request.headers.cookie);
     const cookieStr = socket.request.headers.cookie;
-    socket.request.headers.username = parseCookies(cookieStr).token;
+    // socket.request.headers.username = parseCookies(cookieStr).token;
     socket.username = parseCookies(cookieStr).token;
     console.log(socket.username);
     console.log('-------');
     next();
+});
+
+io.on('connection', function (socket) {
+    socket.on('MSG', async function (msg) {
+        console.log(socket.username);
+        console.log('Socket Msg here');
+        console.log(msg);
+    });
 });
 
 app.get('/heartbeat', async function (req, res, next) {
