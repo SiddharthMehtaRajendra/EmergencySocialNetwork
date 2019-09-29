@@ -7,22 +7,26 @@ const port = 8000;
 const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
-require('../database/connectdb');
 const io = require('socket.io')(http);
+const jwt = require('jsonwebtoken');
+const config = require('./auth/config');
+const cookieParser = require('cookie-parser');
+const checkToken = require('./auth/checkToken');
+require('../database/connectdb');
+
 io.set('origins', '*:*');
-let jwt = require('jsonwebtoken');
-let config = require('./generateToken/config');
-let middleware = require('./generateToken/middleware');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
+app.use(cookieParser());
+app.use(checkToken);
 
 // Serve static front-end files, for future use
 // app.use(express.static(path.resolve(__dirname, '../dist')));
 
 app.get('/heartbeat', async function (req, res, next) {
-    console.log('Hello ESN Node Server');
+    console.log('Hello ESN!');
     res.status(200).json({ success: true, message: 'Hello ESN Node Server', data: {} });
 });
 
@@ -41,7 +45,7 @@ app.post('/api/joinCheck', async function (req, res, next) {
                 validationPass: null
             });
         } else {
-            //login failed
+            // login failed
             if (!await User.validateCredentials(userObj.username, userObj.password)) {
                 res.status(200).json({
                     success: false,
@@ -50,22 +54,8 @@ app.post('/api/joinCheck', async function (req, res, next) {
                     validationPass: false
                 });
             } else {
-                //login successfully
-                let token = jwt.sign({username: req.body.username},
-                  config.secret,
-                  { expiresIn: '24h' // expires in 24 hours
-                  }
-                );
-                jwt.verify(token, config.secret, (err, decoded) => {
-                  if (err) {
-                    return res.json({
-                      success: false,
-                      message: 'Token is not valid'
-                    });
-                  } else {
-                    req.decoded = decoded;
-                  }
-                });   
+                // login successfully
+                const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: '24h' });
                 res.status(200).json({
                     success: true,
                     message: 'Validation Passed',
@@ -78,7 +68,7 @@ app.post('/api/joinCheck', async function (req, res, next) {
     }
 });
 
-//register
+// register
 app.post('/api/join', async function (req, res, next) {
     var randomColor = require('randomcolor');
     var avatar = randomColor({
@@ -92,25 +82,21 @@ app.post('/api/join', async function (req, res, next) {
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
         if (result.success) {
-            //Register Success
-            let token = jwt.sign({username: req.body.username},
-              config.secret,
-              { expiresIn: '24h' // expires in 24 hours
-              }
-            );
+            // Register Success
+            const token = jwt.sign({ username: req.body.username }, config.secret, { expiresIn: '24h' });
             //
             console.log(userObj);
             res.status(200).json({ success: true, message: 'Register Success', data: '', token: token });
         } else {
-            //Username already exist
-            res.status(200).json({ success: false, message: result.res, data: ''});
+            // Username already exist
+            res.status(200).json({ success: false, message: result.res, data: '' });
         }
     } else {
-        res.status(200).json({ success: false, message: 'Validate Failed', data: ''});
+        res.status(200).json({ success: false, message: 'Validate Failed', data: '' });
     }
 });
 
-app.get('/api/directory', async function (req, res) {
+app.get('/api/users', async function (req, res) {
     try {
         const all = await User.find().sort({ username: 1 });
         res.status(200).json({ users: all });

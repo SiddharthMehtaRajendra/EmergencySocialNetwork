@@ -1,12 +1,16 @@
 import axios from 'axios';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
+axios.defaults.withCredentials = true;
 
 function initDirectoryPage() {
     renderDirectoryPage();
 }
 
 function renderDirectoryPage() {
-    axios.get(`${SERVER_ADDRESS}${API_PREFIX}/directory`).then((res) => {
+    axios({
+        url: `${SERVER_ADDRESS}${API_PREFIX}/users`,
+        withCredentials: true
+    }).then((res) => {
         // TODO: User Exist and pass the validation, should go into system
         // console.log(res);
         const users = (res && res.data && res.data.users) || [];
@@ -33,7 +37,7 @@ function renderDirectoryPage() {
             directory.appendChild(userCard);
         });
     }).catch((err) => {
-        console.log(err);
+        console.log(err.toString());
     });
 }
 

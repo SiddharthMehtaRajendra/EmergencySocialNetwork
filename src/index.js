@@ -16,6 +16,21 @@ import Me from './view/me.html';
 import initRouter from './js/initRouter';
 import initDirectoryPage from './js/initDirectory';
 import initJoinPage from './js/join';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+axios.defaults.withCredentials = true;
+axios.interceptors.request.use(function (config) {
+    config.headers.token = Cookies.get('token');
+    return config;
+});
+
+axios.interceptors.response.use(function (response) {
+    if (response.data && !response.data.success && response.data.redirect) {
+        window.location.hash = '/join';
+    } else {
+        return response;
+    }
+});
 
 initRouter();
 

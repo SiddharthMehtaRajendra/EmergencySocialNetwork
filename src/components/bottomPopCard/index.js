@@ -1,7 +1,7 @@
-import bottomPopCard from './bottomPopCard.html';
-import './bottomPopCard.less';
+import bottomPopCard from './View.html';
+import './style.less';
 
-function insertHtml() {
+function mount() {
     const app = document.getElementById('app');
     const bottomPopCardNode = document.createElement('div');
     bottomPopCardNode.id = 'bottom-pop-card-node';
@@ -10,43 +10,43 @@ function insertHtml() {
     app.appendChild(bottomPopCardNode);
 }
 
-function showBottomPopCard() {
+function show() {
     document.getElementById('bottom-pop-card-node').style.visibility = 'visible';
 }
 
-function closePopCard() {
+function close() {
     document.getElementById('bottom-pop-card-node').style.visibility = 'hidden';
 }
 
-function setupCloseBtn(callBack) {
+function setCloseCallback(callBack) {
     const closeBtn = document.getElementById('bottom-card-close-btn');
     if (callBack) {
         closeBtn.addEventListener('click', callBack);
     } else {
-        closeBtn.addEventListener('click', closePopCard);
+        closeBtn.addEventListener('click', close);
     }
 }
 
-function setupYesBtn(callBack) {
+function setYesCallback(callBack) {
     const closeBtn = document.getElementById('bottom-card-close-btn');
     closeBtn.addEventListener('click', callBack);
 }
 
-function setupTitle(title) {
+function setTitle(title) {
     const cardTitle = document.getElementById('bottom-pop-card-title');
     cardTitle.innerText = title;
 }
 
-function setupContent(content) {
+function setContent(content) {
     document.getElementById('bottom-pop-card-content').innerHTML = '';
     document.getElementById('bottom-pop-card-content').appendChild(content);
 }
 
-function bottomPopCardSetup(title, yesCallback, noCallback, contentHtml) {
-    insertHtml();
-    setupCloseBtn();
+function init(title, yesCallback, noCallback, contentHtml) {
+    mount();
+    setCloseCallback();
     if (title) {
-        setupTitle(title);
+        setTitle(title);
     }
     if (yesCallback) {
         document.getElementById('bottom-pop-card-yes').addEventListener('click', yesCallback);
@@ -54,11 +54,19 @@ function bottomPopCardSetup(title, yesCallback, noCallback, contentHtml) {
     if (noCallback) {
         document.getElementById('bottom-pop-card-no').addEventListener('click', noCallback);
     } else {
-        document.getElementById('bottom-pop-card-no').addEventListener('click', closePopCard);
+        document.getElementById('bottom-pop-card-no').addEventListener('click', close);
     }
     if (contentHtml) {
         document.getElementById('bottom-pop-card-content').innerHTML = contentHtml;
     }
 }
 
-export { bottomPopCardSetup, showBottomPopCard, setupTitle, setupContent, setupYesBtn };
+const BottomPopCard = {
+    init,
+    show,
+    setTitle,
+    setContent,
+    setYesCallback
+};
+
+export default BottomPopCard;

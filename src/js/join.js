@@ -2,12 +2,13 @@ import axios from 'axios';
 import { validateUserName, validatePassword } from './lib/validation';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import Toast from './lib/toast';
-import { bottomPopCardSetup, showBottomPopCard, setupContent } from '../components/bottomPopCard';
+import BottomPopCard from '../components/bottomPopCard';
+const Cookie = require('js-cookie');
 
 function initJoinPage() {
     const registerBtn = document.getElementById('register-btn');
     registerBtn.addEventListener('click', join);
-    bottomPopCardSetup('Are you sure to create a new user with this username?', register);
+    BottomPopCard.init('Are you sure to create a new user with this username?', register);
 }
 
 function buildBottomPopCardContent(username) {
@@ -25,8 +26,7 @@ function register() {
         password: password
     }).then((res) => {
         if (res.status === 200 && res.data && res.data.success) {
-            const Cookies = require('js-cookie');
-            Cookies.set('token', res.data.token);
+            Cookie.set('token', res.data.token, { expires: 1 });
             Toast(res.data.message);
             setTimeout(function () { window.location.hash = '/welcome'; }, 1000);
         } else {
@@ -54,20 +54,14 @@ function join() {
             username: username,
             password: password
         }).then((res) => {
-            // TODO: User Exist and pass the validation, should go into system
             if (res.status === 200 && res.data) {
                 if (res.data.success && res.data.exists && res.data.validationPass) {
-                    // login successfully
-                    const Cookies = require('js-cookie');
-                    Cookies.set('token', res.data.token);
-                    window.location.hash = '/';
-                    // TODO change to ESN.html
+                    Cookie.set('token', res.data.token, { expires: 1 });
+                    window.location.hash = '/directory';
                 } else if (!res.data.success && res.data.exists === false && res.data.validationPass === null) {
-                    // ready for registeration
-                    setupContent(buildBottomPopCardContent(username));
-                    showBottomPopCard();
+                    BottomPopCard.setContent(buildBottomPopCardContent(username));
+                    BottomPopCard.show();
                 } else if (!res.data.success && res.data.validationPass === false) {
-                    // username and password are not matched
                     Toast(res.data.message, '#F41C3B');
                 }
             }
