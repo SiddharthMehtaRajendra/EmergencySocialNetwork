@@ -1,10 +1,12 @@
+const ip = require('ip');
+const localIP = ip.address();
 const webpackDevServer = require('webpack-dev-server');
 const webpack = require('webpack');
 const path = require('path');
 const port = 3000;
 const config = require('./webpack.config.js');
-config.mode = "development";
-config.output.publicPath = `http://0.0.0.0:${port}/`;
+config.mode = 'development';
+config.output.publicPath = `http://${localIP}:${port}/`;
 config.devtool = 'source-map';
 config.plugins = (config.plugins || []).concat([
     new webpack.HotModuleReplacementPlugin(),
@@ -18,7 +20,7 @@ config.devServer = {
     disableHostCheck: true,
     hot: true,
     inline: true,
-    host: '0.0.0.0',
+    host: localIP,
     stats: {
         colors: true
     },
@@ -31,7 +33,7 @@ config.devServer = {
     }
 };
 
-new webpackDevServer(webpack(config), config.devServer).listen(port, '0.0.0.0', err => {
+new webpackDevServer(webpack(config), config.devServer).listen(port, localIP, err => {
     if (err) {
         console.log(err);
     }

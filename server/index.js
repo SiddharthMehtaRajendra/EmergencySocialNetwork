@@ -27,7 +27,7 @@ app.use(checkToken);
 
 app.get('/heartbeat', async function (req, res, next) {
     console.log('Hello ESN!');
-    res.status(200).json({ success: true, message: 'Hello ESN Node Server', data: {} });
+    res.status(200).json({ success: true, message: 'Hello ESN!', data: {} });
 });
 
 app.post('/api/joinCheck', async function (req, res, next) {
