@@ -13,14 +13,14 @@ io.set('origins', '*:*');
 const jwt = require('jsonwebtoken');
 const config = require('./auth/config');
 const cookieParser = require('cookie-parser');
-var checkToken = require('./auth/middleware');
+const checkToken = require('./auth/middleware');
 require('../database/connectdb');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors({ credentials: true, origin: true }));
 app.use(cookieParser());
-app.use(checkToken());
+app.use(checkToken);
 
 function parseCookies(cookieStr) {
     const list = {};
@@ -31,12 +31,15 @@ function parseCookies(cookieStr) {
     return list;
 }
 
+// Serve static front-end files, for future use
+// app.use(express.static(path.resolve(__dirname, '../dist')));
 io.use((socket, next) => {
     console.log('--------');
+    // console.log(socket.request);
+    // console.log(socket.handshake);
     console.log(socket.request.headers.cookie);
     const cookieStr = socket.request.headers.cookie;
-    // socket.request.headers.username = parseCookies(cookieStr).token;
-
+    socket.request.headers.username = parseCookies(cookieStr).token;
     socket.username = parseCookies(cookieStr).token;
     console.log(socket.username);
     console.log('-------');
@@ -48,6 +51,17 @@ io.on('connection', function (socket) {
         console.log(socket.username);
         console.log('Socket Msg here');
         console.log(msg);
+        // const res = await Message.insertMessage({
+        //     chatId: '0',
+        //     from: 'Wayne',
+        //     to: 'public chat',
+        //     type: 'public',
+        //     content: 'hi there'
+        // });
+        // if (res.success) {
+        //     console.log(res);
+        //     console.log('insert success');
+        // }
     });
 });
 
@@ -79,13 +93,11 @@ app.post('/api/joinCheck', async function (req, res, next) {
                     validationPass: false
                 });
             } else {
-                //login successfully
-                let token = jwt.sign({username: req.body.username},
-                  config.secret,
-                  { expiresIn: '24h' // expires in 24 hours
-                  }
-                );   
-
+                const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: '24h' });
+                res.cookie('token', token, {
+                    maxAge: 60 * 60 * 24,
+                    httpOnly: false
+                });
                 res.status(200).json({
                     success: true,
                     message: 'Validation Passed',
