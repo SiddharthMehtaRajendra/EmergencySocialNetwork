@@ -3,6 +3,7 @@ import { validateUserName, validatePassword } from './lib/validation';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import Toast from './lib/toast';
 import { bottomPopCardSetup, showBottomPopCard, setupContent } from '../components/bottomPopCard';
+import Cookies from 'js-cookie';
 
 function initJoinPage() {
     const registerBtn = document.getElementById('register-btn');
@@ -25,10 +26,10 @@ function register() {
         password: password
     }).then((res) => {
         if (res.status === 200 && res.data && res.data.success) {
-            const Cookies = require('js-cookie');
-            Cookies.set('token', res.data.token);
             Toast(res.data.message);
-            setTimeout(function () { window.location.hash = '/welcome'; }, 1000);
+            setTimeout(function () {
+                window.location.hash = '/welcome';
+            }, 1000);
         } else {
             Toast(res.data.message);
         }
@@ -50,18 +51,21 @@ function join() {
     const passwordValidation = validatePassword(password);
     if (usernameValidation.result && passwordValidation.result) {
         resetHint();
-        axios.post(`${SERVER_ADDRESS}${API_PREFIX}/joinCheck`, {
-            username: username,
-            password: password
+        axios({
+            method: 'post',
+            url: `${SERVER_ADDRESS}${API_PREFIX}/joinCheck`,
+            data: {
+                username: username,
+                password: password
+            },
+            withCredentials: true
         }).then((res) => {
             // TODO: User Exist and pass the validation, should go into system
             if (res.status === 200 && res.data) {
                 if (res.data.success && res.data.exists && res.data.validationPass) {
-                    // login successfully
-                    const Cookies = require('js-cookie');
+                    console.log(res);
                     Cookies.set('token', res.data.token);
-                    window.location.hash = '/';
-                    // TODO change to ESN.html
+                    window.location.hash = '/directory';
                 } else if (!res.data.success && res.data.exists === false && res.data.validationPass === null) {
                     // ready for registeration
                     setupContent(buildBottomPopCardContent(username));

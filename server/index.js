@@ -21,6 +21,7 @@ app.use(bodyParser.json());
 app.use(cors({ credentials: true, origin: true }));
 app.use(cookieParser());
 app.use(checkToken);
+<<<<<<< HEAD
 
 function parseCookies(cookieStr) {
     const list = {};
@@ -36,6 +37,27 @@ io.use((socket, next) => {
     console.log(socket.request.headers.cookie);
     const cookieStr = socket.request.headers.cookie;
     // socket.request.headers.username = parseCookies(cookieStr).token;
+=======
+
+function parseCookies(cookieStr) {
+    const list = {};
+    cookieStr && cookieStr.split(';').forEach(function (cookie) {
+        const parts = cookie.split('=');
+        list[parts.shift().trim()] = decodeURI(parts.join('='));
+    });
+    return list;
+}
+
+// Serve static front-end files, for future use
+// app.use(express.static(path.resolve(__dirname, '../dist')));
+io.use((socket, next) => {
+    console.log('--------');
+    // console.log(socket.request);
+    // console.log(socket.handshake);
+    console.log(socket.request.headers.cookie);
+    const cookieStr = socket.request.headers.cookie;
+    socket.request.headers.username = parseCookies(cookieStr).token;
+>>>>>>> yiwang-dev-iteration1
     socket.username = parseCookies(cookieStr).token;
     console.log(socket.username);
     console.log('-------');
@@ -47,6 +69,20 @@ io.on('connection', function (socket) {
         console.log(socket.username);
         console.log('Socket Msg here');
         console.log(msg);
+<<<<<<< HEAD
+=======
+        // const res = await Message.insertMessage({
+        //     chatId: '0',
+        //     from: 'Wayne',
+        //     to: 'public chat',
+        //     type: 'public',
+        //     content: 'hi there'
+        // });
+        // if (res.success) {
+        //     console.log(res);
+        //     console.log('insert success');
+        // }
+>>>>>>> yiwang-dev-iteration1
     });
 });
 
@@ -70,7 +106,6 @@ app.post('/api/joinCheck', async function (req, res, next) {
                 validationPass: null
             });
         } else {
-            //login failed
             if (!await User.validateCredentials(userObj.username, userObj.password)) {
                 res.status(200).json({
                     success: false,
@@ -79,12 +114,20 @@ app.post('/api/joinCheck', async function (req, res, next) {
                     validationPass: false
                 });
             } else {
+<<<<<<< HEAD
                 //login successfully
                 let token = jwt.sign({username: req.body.username},
                   config.secret,
                   { expiresIn: '24h' // expires in 24 hours
                   }
                 );   
+=======
+                const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: '24h' });
+                res.cookie('token', token, {
+                    maxAge: 60 * 60 * 24,
+                    httpOnly: false
+                });
+>>>>>>> yiwang-dev-iteration1
                 res.status(200).json({
                     success: true,
                     message: 'Validation Passed',
@@ -97,10 +140,10 @@ app.post('/api/joinCheck', async function (req, res, next) {
     }
 });
 
-//register
+// register
 app.post('/api/join', async function (req, res, next) {
-    var randomColor = require('randomcolor');
-    var avatar = randomColor({
+    const randomColor = require('randomcolor');
+    const avatar = randomColor({
         luminosity: 'light'
     });
     const userObj = {
@@ -111,21 +154,20 @@ app.post('/api/join', async function (req, res, next) {
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
         if (result.success) {
-            //Register Success
-            let token = jwt.sign({username: req.body.username},
-              config.secret,
-              { expiresIn: '24h' // expires in 24 hours
-              }
+            // Register Success
+            const token = jwt.sign({ username: req.body.username },
+                config.secret,
+                {
+                    expiresIn: '24h' // expires in 24 hours
+                }
             );
-            //
-            console.log(userObj);
             res.status(200).json({ success: true, message: 'Register Success', data: '', token: token });
         } else {
-            //Username already exist
-            res.status(200).json({ success: false, message: result.res, data: ''});
+            // Username already exist
+            res.status(200).json({ success: false, message: result.res, data: '' });
         }
     } else {
-        res.status(200).json({ success: false, message: 'Validate Failed', data: ''});
+        res.status(200).json({ success: false, message: 'Validate Failed', data: '' });
     }
 });
 
