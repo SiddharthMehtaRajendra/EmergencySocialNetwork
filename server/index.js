@@ -10,6 +10,7 @@ const User = require('../database/model/User');
 const io = require('socket.io')(http);
 const jwt = require('jsonwebtoken');
 const config = require('./auth/config');
+const randomColor = require('randomcolor');
 const cookieParser = require('cookie-parser');
 const checkToken = require('./auth/checkToken');
 require('../database/connectdb');
@@ -70,8 +71,7 @@ app.post('/api/joinCheck', async function (req, res, next) {
 
 // register
 app.post('/api/join', async function (req, res, next) {
-    var randomColor = require('randomcolor');
-    var avatar = randomColor({
+    const avatar = randomColor({
         luminosity: 'light'
     });
     const userObj = {
