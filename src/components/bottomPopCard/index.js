@@ -18,13 +18,9 @@ function close() {
     document.getElementById('bottom-pop-card-node').style.visibility = 'hidden';
 }
 
-function setCloseCallback(callBack) {
-    const closeBtn = document.getElementById('bottom-card-close-btn');
-    if (callBack) {
-        closeBtn.addEventListener('click', callBack);
-    } else {
-        closeBtn.addEventListener('click', close);
-    }
+function setBlackCoverClose() {
+    const blackCover = document.getElementById('black-cover');
+    blackCover.addEventListener('click', close);
 }
 
 function setYesCallback(callBack) {
@@ -44,7 +40,7 @@ function setContent(content) {
 
 function init(title, yesCallback, noCallback, contentHtml) {
     mount();
-    setCloseCallback();
+    setBlackCoverClose();
     if (title) {
         setTitle(title);
     }
