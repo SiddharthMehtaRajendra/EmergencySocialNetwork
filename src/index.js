@@ -16,6 +16,7 @@ import Me from './view/me.html';
 import initRouter from './js/initRouter';
 import initDirectoryPage from './js/initDirectory';
 import initJoinPage from './js/join';
+import initBottomTab from './components/bottomTab';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 axios.defaults.withCredentials = true;
@@ -33,6 +34,7 @@ axios.interceptors.response.use(function (response) {
 });
 
 initRouter();
+initBottomTab();
 
 const app = document.getElementById('app');
 const router = new Navigo(null, true, '#');

@@ -11,8 +11,6 @@ function renderDirectoryPage() {
         url: `${SERVER_ADDRESS}${API_PREFIX}/users`,
         withCredentials: true
     }).then((res) => {
-        // TODO: User Exist and pass the validation, should go into system
-        // console.log(res);
         const users = (res && res.data && res.data.users) || [];
         // console.log(users);
         const directory = document.getElementById('user-directory');
