@@ -6,6 +6,7 @@ import './style/directory.less';
 import './style/chats.less';
 import './style/me.less';
 import './style/announcement.less';
+import './style/chat.less';
 import Navigo from 'navigo';
 import Welcome from './view/welcome.html';
 import Home from './view/home.html';
@@ -14,6 +15,7 @@ import Join from './view/join.html';
 import Directory from './view/directory.html';
 import Chats from './view/chats.html';
 import Me from './view/me.html';
+import Chat from './view/chat.html';
 import Announcement from './view/announcement.html';
 import initRouter from './js/initRouter';
 import directory from './js/directory';
@@ -21,6 +23,8 @@ import initJoinPage from './js/join';
 import initBottomTab from './components/bottomTab';
 import me from './js/me';
 import guide from './js/guide';
+import chats from './js/chats';
+import chat from './js/chat';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 axios.defaults.withCredentials = true;
@@ -74,11 +78,17 @@ router.on('/guide', function () {
 
 router.on('/chats', function () {
     app.innerHTML = Chats;
+    chats.render();
 }).resolve();
 
 router.on('/me', async function () {
     app.innerHTML = Me;
     await me.render();
+}).resolve();
+
+router.on('/chat/:id', async function () {
+    app.innerHTML = Chat;
+    await chat.render();
 }).resolve();
 
 router.notFound(function () {
