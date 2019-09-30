@@ -82,27 +82,39 @@ app.post('/api/join', async function (req, res, next) {
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
         if (result.success) {
-            // Register Success
             const token = jwt.sign({ username: req.body.username }, config.secret, { expiresIn: '24h' });
-            //
-            console.log(userObj);
-            res.status(200).json({ success: true, message: 'Register Success', data: '', token: token });
+            res.status(200).json({ success: true, message: 'Register Success', token: token });
         } else {
-            // Username already exist
-            res.status(200).json({ success: false, message: result.res, data: '' });
+            res.status(200).json({ success: false, message: result.res });
         }
     } else {
-        res.status(200).json({ success: false, message: 'Validate Failed', data: '' });
+        res.status(200).json({ success: false, message: 'Validate Failed' });
     }
 });
 
 app.get('/api/users', async function (req, res) {
     try {
         const all = await User.find().sort({ username: 1 });
-        res.status(200).json({ users: all });
+        res.status(200).json({ success: true, message: 'All Directory', users: all });
     } catch (e) {
-        console.log(e);
+        res.status(200).json({ success: false, message: e._message });
     }
+});
+
+app.get('/api/user/:username?', async function (req, res) {
+    const username = (req.params && req.params.username) || req.username;
+    const result = await User.getOneUserByUsername(username);
+    const user = result.res[0];
+    res.status(200).json({
+        success: result.success,
+        message: result.success ? 'Get User info OK' : result.res,
+        user: {
+            username: user.username,
+            avatar: user.avatar || '#999',
+            online: user.online || false,
+            status: user.status || 'OK'
+        }
+    });
 });
 
 http.listen(port, function () {

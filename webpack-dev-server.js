@@ -1,5 +1,5 @@
 const ip = require('ip');
-const localIP = ip.address();
+const localIP = '0.0.0.0' || ip.address();
 const webpackDevServer = require('webpack-dev-server');
 const webpack = require('webpack');
 const path = require('path');

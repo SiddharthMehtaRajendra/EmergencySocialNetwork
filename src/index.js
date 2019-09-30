@@ -19,6 +19,8 @@ import initRouter from './js/initRouter';
 import initDirectoryPage from './js/directory';
 import initJoinPage from './js/join';
 import initBottomTab from './components/bottomTab';
+import initUserInfo from './js/initUserInfo';
+import initMe from './js/me';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 axios.defaults.withCredentials = true;
@@ -34,9 +36,6 @@ axios.interceptors.response.use(function (response) {
         return response;
     }
 });
-
-initRouter();
-initBottomTab();
 
 const app = document.getElementById('app');
 const router = new Navigo(null, true, '#');
@@ -69,8 +68,13 @@ router.on('/chats', function () {
 
 router.on('/me', function () {
     app.innerHTML = Me;
+    initMe();
 }).resolve();
 
 router.notFound(function () {
     app.innerHTML = Error;
 }).resolve();
+
+initRouter();
+initBottomTab();
+initUserInfo();
