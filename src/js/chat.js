@@ -16,7 +16,7 @@ async function getHistoryMessage() {
         content: 'Content 2',
         chatId: '123456',
         fromMe: true,
-        status: 'emergency'
+        status: 'help'
     }, {
         time: 'time here',
         from: 'WEEE',
@@ -34,7 +34,7 @@ async function getHistoryMessage() {
         content: 'Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1',
         chatId: '123456',
         fromMe: false,
-        status: 'ok'
+        status: 'emergency'
     }, {
         time: 'time here',
         from: 'tttt',

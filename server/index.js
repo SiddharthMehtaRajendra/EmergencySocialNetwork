@@ -96,7 +96,13 @@ app.post('/api/join', async function (req, res, next) {
 
 app.get('/api/users', async function (req, res) {
     try {
-        const all = await User.find().sort({ username: 1 });
+        const result = await User.find().sort({ username: 1 });
+        const all = result.map(item => ({
+            username: item.username,
+            avatar: item.avatar || '#ccc',
+            status: item.status || 'ok',
+            online: item.online || false
+        }));
         res.status(200).json({ success: true, message: 'All Directory', users: all });
     } catch (e) {
         res.status(200).json({ success: false, message: e._message });
