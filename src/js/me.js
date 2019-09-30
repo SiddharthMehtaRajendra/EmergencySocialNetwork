@@ -19,14 +19,19 @@ async function render() {
     if (!window.state.user) {
         await fetchData();
     }
-    const user = window.state.user;
-    if (user.avatar.indexOf('#') === 0) {
-        document.getElementById('page-me-avatar').style.backgroundColor = user.avatar;
-        document.getElementById('page-me-avatar').innerText = user.username[0];
+    if (window.state.user) {
+        const user = window.state.user;
+        if (user.avatar.indexOf('#') === 0) {
+            document.getElementById('page-me-avatar').style.backgroundColor = user.avatar;
+            document.getElementById('page-me-avatar').innerText = user.username[0];
+        }
+        document.getElementById('page-me-username').innerText = user.username;
+        document.getElementById('page-me-status').innerText = user.status;
+        document.getElementById('logout-menu').addEventListener('click', logout);
+        document.getElementById('user-guide-entrance').addEventListener('click', function () {
+            window.location.hash = '/guide';
+        });
     }
-    document.getElementById('page-me-username').innerText = user.username;
-    document.getElementById('page-me-status').innerText = user.status;
-    document.getElementById('logout-menu').addEventListener('click', logout);
 }
 
 const me = {

@@ -20,10 +20,14 @@ import directory from './js/directory';
 import initJoinPage from './js/join';
 import initBottomTab from './components/bottomTab';
 import me from './js/me';
+import guide from './js/guide';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 axios.defaults.withCredentials = true;
 axios.interceptors.request.use(function (config) {
+    if (!Cookies.get('token')) {
+        window.location.hash = '/join';
+    }
     config.headers.token = Cookies.get('token');
     return config;
 });
@@ -31,6 +35,7 @@ axios.interceptors.request.use(function (config) {
 axios.interceptors.response.use(function (response) {
     if (response.data && !response.data.success && response.data.redirect) {
         window.location.hash = '/join';
+        return response;
     } else {
         return response;
     }
@@ -60,6 +65,11 @@ router.on('/directory', async function () {
 
 router.on('/announcement', function () {
     app.innerHTML = Announcement;
+});
+
+router.on('/guide', function () {
+    app.innerHTML = Welcome;
+    guide.render();
 });
 
 router.on('/chats', function () {
