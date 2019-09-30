@@ -65,6 +65,15 @@ function join() {
                 if (res.data.success && res.data.exists && res.data.validationPass) {
                     console.log(res);
                     Cookies.set('token', res.data.token);
+                    axios({
+                        method: 'post',
+                        url: `${SERVER_ADDRESS}${API_PREFIX}/updateStatus`,
+                        data: {
+                            username: username,
+                            status: 'online'
+                        },
+                        withCredentials: true
+                    });
                     window.location.hash = '/directory';
                 } else if (!res.data.success && res.data.exists === false && res.data.validationPass === null) {
                     // ready for registeration

@@ -12,7 +12,7 @@ function initChat() {
         test: 'test'
     });
 
-    socket.on('redirect', {
+    socket.on('redirect', function () {
         window.location.hash = '/';
     });
 

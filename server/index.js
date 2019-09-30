@@ -77,6 +77,11 @@ app.get('/heartbeat', async function (req, res, next) {
     res.status(200).json({ success: true, message: 'Hello ESN Node Server', data: {} });
 });
 
+app.get('/updateStatus', async function (req, res, next) {
+    console.log('UpdateStatus');
+    User.updateStatus(req.data.username, req.data.status);
+});
+
 app.post('/api/joinCheck', async function (req, res, next) {
     const userObj = {
         username: req.body.username,
@@ -126,10 +131,13 @@ app.post('/api/join', async function (req, res, next) {
     const userObj = {
         username: req.body.username,
         password: req.body.password,
-        avatar: avatar
+        avatar: avatar,
+        status: 'online'
     };
+    console.log('123456');
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
+        console.log(result);
         if (result.success) {
             // Register Success
             const token = jwt.sign({ username: req.body.username },

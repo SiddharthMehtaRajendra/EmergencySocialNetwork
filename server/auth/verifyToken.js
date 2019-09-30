@@ -8,6 +8,7 @@ const exclude = {
 
 const checkToken = (req, res, next) => {
     // console.log(exclude[req.originalUrl]);
+    console.log('123');
     if (exclude[req.originalUrl]) {
         next();
     } else {
@@ -15,21 +16,20 @@ const checkToken = (req, res, next) => {
         if (token) {
             jwt.verify(token, config.secret, (err, decoded) => {
                 if (err) {
-                    return res.json({
-                        success: false,
+                    return res.status(200).json({
+                        redirect: true,
                         message: 'Token is not valid'
                     });
                 } else {
                     req.decoded = decoded;
-                    //console.log(decoded);
-                    // note, the exp time here is 10 digit, not 13!
+                    req.username = decoded.username;
                     next();
                 }
             });
         } else {
             // TODO: Use res.location to redirect
-            return res.json({
-                success: false,
+            return res.statu(200).json({
+                redirect: true,
                 message: 'Auth token is not supplied'
             });
         }
