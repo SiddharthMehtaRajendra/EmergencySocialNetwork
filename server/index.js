@@ -119,6 +119,24 @@ app.get('/api/user/:username?', async function (req, res) {
     });
 });
 
+app.get('/api/historyMessage/:chatId', async function (req, res) {
+    console.log(req.params);
+    res.status(200).json({
+        success: true,
+        message: 'Get History Message OK',
+        messageList: [
+            {
+                time: 'time here',
+                from: 'Wayne',
+                to: 'public',
+                type: 'text',
+                content: 'content here',
+                chatId: '123456'
+            }
+        ]
+    });
+});
+
 http.listen(port, function () {
     console.log(`Express server start, listening on port:${port} ...`);
 });

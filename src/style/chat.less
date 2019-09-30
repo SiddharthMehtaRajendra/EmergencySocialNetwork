@@ -5,10 +5,86 @@
 
     .bubble{
         .bubble-wrap{
-
+            height: auto;
+            position: absolute;
+            top: 85px;
+            bottom: 63px;
+            right: 0;
+            left: 0;
+            overflow-y: scroll;
+            padding: 0 20px;
+            .single-bubble {
+                &.from-me{
+                    flex-direction: row-reverse;
+                    .avatar-container{
+                        margin-right: 0;
+                        margin-left: 12px;
+                    }
+                    .bubble-message{
+                        background-color: #1983FF;
+                        color: white;
+                    }
+                }
+                margin-top: 14px;
+                display: flex;
+                .avatar-container {
+                    margin-right: 12px;
+                    position: relative;
+                    top: 10px;
+                    .bubble-avatar {
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        background-color: #cccccc;
+                        text-align: center;
+                        line-height: 40px;
+                        font-weight: 800;
+                        color: white;
+                    }
+                    .bubble-status-dot{
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 50%;
+                        background-color: #cccccc;
+                        border: 1px solid white;
+                        position: relative;
+                        left: 28px;
+                        top: -12px;
+                        &.ok{
+                            background-color: #7ED321;
+                        }
+                        &.help{
+                            background-color: #FFCC00;
+                        }
+                        &.emergency{
+                            background-color: #F41C3B;
+                        }
+                    }
+                }
+                .bubble-message{
+                    background-color: #F1F1F1;
+                    padding: 12px 14px;
+                    border-radius: 10px;
+                    max-width: calc(100vw - 190px);
+                    &.emergency{
+                        background-color: #F41C3B;
+                        color: white;
+                    }
+                    .bubble-name-time{
+                        display: flex;
+                        margin-bottom: 6px;
+                        font-size: 12px;
+                        .name{
+                            font-weight: 800;
+                            margin-right: 22px;
+                        }
+                    }
+                }
+            }
         }
-        ._blank{
-            height: 63px;
+        #blank-bubble{
+            width: 100%;
+            height: 80px;
         }
     }
 
