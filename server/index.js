@@ -70,6 +70,9 @@ io.on('connection', function (socket) {
         //     console.log('insert success');
         // }
     });
+    socket.on('disconnect', function () {
+        io.emit('user disconnected');
+    });
 });
 
 app.get('/heartbeat', async function (req, res, next) {
@@ -77,9 +80,11 @@ app.get('/heartbeat', async function (req, res, next) {
     res.status(200).json({ success: true, message: 'Hello ESN Node Server', data: {} });
 });
 
-app.get('/updateStatus', async function (req, res, next) {
+app.post('/api/updateStatus', async function (req, res, next) {
     console.log('UpdateStatus');
-    User.updateStatus(req.data.username, req.data.status);
+    const result = await User.updateStatus(req.body.username, req.body.status);
+    console.log('finishUpdateStatus');
+    console.log(result);
 });
 
 app.post('/api/joinCheck', async function (req, res, next) {

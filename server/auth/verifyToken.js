@@ -28,7 +28,7 @@ const checkToken = (req, res, next) => {
             });
         } else {
             // TODO: Use res.location to redirect
-            return res.statu(200).json({
+            return res.status(200).json({
                 redirect: true,
                 message: 'Auth token is not supplied'
             });
