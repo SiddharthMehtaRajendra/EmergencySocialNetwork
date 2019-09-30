@@ -16,11 +16,10 @@ import Chats from './view/chats.html';
 import Me from './view/me.html';
 import Announcement from './view/announcement.html';
 import initRouter from './js/initRouter';
-import initDirectoryPage from './js/directory';
+import directory from './js/directory';
 import initJoinPage from './js/join';
 import initBottomTab from './components/bottomTab';
-import initUserInfo from './js/initUserInfo';
-import initMe from './js/me';
+import me from './js/me';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 axios.defaults.withCredentials = true;
@@ -39,6 +38,7 @@ axios.interceptors.response.use(function (response) {
 
 const app = document.getElementById('app');
 const router = new Navigo(null, true, '#');
+window.state = {};
 
 router.on('/', function () {
     app.innerHTML = Home;
@@ -53,9 +53,9 @@ router.on('/welcome', function () {
     app.innerHTML = Welcome;
 }).resolve();
 
-router.on('/directory', function () {
+router.on('/directory', async function () {
     app.innerHTML = Directory;
-    initDirectoryPage();
+    await directory.render();
 }).resolve();
 
 router.on('/announcement', function () {
@@ -66,9 +66,9 @@ router.on('/chats', function () {
     app.innerHTML = Chats;
 }).resolve();
 
-router.on('/me', function () {
+router.on('/me', async function () {
     app.innerHTML = Me;
-    initMe();
+    await me.render();
 }).resolve();
 
 router.notFound(function () {
@@ -77,4 +77,3 @@ router.notFound(function () {
 
 initRouter();
 initBottomTab();
-initUserInfo();

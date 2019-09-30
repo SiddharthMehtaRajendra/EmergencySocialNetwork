@@ -77,7 +77,9 @@ app.post('/api/join', async function (req, res, next) {
     const userObj = {
         username: req.body.username,
         password: req.body.password,
-        avatar: avatar
+        avatar: avatar,
+        status: 'OK',
+        online: true
     };
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
@@ -110,7 +112,7 @@ app.get('/api/user/:username?', async function (req, res) {
         message: result.success ? 'Get User info OK' : result.res,
         user: {
             username: user.username,
-            avatar: user.avatar || '#999',
+            avatar: user.avatar || '#ccc',
             online: user.online || false,
             status: user.status || 'OK'
         }

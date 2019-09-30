@@ -18,6 +18,11 @@ function buildBottomPopCardContent(username) {
     return usernameDom;
 }
 
+function resetData() {
+    Cookie.remove('token');
+    window.state = {};
+}
+
 function register() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
@@ -26,6 +31,7 @@ function register() {
         password: password
     }).then((res) => {
         if (res.status === 200 && res.data && res.data.success) {
+            resetData();
             Cookie.set('token', res.data.token, { expires: 1 });
             Toast(res.data.message);
             setTimeout(function () { window.location.hash = '/welcome'; }, 1000);
@@ -56,6 +62,7 @@ function join() {
         }).then((res) => {
             if (res.status === 200 && res.data) {
                 if (res.data.success && res.data.exists && res.data.validationPass) {
+                    resetData();
                     Cookie.set('token', res.data.token, { expires: 1 });
                     window.location.hash = '/directory';
                 } else if (!res.data.success && res.data.exists === false && res.data.validationPass === null) {

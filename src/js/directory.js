@@ -1,46 +1,50 @@
 import axios from 'axios';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 
-function initDirectoryPage() {
-    renderDirectoryPage();
+async function fetchData() {
+    const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`);
+    if (res.status === 200 && res.data.success && res.data.users) {
+        window.state.users = res.data.users;
+    }
 }
 
-function renderDirectoryPage() {
-    axios({
-        url: `${SERVER_ADDRESS}${API_PREFIX}/users`,
-        withCredentials: true
-    }).then((res) => {
-        const users = (res && res.data && res.data.users) || [];
-        const directory = document.getElementById('user-directory');
+async function render() {
+    if (!window.state.users) {
+        await fetchData();
+    }
+    const directory = document.getElementById('user-directory');
+    directory.innerHTML = '';
+    const users = window.state.users;
+    users.forEach((user, index) => {
+        const userCard = document.createElement('div');
+        const userName = document.createElement('div');
+        const userAvatar = document.createElement('div');
+        const userStatus = document.createElement('div');
+        const bottomThinLine = document.createElement('div');
 
-        users.forEach((user, index) => {
-            const userCard = document.createElement('div');
-            const userName = document.createElement('div');
-            const userAvatar = document.createElement('div');
-            const userStatus = document.createElement('div');
-            const bottomThinLine = document.createElement('div');
-
-            userCard.className = 'single-user common-list-item';
-            userName.className = 'username';
-            userAvatar.className = 'avatar';
-            userStatus.className = 'status-circle';
-            bottomThinLine.className = 'right-thin-line';
-            userName.innerText = user.username;
-            userAvatar.innerText = user.username.charAt(0);
-            userAvatar.setAttribute('style', `background-color: ${user.avatar || '#134dd9'};`);
-            userCard.appendChild(userAvatar);
-            userCard.appendChild(userStatus);
-            userCard.appendChild(userName);
-            if (index !== users.length - 1) {
-                directory.appendChild(userCard);
-                directory.appendChild(bottomThinLine);
-            } else {
-                directory.appendChild(userCard);
-            }
-        });
-    }).catch((err) => {
-        console.log(err.toString());
+        userCard.className = 'single-user common-list-item';
+        userName.className = 'username';
+        userAvatar.className = 'avatar';
+        userStatus.className = 'status-circle';
+        bottomThinLine.className = 'right-thin-line';
+        userName.innerText = user.username;
+        userAvatar.innerText = user.username.charAt(0);
+        userAvatar.setAttribute('style', `background-color: ${user.avatar || '#CCC'};`);
+        userCard.appendChild(userAvatar);
+        userCard.appendChild(userStatus);
+        userCard.appendChild(userName);
+        if (index !== users.length - 1) {
+            directory.appendChild(userCard);
+            directory.appendChild(bottomThinLine);
+        } else {
+            directory.appendChild(userCard);
+        }
     });
 }
 
-export default initDirectoryPage;
+const directory = {
+    fetchData,
+    render
+};
+
+export default directory;
