@@ -13,7 +13,7 @@ io.set('origins', '*:*');
 const jwt = require('jsonwebtoken');
 const config = require('./auth/config');
 const cookieParser = require('cookie-parser');
-const checkToken = require('./auth/middleware');
+const checkToken = require('./auth/verifyToken');
 require('../database/connectdb');
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -37,12 +37,19 @@ io.use((socket, next) => {
     console.log('--------');
     // console.log(socket.request);
     // console.log(socket.handshake);
-    console.log(socket.request.headers.cookie);
+    const token = socket.token;
+    console.log(token);
     const cookieStr = socket.request.headers.cookie;
-    socket.request.headers.username = parseCookies(cookieStr).token;
-    socket.username = parseCookies(cookieStr).token;
-    console.log(socket.username);
-    console.log('-------');
+    var tokenString = parseCookies(cookieStr).token;
+    jwt.verify(tokenString, config.secret, (err, decoded) => {
+        if (err) {
+            socket.emit('redirect');
+        } else {
+            const username = decoded.username;
+            console.log(username);
+            //Cookies.set('username', username);
+        }
+    });
     next();
 });
 

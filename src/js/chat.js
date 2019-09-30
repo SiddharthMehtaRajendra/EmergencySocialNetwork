@@ -12,6 +12,10 @@ function initChat() {
         test: 'test'
     });
 
+    socket.on('redirect', {
+        window.location.hash = '/';
+    });
+
     window.state = {};
     window.state.Hello = 123;
     console.log(window.state);

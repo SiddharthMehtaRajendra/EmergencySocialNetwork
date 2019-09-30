@@ -17,6 +17,7 @@ import initJoinPage from './js/join';
 import initBottomTab from './components/bottomTab';
 import initChat from './js/chat';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 axios.defaults.withCredentials = true;
 
 const app = document.getElementById('app');
@@ -59,6 +60,11 @@ router.on('/chat/:id', function () {
 router.notFound(function () {
     app.innerHTML = Error;
 }).resolve();
+
+axios.interceptors.request.use(function (config) {
+    config.headers.token = Cookies.get('token');
+    return config;
+});
 
 initRouter();
 initBottomTab();

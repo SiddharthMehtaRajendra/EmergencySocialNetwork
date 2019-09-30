@@ -7,13 +7,11 @@ const exclude = {
 };
 
 const checkToken = (req, res, next) => {
-    console.log(req.originalUrl);
+    // console.log(exclude[req.originalUrl]);
     if (exclude[req.originalUrl]) {
         next();
     } else {
-        // const token = req.headers['x-access-token'] || req.headers.authorization; // Express headers are auto converted to lowercase
-        console.log(req.cookies);
-        const token = req.cookies && req.cookies.token;
+        const token = req.headers.token;
         if (token) {
             jwt.verify(token, config.secret, (err, decoded) => {
                 if (err) {
@@ -23,7 +21,7 @@ const checkToken = (req, res, next) => {
                     });
                 } else {
                     req.decoded = decoded;
-                    console.log(decoded);
+                    //console.log(decoded);
                     // note, the exp time here is 10 digit, not 13!
                     next();
                 }
