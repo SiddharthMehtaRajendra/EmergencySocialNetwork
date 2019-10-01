@@ -18,9 +18,9 @@ import Me from './view/me.html';
 import Chat from './view/chat.html';
 import Announcement from './view/announcement.html';
 import initRouter from './js/initRouter';
-import directory from './js/directory';
 import initJoinPage from './js/join';
 import initBottomTab from './components/bottomTab';
+import directory from './js/directory';
 import me from './js/me';
 import guide from './js/guide';
 import chats from './js/chats';
@@ -48,6 +48,22 @@ axios.interceptors.response.use(function (response) {
 const app = document.getElementById('app');
 const router = new Navigo(null, true, '#');
 window.state = {};
+initRouter();
+initBottomTab();
+
+router.hooks({
+    before: async function (done, params) {
+        if (!(window.state && window.state.user) && Cookies.get('token')) {
+            console.log('Load My info');
+            await me.fetchData();
+        }
+        if (!(window.state && window.state.users)) {
+            console.log('Load Directory');
+            await directory.fetchData();
+        }
+        done();
+    }
+});
 
 router.on('/', function () {
     app.innerHTML = Home;
@@ -94,8 +110,3 @@ router.on('/chat/:id', async function () {
 router.notFound(function () {
     app.innerHTML = Error;
 }).resolve();
-
-initRouter();
-initBottomTab();
-me.fetchData();
-directory.fetchData();

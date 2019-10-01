@@ -1,28 +1,19 @@
 import socket from './socket/config';
 import axios from 'axios';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
-import dateFormat from './lib/dateFormat';
+import processMessage from './lib/processMessage';
 const pageSize = 20;
 
 async function getHistoryMessage() {
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/historyMessage`, {
         params: {
-            smallestMessageId: Infinity,
+            smallestMessageId: window.state.smallestMessageId,
             pageSize: pageSize,
             chatId: 0
         }
     });
-    return processMessages(res.data.messages);
-}
-
-function processMessages(msgList) {
-    for (let i = 0; i < msgList.length; i++) {
-        msgList[i].fromMe = msgList[i].from === (window.state.user && window.state.user.username);
-        msgList[i].time = dateFormat(msgList[i].time, 'mm/dd HH:MM');
-        msgList[i].status = window.state.userMap[msgList[i].from].status.toLowerCase();
-        msgList[i].avatar = window.state.userMap[msgList[i].from].avatar;
-    }
-    return msgList;
+    window.state.smallestMessageId = (res.data.messages[0] && res.data.messages[0].id) || 0;
+    return processMessage(res.data.messages);
 }
 
 function createAvatar(msg) {
@@ -63,6 +54,7 @@ function createMessageContainer(msg) {
 function createSingleBubble(msg) {
     const singleBubble = document.createElement('div');
     singleBubble.className = 'single-bubble';
+    singleBubble.id = `message-${msg.id}`;
     if (msg.fromMe) {
         singleBubble.classList.add('from-me');
     }
@@ -101,6 +93,7 @@ function renderMessages(msgList) {
 }
 
 async function render() {
+    window.state.smallestMessageId = Infinity;
     if (window.location.hash.indexOf('public') >= 0) {
         document.getElementById('single-chat-navbar-title').innerText = 'Public Wall';
     }
