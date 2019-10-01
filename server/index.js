@@ -33,12 +33,11 @@ function parseCookies(cookieStr) {
 
 // Serve static front-end files, for future use
 // app.use(express.static(path.resolve(__dirname, '../dist')));
+/*
 io.use((socket, next) => {
     console.log('--------');
     // console.log(socket.request);
-    // console.log(socket.handshake);
-    const token = socket.token;
-    console.log(token);
+    console.log('io.use1');
     const cookieStr = socket.request.headers.cookie;
     var tokenString = parseCookies(cookieStr).token;
     jwt.verify(tokenString, config.secret, (err, decoded) => {
@@ -46,12 +45,13 @@ io.use((socket, next) => {
             socket.emit('redirect');
         } else {
             const username = decoded.username;
-            console.log(username);
-            //Cookies.set('username', username);
+            // console.log(username);
+            //socket.username = username;
         }
     });
     next();
 });
+*/
 
 io.on('connection', function (socket) {
     socket.on('MSG', async function (msg) {
@@ -70,9 +70,28 @@ io.on('connection', function (socket) {
         //     console.log('insert success');
         // }
     });
+    // disconnected
+    /*
     socket.on('disconnect', function () {
-        io.emit('user disconnected');
+        console.log('offline');
+        console.log(socket.username);
+    */
+    /*
+        console.log('offline');
+        const status = 'offline';
+        // console.log(socket.username);
+        const cookieStr = socket.request;
+        console.log(cookieStr);
+        var tokenString = parseCookies(cookieStr).token;
+        jwt.verify(tokenString, config.secret, (err, decoded) => {
+            if (err) {
+            } else {
+                console.log(decoded.username);
+            }
+        });
+        User.updateStatus(socket.username, status);
     });
+    */
 });
 
 app.get('/heartbeat', async function (req, res, next) {
@@ -84,7 +103,6 @@ app.post('/api/updateStatus', async function (req, res, next) {
     console.log('UpdateStatus');
     const result = await User.updateStatus(req.body.username, req.body.status);
     console.log('finishUpdateStatus');
-    console.log(result);
 });
 
 app.post('/api/joinCheck', async function (req, res, next) {
@@ -139,10 +157,9 @@ app.post('/api/join', async function (req, res, next) {
         avatar: avatar,
         status: 'online'
     };
-    console.log('123456');
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
-        console.log(result);
+       //console.log(result);
         if (result.success) {
             // Register Success
             const token = jwt.sign({ username: req.body.username },

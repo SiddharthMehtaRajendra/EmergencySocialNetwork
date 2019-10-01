@@ -8,7 +8,6 @@ const exclude = {
 
 const checkToken = (req, res, next) => {
     // console.log(exclude[req.originalUrl]);
-    console.log('123');
     if (exclude[req.originalUrl]) {
         next();
     } else {
