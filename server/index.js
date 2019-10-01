@@ -1,17 +1,19 @@
 const express = require('express');
 const app = express();
-// const path = require('path');
+const path = require('path');
 const cors = require('cors');
 const http = require('http').createServer(app);
 const port = 8000;
 const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
+const Message = require('../database/model/Message');
 const io = require('socket.io')(http);
 const jwt = require('jsonwebtoken');
 const config = require('./auth/config');
 const randomColor = require('randomcolor');
 const cookieParser = require('cookie-parser');
+const parseCookies = require('./lib/parseCookies');
 const checkToken = require('./auth/checkToken');
 require('../database/connectdb');
 
@@ -24,11 +26,39 @@ app.use(cookieParser());
 app.use(checkToken);
 
 // Serve static front-end files, for future use
-// app.use(express.static(path.resolve(__dirname, '../dist')));
+app.use(express.static(path.resolve(__dirname, '../dist')));
+
+io.use((socket, next) => {
+    const token = parseCookies(socket.request.headers.cookie).token;
+    jwt.verify(token, config.secret, (err, decoded) => {
+        if (err) {
+            socket.emit('AUTH_FAILED');
+        } else {
+            socket.handshake.username = decoded.username;
+        }
+    });
+    next();
+});
+
+io.on('connection', function (socket) {
+    socket.on('MESSAGE', async function (msg) {
+        const insertResult = await Message.insertOne({
+            time: new Date(),
+            from: socket.handshake.username,
+            to: msg.to,
+            type: msg.type,
+            content: msg.content,
+            chatId: msg.chatId
+        });
+        if (insertResult.success) {
+            io.emit('UPDATE_MESSAGE', insertResult.res);
+        }
+    });
+});
 
 app.get('/heartbeat', async function (req, res, next) {
     console.log('Hello ESN!');
-    res.status(200).json({ success: true, message: 'Hello ESN!', data: {} });
+    res.status(200).json({ success: true, message: 'Hello ESN!' });
 });
 
 app.post('/api/joinCheck', async function (req, res, next) {

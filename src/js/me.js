@@ -1,10 +1,12 @@
 import axios from 'axios';
+import socket from './socket/config';
 import { API_PREFIX, SERVER_ADDRESS } from './constant/serverInfo';
 import Cookie from 'js-cookie';
 
 function logout() {
-    window.state = {};
     Cookie.remove('token');
+    window.state = {};
+    socket.close();
     window.location.hash = '/';
 }
 

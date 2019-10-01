@@ -23,7 +23,7 @@ const MessageSchema = new mongoose.Schema({
     }
 });
 
-MessageSchema.statics.insertMessage = async function (message) {
+MessageSchema.statics.insertOne = async function (message) {
     let res = {};
     let success = true;
     message.time = new Date();

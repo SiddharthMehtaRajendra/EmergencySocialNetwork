@@ -3,6 +3,7 @@ import { validateUserName, validatePassword } from './lib/validation';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import Toast from './lib/toast';
 import BottomPopCard from '../components/bottomPopCard';
+import socket from './socket/config';
 const Cookie = require('js-cookie');
 
 function initJoinPage() {
@@ -18,9 +19,15 @@ function buildBottomPopCardContent(username) {
     return usernameDom;
 }
 
-function resetData() {
+function reset() {
     Cookie.remove('token');
     window.state = {};
+    socket.close();
+}
+
+function setToken(token) {
+    Cookie.set('token', token, { expires: 1 });
+    window.state.token = token;
 }
 
 function register() {
@@ -31,8 +38,9 @@ function register() {
         password: password
     }).then((res) => {
         if (res.status === 200 && res.data && res.data.success) {
-            resetData();
-            Cookie.set('token', res.data.token, { expires: 1 });
+            reset();
+            setToken(res.data.token);
+            socket.open();
             Toast(res.data.message);
             setTimeout(function () { window.location.hash = '/welcome'; }, 1000);
         } else {
@@ -62,8 +70,9 @@ function join() {
         }).then((res) => {
             if (res.status === 200 && res.data) {
                 if (res.data.success && res.data.exists && res.data.validationPass) {
-                    resetData();
-                    Cookie.set('token', res.data.token, { expires: 1 });
+                    reset();
+                    setToken(res.data.token);
+                    socket.open();
                     window.location.hash = '/directory';
                 } else if (!res.data.success && res.data.exists === false && res.data.validationPass === null) {
                     BottomPopCard.setContent(buildBottomPopCardContent(username));

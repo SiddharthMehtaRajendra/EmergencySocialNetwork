@@ -1,3 +1,5 @@
+import socket from './socket/config';
+
 async function getHistoryMessage() {
     return [{
         time: 'time here',
@@ -94,6 +96,25 @@ function createSingleBubble(msg) {
     return singleBubble;
 }
 
+function sendMessage() {
+    const content = document.getElementById('message-input').value;
+    if (content && content.length > 0) {
+        socket.emit('MESSAGE', {
+            content: content,
+            type: 0,
+            to: 0,
+            chatId: 0
+        });
+        document.getElementById('message-input').value = '';
+    }
+}
+
+function renderOneMessage(msg) {
+
+}
+
+
+
 async function renderBubbleList(msgList) {
     const bubbleWrap = document.getElementById('bubble-wrap');
     for (let i = 0; i < msgList.length; i++) {
@@ -112,11 +133,18 @@ async function render() {
         window.history.go(-1);
     });
     await renderBubbleList(await getHistoryMessage());
+    document.getElementById('send-btn').addEventListener('click', sendMessage);
+    document.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
 }
 
 const chat = {
     render,
-    getHistoryMessage
+    getHistoryMessage,
+    renderOneMessage
 };
 
 export default chat;

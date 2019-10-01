@@ -97,3 +97,5 @@ router.notFound(function () {
 
 initRouter();
 initBottomTab();
+me.fetchData();
+directory.fetchData();
