@@ -4,7 +4,13 @@ import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 async function fetchData() {
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`);
     if (res.status === 200 && res.data.success && res.data.users) {
-        window.state.users = res.data.users;
+        const users = res.data.users;
+        window.state.users = users;
+        const userMap = {};
+        for (let i = 0; i < users.length; i++) {
+            userMap[users[i].username] = users[i];
+        }
+        window.state.userMap = userMap;
     }
 }
 

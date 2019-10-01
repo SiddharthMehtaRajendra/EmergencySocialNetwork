@@ -1,58 +1,35 @@
 import socket from './socket/config';
+import axios from 'axios';
+import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
+import dateFormat from './lib/dateFormat';
+const pageSize = 20;
 
 async function getHistoryMessage() {
-    return [{
-        time: 'time here',
-        from: 'tttt',
-        to: 'public',
-        type: 'text',
-        content: 'Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1',
-        chatId: '123456',
-        fromMe: false,
-        status: 'ok'
-    }, {
-        time: 'time here',
-        from: 'Wayne',
-        to: 'public',
-        type: 'text',
-        content: 'Content 2',
-        chatId: '123456',
-        fromMe: true,
-        status: 'help'
-    }, {
-        time: 'time here',
-        from: 'WEEE',
-        to: 'public',
-        type: 'text',
-        content: 'Content 3',
-        chatId: '123456',
-        fromMe: true,
-        status: 'ok'
-    }, {
-        time: 'time here',
-        from: 'tttt',
-        to: 'public',
-        type: 'text',
-        content: 'Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1',
-        chatId: '123456',
-        fromMe: false,
-        status: 'emergency'
-    }, {
-        time: 'time here',
-        from: 'tttt',
-        to: 'public',
-        type: 'text',
-        content: 'Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1',
-        chatId: '123456',
-        fromMe: false,
-        status: 'ok'
-    }];
+    const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/historyMessage`, {
+        params: {
+            smallestMessageId: Infinity,
+            pageSize: pageSize,
+            chatId: 0
+        }
+    });
+    return processMessages(res.data.messages);
+}
+
+function processMessages(msgList) {
+    for (let i = 0; i < msgList.length; i++) {
+        msgList[i].fromMe = msgList[i].from === (window.state.user && window.state.user.username);
+        msgList[i].time = dateFormat(msgList[i].time, 'mm/dd HH:MM');
+        msgList[i].status = window.state.userMap[msgList[i].from].status.toLowerCase();
+        msgList[i].avatar = window.state.userMap[msgList[i].from].avatar;
+    }
+    return msgList;
 }
 
 function createAvatar(msg) {
     const avatar = document.createElement('div');
     avatar.className = 'bubble-avatar';
     avatar.innerText = msg.from[0];
+    avatar.style.backgroundColor = msg.avatar;
     const statusDot = document.createElement('div');
     statusDot.className = `bubble-status-dot ${msg.status}`;
     const avatarContainer = document.createElement('div');
@@ -110,19 +87,17 @@ function sendMessage() {
 }
 
 function renderOneMessage(msg) {
-
+    const bubbleWrap = document.getElementById('bubble-wrap');
+    const blankBubble = document.getElementById('blank-bubble');
+    bubbleWrap.insertBefore(createSingleBubble(msg), blankBubble);
 }
 
-
-
-async function renderBubbleList(msgList) {
+function renderMessages(msgList) {
     const bubbleWrap = document.getElementById('bubble-wrap');
+    const blankBubble = document.getElementById('blank-bubble');
     for (let i = 0; i < msgList.length; i++) {
-        bubbleWrap.appendChild(createSingleBubble(msgList[i]));
+        bubbleWrap.insertBefore(createSingleBubble(msgList[i]), blankBubble);
     }
-    const blankBubble = document.createElement('div');
-    blankBubble.id = 'blank-bubble';
-    bubbleWrap.appendChild(blankBubble);
 }
 
 async function render() {
@@ -132,7 +107,7 @@ async function render() {
     document.getElementById('navbar-back-arrow').addEventListener('click', function () {
         window.history.go(-1);
     });
-    await renderBubbleList(await getHistoryMessage());
+    renderMessages(await getHistoryMessage());
     document.getElementById('send-btn').addEventListener('click', sendMessage);
     document.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {

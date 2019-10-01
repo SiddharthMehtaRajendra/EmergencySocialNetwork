@@ -108,7 +108,7 @@ app.post('/api/join', async function (req, res, next) {
         username: req.body.username,
         password: req.body.password,
         avatar: avatar,
-        status: 'OK',
+        status: 'ok',
         online: true
     };
     if (validate(userObj.username, userObj.password)) {
@@ -150,27 +150,23 @@ app.get('/api/user/:username?', async function (req, res) {
             username: user.username,
             avatar: user.avatar || '#ccc',
             online: user.online || false,
-            status: user.status || 'OK'
+            status: user.status || 'ok'
         }
     });
 });
 
-app.get('/api/historyMessage/:chatId', async function (req, res) {
-    console.log(req.params);
-    res.status(200).json({
-        success: true,
-        message: 'Get History Message OK',
-        messageList: [
-            {
-                time: 'time here',
-                from: 'Wayne',
-                to: 'public',
-                type: 'text',
-                content: 'content here',
-                chatId: '123456'
-            }
-        ]
-    });
+app.get('/api/historyMessage', async function (req, res) {
+    const smallestMessageId = +(req.query && req.query.smallestMessageId);
+    const pageSize = +(req.query && req.query.pageSize);
+    const chatId = +(req.query && req.query.chatId);
+    console.log(req.query);
+    const dbResult = await Message.history(chatId, +smallestMessageId, pageSize);
+    console.log(dbResult);
+    if (dbResult.success) {
+        res.status(200).json({ success: true, message: 'Get Messages', messages: dbResult.res });
+    } else {
+        res.status(200).json({ success: false, message: 'Load Messages Failed' });
+    }
 });
 
 http.listen(port, function () {

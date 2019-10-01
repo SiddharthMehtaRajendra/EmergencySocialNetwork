@@ -4,6 +4,8 @@ import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import Toast from './lib/toast';
 import BottomPopCard from '../components/bottomPopCard';
 import socket from './socket/config';
+import me from './me';
+import directory from './directory';
 const Cookie = require('js-cookie');
 
 function initJoinPage() {
@@ -41,6 +43,8 @@ function register() {
             reset();
             setToken(res.data.token);
             socket.open();
+            me.fetchData();
+            directory.fetchData();
             Toast(res.data.message);
             setTimeout(function () { window.location.hash = '/welcome'; }, 1000);
         } else {
@@ -73,6 +77,8 @@ function join() {
                     reset();
                     setToken(res.data.token);
                     socket.open();
+                    me.fetchData();
+                    directory.fetchData();
                     window.location.hash = '/directory';
                 } else if (!res.data.success && res.data.exists === false && res.data.validationPass === null) {
                     BottomPopCard.setContent(buildBottomPopCardContent(username));
