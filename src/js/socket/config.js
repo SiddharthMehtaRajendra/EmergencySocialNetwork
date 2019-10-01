@@ -2,11 +2,12 @@ import io from 'socket.io-client';
 import chat from '../chat';
 import processMessage from '../lib/processMessage';
 import directory from '../directory';
+import { SERVER_ADDRESS } from '../constant/serverInfo';
 
-const socket = io('http://localhost:8000');
+const socket = io(SERVER_ADDRESS);
 
 socket.on('UPDATE_MESSAGE', function (msg) {
-    if (msg) {
+    if (msg && window.location.hash.indexOf('#/chat/') >= 0) {
         chat.renderOneMessage(processMessage(msg));
     }
 });
@@ -16,11 +17,8 @@ socket.on('AUTH_FAILED', function () {
 });
 
 socket.on('UPDATE_DIRECTORY', async function (data) {
-    console.log(data);
     await directory.fetchData();
-    console.log(window.location.hash);
     if (window.location.hash === '#/directory') {
-        console.log('need render');
         await directory.render();
     }
 });

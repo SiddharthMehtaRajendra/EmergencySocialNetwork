@@ -41,6 +41,16 @@ UserSchema.statics.getOneUserByUsername = async function (username) {
     return { success, res };
 };
 
+UserSchema.statics.updateStatus = async function (username, status) {
+    const res = await this.updateOne({ username: username }, { status: status });
+    return res;
+};
+
+UserSchema.statics.updateOnline = async function (username, online) {
+    const res = await this.updateOne({ username: username }, { online: online });
+    return res;
+};
+
 UserSchema.statics.addOneUser = async function (userObject) {
     let res = {};
     let success = true;

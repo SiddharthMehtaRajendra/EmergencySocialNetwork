@@ -15,12 +15,12 @@ async function fetchData() {
 }
 
 async function render() {
+    const directory = document.getElementById('user-directory');
+
     if (!window.state.users) {
         await fetchData();
     }
-    if (window.state.users) {
-        console.log('Render Directory');
-        const directory = document.getElementById('user-directory');
+    if (window.state.users && directory) {
         directory.innerHTML = '';
         const users = window.state.users;
         users.forEach((user, index) => {
@@ -41,6 +41,9 @@ async function render() {
             userCard.appendChild(userAvatar);
             userCard.appendChild(userStatus);
             userCard.appendChild(userName);
+            if (!user.online) {
+                userCard.classList.add('offline');
+            }
             if (index !== users.length - 1) {
                 directory.appendChild(userCard);
                 directory.appendChild(bottomThinLine);

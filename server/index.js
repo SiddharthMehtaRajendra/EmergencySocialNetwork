@@ -40,7 +40,9 @@ io.use((socket, next) => {
     next();
 });
 
-io.on('connection', function (socket) {
+io.on('connection', async function (socket) {
+    await User.updateOnline(socket.handshake.username, true);
+    io.emit('UPDATE_DIRECTORY', { data: 'A User Online' });
     socket.on('MESSAGE', async function (msg) {
         const insertResult = await Message.insertOne({
             time: new Date(),
@@ -53,6 +55,10 @@ io.on('connection', function (socket) {
         if (insertResult.success) {
             io.emit('UPDATE_MESSAGE', insertResult.res);
         }
+    });
+    socket.on('disconnect', async function () {
+        await User.updateOnline(socket.handshake.username, false);
+        io.emit('UPDATE_DIRECTORY', { data: 'A User Offline' });
     });
 });
 
@@ -87,6 +93,8 @@ app.post('/api/joinCheck', async function (req, res, next) {
             } else {
                 // login successfully
                 const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: '24h' });
+                // await User.updateOnline(userObj.username, true);
+                // io.emit('UPDATE_DIRECTORY', { data: 'A User Online' });
                 res.status(200).json({
                     success: true,
                     message: 'Validation Passed',
@@ -114,7 +122,8 @@ app.post('/api/join', async function (req, res, next) {
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
         if (result.success) {
-            io.emit('UPDATE_DIRECTORY', { data: 'need update directory' });
+            // await User.updateOnline(userObj.username, true);
+            // io.emit('UPDATE_DIRECTORY', { data: 'A New User Created' });
             const token = jwt.sign({ username: req.body.username }, config.secret, { expiresIn: '24h' });
             res.status(200).json({ success: true, message: 'Register Success', token: token });
         } else {
@@ -127,7 +136,7 @@ app.post('/api/join', async function (req, res, next) {
 
 app.get('/api/users', async function (req, res) {
     try {
-        const result = await User.find().sort({ username: 1 });
+        const result = await User.find().sort({ online: -1, username: 1 });
         const all = result.map(item => ({
             username: item.username,
             avatar: item.avatar || '#ccc',

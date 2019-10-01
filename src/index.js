@@ -53,13 +53,15 @@ initBottomTab();
 
 router.hooks({
     before: async function (done, params) {
-        if (!(window.state && window.state.user) && Cookie.get('token')) {
-            console.log('Load My info');
-            await me.fetchData();
-        }
-        if (!(window.state && window.state.users)) {
-            console.log('Load Directory');
-            await directory.fetchData();
+        if (!(window.location.hash === '#/' || window.location.hash === '#/join')) {
+            if (!(window.state && window.state.user) && Cookie.get('token')) {
+                console.log('Load My info');
+                await me.fetchData();
+            }
+            if (!(window.state && window.state.users)) {
+                console.log('Load Directory');
+                await directory.fetchData();
+            }
         }
         done();
     }
