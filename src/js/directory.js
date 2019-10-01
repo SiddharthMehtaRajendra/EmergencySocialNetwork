@@ -19,6 +19,7 @@ async function render() {
         await fetchData();
     }
     if (window.state.users) {
+        console.log('Render Directory');
         const directory = document.getElementById('user-directory');
         directory.innerHTML = '';
         const users = window.state.users;

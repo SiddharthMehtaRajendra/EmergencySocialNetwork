@@ -32,7 +32,7 @@ io.use((socket, next) => {
     const token = parseCookies(socket.request.headers.cookie).token;
     jwt.verify(token, config.secret, (err, decoded) => {
         if (err) {
-            socket.emit('AUTH_FAILED');
+            socket.emit('AUTH_FAILED', {});
         } else {
             socket.handshake.username = decoded.username;
         }
@@ -114,6 +114,7 @@ app.post('/api/join', async function (req, res, next) {
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
         if (result.success) {
+            io.emit('UPDATE_DIRECTORY', { data: 'need update directory' });
             const token = jwt.sign({ username: req.body.username }, config.secret, { expiresIn: '24h' });
             res.status(200).json({ success: true, message: 'Register Success', token: token });
         } else {
@@ -159,9 +160,7 @@ app.get('/api/historyMessage', async function (req, res) {
     const smallestMessageId = +(req.query && req.query.smallestMessageId);
     const pageSize = +(req.query && req.query.pageSize);
     const chatId = +(req.query && req.query.chatId);
-    console.log(req.query);
     const dbResult = await Message.history(chatId, +smallestMessageId, pageSize);
-    console.log(dbResult);
     if (dbResult.success) {
         res.status(200).json({ success: true, message: 'Get Messages', messages: dbResult.res });
     } else {
