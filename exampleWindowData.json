@@ -2,7 +2,7 @@
   "window": {
     "user": {
       "username": "Test",
-      "status": "OK",
+      "status": "ok",
       "active": true,
       "avatar": "#00FF00"
     },

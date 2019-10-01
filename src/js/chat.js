@@ -2,9 +2,11 @@ import socket from './socket/config';
 import axios from 'axios';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import processMessage from './lib/processMessage';
+import lodash from 'lodash';
 const pageSize = 20;
 
 async function getHistoryMessage() {
+    window.state.isLoading = true;
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/historyMessage`, {
         params: {
             smallestMessageId: window.state.smallestMessageId,
@@ -12,7 +14,7 @@ async function getHistoryMessage() {
             chatId: 0
         }
     });
-    window.state.smallestMessageId = (res.data.messages[0] && res.data.messages[0].id) || 0;
+    window.state.isLoading = false;
     return processMessage(res.data.messages);
 }
 
@@ -72,7 +74,8 @@ function sendMessage() {
             content: content,
             type: 0,
             to: 0,
-            chatId: 0
+            chatId: 0,
+            status: (window.state && window.state.user && window.state.user.status) || 'ok'
         });
         document.getElementById('message-input').value = '';
     }
@@ -82,18 +85,65 @@ function renderOneMessage(msg) {
     const bubbleWrap = document.getElementById('bubble-wrap');
     const blankBubble = document.getElementById('blank-bubble');
     bubbleWrap.insertBefore(createSingleBubble(msg), blankBubble);
+    if (msg.from === window.state.user.username || window.state.needScrollToBottom) {
+        scrollToBottom();
+    }
+    if (!window.state.needScrollToBottom) {
+        window.state.showMessageTip = true;
+    }
+    if (window.state.showMessageTip) {
+        setMessageTipVisible(true);
+    } else {
+        setMessageTipVisible(false);
+    }
+}
+
+function setMessageTipVisible(visible) {
+    document.getElementById('new-message-tip').style.visibility = (visible ? 'visible' : 'hidden');
 }
 
 function renderMessages(msgList) {
     const bubbleWrap = document.getElementById('bubble-wrap');
-    const blankBubble = document.getElementById('blank-bubble');
-    for (let i = 0; i < msgList.length; i++) {
-        bubbleWrap.insertBefore(createSingleBubble(msgList[i]), blankBubble);
+    const smallestMessageId = window.state.smallestMessageId || Infinity;
+    let beforeNode;
+    if (window.state.smallestMessageId === Infinity) {
+        beforeNode = document.getElementById('blank-bubble');
+    } else {
+        beforeNode = document.getElementById(`message-${smallestMessageId}`);
     }
+    for (let i = 0; i < msgList.length; i++) {
+        bubbleWrap.insertBefore(createSingleBubble(msgList[i]), beforeNode);
+    }
+    window.state.smallestMessageId = (msgList[0] && msgList[0].id) || 0;
+}
+
+function handleScroll() {
+    return lodash.debounce(async function () {
+        const container = document.getElementById('bubble-wrap');
+        const scrollTop = container.scrollTop;
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
+            window.state.needScrollToBottom = true;
+            window.state.showMessageTip = false;
+            setMessageTipVisible(false);
+        } else {
+            window.state.needScrollToBottom = false;
+        }
+        if (scrollTop === 0 && !window.state.isLoading) {
+            renderMessages(await getHistoryMessage());
+        }
+    }, 100);
+}
+
+function scrollToBottom() {
+    const container = document.getElementById('bubble-wrap');
+    container.scrollTop = container.scrollHeight;
 }
 
 async function render() {
     window.state.smallestMessageId = Infinity;
+    window.state.isLoading = false;
+    window.state.needScrollToBottom = false;
+    window.state.showMessageTip = false;
     if (window.location.hash.indexOf('public') >= 0) {
         document.getElementById('single-chat-navbar-title').innerText = 'Public Wall';
     }
@@ -107,6 +157,9 @@ async function render() {
             sendMessage();
         }
     });
+    document.getElementById('bubble-wrap').addEventListener('scroll', handleScroll());
+    document.getElementById('new-message-tip').addEventListener('click', scrollToBottom);
+    scrollToBottom();
 }
 
 const chat = {

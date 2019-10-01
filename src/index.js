@@ -26,13 +26,13 @@ import guide from './js/guide';
 import chats from './js/chats';
 import chat from './js/chat';
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import Cookie from 'js-cookie';
 axios.defaults.withCredentials = true;
 axios.interceptors.request.use(function (config) {
-    if (!Cookies.get('token')) {
+    if (!Cookie.get('token')) {
         window.location.hash = '/join';
     }
-    config.headers.token = Cookies.get('token');
+    config.headers.token = Cookie.get('token');
     return config;
 });
 
@@ -53,7 +53,7 @@ initBottomTab();
 
 router.hooks({
     before: async function (done, params) {
-        if (!(window.state && window.state.user) && Cookies.get('token')) {
+        if (!(window.state && window.state.user) && Cookie.get('token')) {
             console.log('Load My info');
             await me.fetchData();
         }

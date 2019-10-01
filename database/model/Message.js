@@ -20,6 +20,9 @@ const MessageSchema = new mongoose.Schema({
     },
     chatId: {
         type: Number
+    },
+    status: {
+        type: String
     }
 });
 
