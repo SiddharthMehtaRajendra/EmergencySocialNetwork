@@ -1,12 +1,12 @@
-[![BCH compliance](https://bettercodehub.com/edge/badge/cmusv-fse/f19-ESN-SB2?branch=master&token=ec3c9a3d44156002dd5e4debeec0dbbf05bebdbb)](https://bettercodehub.com/)
-
-Please add links to your REST API doc and architecture haiku to this page.
-
-
 # FSE SB2 ESN Project
 ## About
 * A Single Page Application based on hash
 * Vanilla JS(No Vue, Angular, React, JQuery)
+
+## Documents
+* Architecture Haiku
+* OOA/UML Diagram
+* [Rest API](https://documenter.getpostman.com/view/3161844/SVn2PbnT?version=latest) 
 
 ## How to run
 Install all packages
