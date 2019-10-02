@@ -7,7 +7,7 @@
 
 ## Documents
 * [Architecture Haiku](https://drive.google.com/open?id=1XvmNesWl7x0G3_e_yFWfrFfvacbbHwhM)
-* OOA/UML Diagram
+* [OOA/UML Diagram](https://drive.google.com/drive/folders/1JonuDBP1Gf3wSTkMVeVivOKOA34FsPI0?usp=sharing)
 * [Rest API](https://documenter.getpostman.com/view/3161844/SVn2PbnT?version=latest) 
 
 ## How to run
