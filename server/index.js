@@ -50,7 +50,8 @@ io.on('connection', async function (socket) {
             to: msg.to,
             type: msg.type,
             content: msg.content,
-            chatId: msg.chatId
+            chatId: msg.chatId,
+            status: msg.status
         });
         if (insertResult.success) {
             io.emit('UPDATE_MESSAGE', insertResult.res);
