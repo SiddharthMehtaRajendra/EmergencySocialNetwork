@@ -6,7 +6,7 @@
 * Vanilla JS(No Vue, Angular, React, JQuery)
 
 ## Documents
-* Architecture Haiku
+* [Architecture Haiku](https://drive.google.com/open?id=1XvmNesWl7x0G3_e_yFWfrFfvacbbHwhM)
 * OOA/UML Diagram
 * [Rest API](https://documenter.getpostman.com/view/3161844/SVn2PbnT?version=latest) 
 
