@@ -1,53 +1,18 @@
+import axios from 'axios';
+import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import socket from './socket/config';
 
-async function getHistoryMessage() {
-    return [{
-        time: 'time here',
-        from: 'tttt',
-        to: 'public',
-        type: 'text',
-        content: 'Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1',
-        chatId: '123456',
-        fromMe: false,
-        status: 'ok'
-    }, {
-        time: 'time here',
-        from: 'Wayne',
-        to: 'public',
-        type: 'text',
-        content: 'Content 2',
-        chatId: '123456',
-        fromMe: true,
-        status: 'help'
-    }, {
-        time: 'time here',
-        from: 'WEEE',
-        to: 'public',
-        type: 'text',
-        content: 'Content 3',
-        chatId: '123456',
-        fromMe: true,
-        status: 'ok'
-    }, {
-        time: 'time here',
-        from: 'tttt',
-        to: 'public',
-        type: 'text',
-        content: 'Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1',
-        chatId: '123456',
-        fromMe: false,
-        status: 'emergency'
-    }, {
-        time: 'time here',
-        from: 'tttt',
-        to: 'public',
-        type: 'text',
-        content: 'Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1Content 1',
-        chatId: '123456',
-        fromMe: false,
-        status: 'ok'
-    }];
-}
+const getHistoryMessage = new Promise((resolve, reject) => {
+    axios({
+        url: `${SERVER_ADDRESS}${API_PREFIX}/public-chats`
+    }).then((res) => {
+        const messages = (res && res.data && res.data.messages) || [];
+        resolve(messages);
+    }).catch((err) => {
+        console.log(err);
+        reject(err);
+    });
+});
 
 function createAvatar(msg) {
     const avatar = document.createElement('div');
@@ -99,21 +64,27 @@ function createSingleBubble(msg) {
 function sendMessage() {
     const content = document.getElementById('message-input').value;
     if (content && content.length > 0) {
-        socket.emit('MESSAGE', {
+        const message = {
+            from: window.state.user.username,
+            to: 'public',
+            type: 'public',
             content: content,
-            type: 0,
-            to: 0,
-            chatId: 0
+            status: window.state.user.status
+        };
+        socket.emit('MESSAGE', message, (error) => {
+            if (error) {
+                return console.log(error);
+            }
+            console.log('Message delivered!');
         });
         document.getElementById('message-input').value = '';
+        document.getElementById('message-input').focus();
     }
 }
 
 function renderOneMessage(msg) {
-
+    createSingleBubble(msg);
 }
-
-
 
 async function renderBubbleList(msgList) {
     const bubbleWrap = document.getElementById('bubble-wrap');
@@ -132,7 +103,8 @@ async function render() {
     document.getElementById('navbar-back-arrow').addEventListener('click', function () {
         window.history.go(-1);
     });
-    await renderBubbleList(await getHistoryMessage());
+    const messageList = await getHistoryMessage;
+    await renderBubbleList(messageList);
     document.getElementById('send-btn').addEventListener('click', sendMessage);
     document.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {

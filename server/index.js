@@ -48,6 +48,7 @@ io.on('connection', function (socket) {
             to: msg.to,
             type: msg.type,
             content: msg.content,
+            status: msg.status,
             chatId: msg.chatId
         });
         if (insertResult.success) {
@@ -155,22 +156,32 @@ app.get('/api/user/:username?', async function (req, res) {
     });
 });
 
-app.get('/api/historyMessage/:chatId', async function (req, res) {
-    console.log(req.params);
-    res.status(200).json({
-        success: true,
-        message: 'Get History Message OK',
-        messageList: [
-            {
-                time: 'time here',
-                from: 'Wayne',
-                to: 'public',
-                type: 'text',
-                content: 'content here',
-                chatId: '123456'
-            }
-        ]
-    });
+// register
+app.post('/api/chats/insertMessage', async function (req, res) {
+    const messageObj = {
+        from: req.body.username,
+        to: req.body.to || 'public',
+        type: req.body.type,
+        content: req.body.text,
+        status: req.body.status
+    }
+    const result = await Message.insertMessage(messageObj);
+    if (result.success) {
+        res.status(200).json({ success: true, message: 'Insert Success'});
+    } else {
+        res.status(200).json({ success: false, message: 'Insert Fail' });
+    }
+});
+
+app.get('/api/public-chats', async function (req, res) {
+    const result = await Message.getMessagesForPublicWall();
+    if(result && result.res.length > 0){
+        var publicMessages = result.res.filter(function(value) {
+            return value.type && value.type.trim().toLowerCase() === 'public';
+        })
+        res.status(200).json({ success: true, message: 'Public Wall', messages: publicMessages });
+    }
+        res.status(200).json({ success: false, message: ['No Message'] });
 });
 
 http.listen(port, function () {

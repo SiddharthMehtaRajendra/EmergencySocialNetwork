@@ -4,7 +4,8 @@ const config = require('./config.js');
 const exclude = {
     '/heartbeat': true,
     '/api/joinCheck': true,
-    '/api/join': true
+    '/api/join': true,
+    '/api/public-chats': true
 };
 
 const checkToken = (req, res, next) => {

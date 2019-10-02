@@ -18,6 +18,9 @@ const MessageSchema = new mongoose.Schema({
     content: {
         type: String
     },
+    status: {
+        type: String
+    },
     chatId: {
         type: Number
     }
@@ -34,6 +37,16 @@ MessageSchema.statics.insertOne = async function (message) {
         success = false;
     }
     return { success, res };
+};
+
+MessageSchema.statics.getMessagesForPublicWall = async function () {
+    let res = {};
+    try {
+        res = await this.find({});
+    } catch (e) {
+        res = e._message;
+    }
+    return {res};
 };
 
 MessageSchema.plugin(AutoIncrement, { inc_field: 'id' });
