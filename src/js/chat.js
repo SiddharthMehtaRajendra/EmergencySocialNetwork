@@ -3,6 +3,7 @@ import axios from 'axios';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import processMessage from './lib/processMessage';
 import lodash from 'lodash';
+
 const pageSize = 20;
 
 async function getHistoryMessage() {
