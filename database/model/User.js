@@ -16,6 +16,10 @@ const UserSchema = new mongoose.Schema({
     avatar: {
         type: String,
         required: true
+    },
+    status: {
+        type: String,
+        required: true
     }
 });
 
@@ -26,6 +30,11 @@ UserSchema.statics.exists = async function (username) {
 
 UserSchema.statics.getOneUserByUsername = async function (username) {
     const res = await this.find({ username: username });
+    return res;
+};
+
+UserSchema.statics.updateStatus = async function (username, status) {
+    const res = await this.updateOne({ username: username }, { status: status });
     return res;
 };
 
