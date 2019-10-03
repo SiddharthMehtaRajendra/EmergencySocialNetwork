@@ -46,7 +46,7 @@ MessageSchema.statics.getMessagesForPublicWall = async function () {
     } catch (e) {
         res = e._message;
     }
-    return {res};
+    return { res };
 };
 
 MessageSchema.plugin(AutoIncrement, { inc_field: 'id' });
