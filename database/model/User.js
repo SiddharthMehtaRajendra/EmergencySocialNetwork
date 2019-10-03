@@ -12,6 +12,16 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    avatar: {
+        type: String,
+        required: true
+    },
+    online: {
+        type: Boolean
+    },
+    status: {
+        type: String
     }
 });
 
@@ -21,7 +31,23 @@ UserSchema.statics.exists = async function (username) {
 };
 
 UserSchema.statics.getOneUserByUsername = async function (username) {
-    const res = await this.find({ username: username });
+    let res = {};
+    const success = true;
+    try {
+        res = await this.find({ username: username });
+    } catch (e) {
+        res = e._message;
+    }
+    return { success, res };
+};
+
+UserSchema.statics.updateStatus = async function (username, status) {
+    const res = await this.updateOne({ username: username }, { status: status });
+    return res;
+};
+
+UserSchema.statics.updateOnline = async function (username, online) {
+    const res = await this.updateOne({ username: username }, { online: online });
     return res;
 };
 
