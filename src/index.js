@@ -44,7 +44,6 @@ axios.interceptors.response.use(function (response) {
         return response;
     }
 });
->>>>>>> origin/public-wall-dev
 
 const app = document.getElementById('app');
 const router = new Navigo(null, true, '#');
@@ -81,18 +80,9 @@ router.on('/welcome', function () {
     app.innerHTML = Welcome;
 }).resolve();
 
-<<<<<<< HEAD
-router.on('/me', function () {
-    app.innerHTML = Me;
-}).resolve();
-
-router.on('/directory', function () {
-    app.innerHTML = Directory;
-=======
 router.on('/directory', async function () {
     app.innerHTML = Directory;
     await directory.render();
->>>>>>> origin/public-wall-dev
 }).resolve();
 
 router.on('/announcement', function () {
@@ -109,15 +99,6 @@ router.on('/chats', function () {
     chats.render();
 }).resolve();
 
-<<<<<<< HEAD
-router.on('/announcement', function () {
-    app.innerHTML = Announcement;
-}).resolve();
-
-router.on('/chat/:id', function () {
-    app.innerHTML = Chat;
-    initChat();
-=======
 router.on('/me', async function () {
     app.innerHTML = Me;
     await me.render();
@@ -126,7 +107,6 @@ router.on('/me', async function () {
 router.on('/chat/:id', async function () {
     app.innerHTML = Chat;
     await chat.render();
->>>>>>> origin/public-wall-dev
 }).resolve();
 
 router.notFound(function () {

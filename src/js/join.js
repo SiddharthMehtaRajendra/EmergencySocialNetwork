@@ -2,17 +2,11 @@ import axios from 'axios';
 import { validateUserName, validatePassword } from './lib/validation';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import Toast from './lib/toast';
-<<<<<<< HEAD
-import { bottomPopCardSetup, showBottomPopCard, setupContent } from '../components/bottomPopCard';
-import Cookies from 'js-cookie';
-// import socket from './socket.js';
-=======
 import BottomPopCard from '../components/bottomPopCard';
 import socket from './socket/config';
 import me from './me';
 import directory from './directory';
 const Cookie = require('js-cookie');
->>>>>>> origin/public-wall-dev
 
 function initJoinPage() {
     const registerBtn = document.getElementById('register-btn');
@@ -84,28 +78,6 @@ function join() {
             },
             withCredentials: true
         }).then((res) => {
-<<<<<<< HEAD
-            // login successfully
-            // TODO: User Exist and pass the validation, should go into system
-            if (res.status === 200 && res.data) {
-                if (res.data.success && res.data.exists && res.data.validationPass) {
-                    Cookies.set('token', res.data.token);
-                    // socket.connect();
-                    axios({
-                        method: 'post',
-                        url: `${SERVER_ADDRESS}${API_PREFIX}/updateStatus`,
-                        data: {
-                            username: username,
-                            status: 'online'
-                        },
-                        withCredentials: true
-                    });
-                    window.location.hash = '/directory';
-                } else if (!res.data.success && res.data.exists === false && res.data.validationPass === null) {
-                    // ready for registeration
-                    setupContent(buildBottomPopCardContent(username));
-                    showBottomPopCard();
-=======
             if (res.status === 200 && res.data) {
                 if (res.data.success && res.data.exists && res.data.validationPass) {
                     reset();
@@ -117,7 +89,6 @@ function join() {
                 } else if (!res.data.success && res.data.exists === false && res.data.validationPass === null) {
                     BottomPopCard.setContent(buildBottomPopCardContent(username));
                     BottomPopCard.show();
->>>>>>> origin/public-wall-dev
                 } else if (!res.data.success && res.data.validationPass === false) {
                     // username and password are not matched
                     Toast(res.data.message, '#F41C3B');

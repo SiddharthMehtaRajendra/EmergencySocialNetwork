@@ -18,24 +18,6 @@ async function getHistoryMessage() {
     return processMessage(res.data.messages);
 }
 
-export default initChat;
-=======
-import axios from 'axios';
-import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
-import socket from './socket/config';
-
-const getHistoryMessage = new Promise((resolve, reject) => {
-    axios({
-        url: `${SERVER_ADDRESS}${API_PREFIX}/public-chats`
-    }).then((res) => {
-        const messages = (res && res.data && res.data.messages) || [];
-        resolve(messages);
-    }).catch((err) => {
-        console.log(err);
-        reject(err);
-    });
-});
-
 function createAvatar(msg) {
     const avatar = document.createElement('div');
     avatar.className = 'bubble-avatar';
@@ -88,10 +70,7 @@ function createSingleBubble(msg) {
 function sendMessage() {
     const content = document.getElementById('message-input').value;
     if (content && content.length > 0) {
-        const message = {
-            from: window.state.user.username,
-            to: 'public',
-            type: 'public',
+        socket.emit('MESSAGE', {
             content: content,
             type: 0,
             to: 0,
@@ -99,7 +78,6 @@ function sendMessage() {
             status: (window.state && window.state.user && window.state.user.status) || 'ok'
         });
         document.getElementById('message-input').value = '';
-        document.getElementById('message-input').focus();
     }
 }
 
@@ -191,4 +169,3 @@ const chat = {
 };
 
 export default chat;
->>>>>>> origin/public-wall-dev
