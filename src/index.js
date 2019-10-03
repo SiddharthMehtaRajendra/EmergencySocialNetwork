@@ -26,27 +26,21 @@ import Chat from './view/chat.html';
 import Announcement from './view/announcement.html';
 >>>>>>> origin/public-wall-dev
 import initRouter from './js/initRouter';
-import directory from './js/directory';
 import initJoinPage from './js/join';
 import initBottomTab from './components/bottomTab';
-<<<<<<< HEAD
-import initChat from './js/chat';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-axios.defaults.withCredentials = true;
-=======
+import directory from './js/directory';
 import me from './js/me';
 import guide from './js/guide';
 import chats from './js/chats';
 import chat from './js/chat';
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import Cookie from 'js-cookie';
 axios.defaults.withCredentials = true;
 axios.interceptors.request.use(function (config) {
-    if (!Cookies.get('token')) {
+    if (!Cookie.get('token')) {
         window.location.hash = '/join';
     }
-    config.headers.token = Cookies.get('token');
+    config.headers.token = Cookie.get('token');
     return config;
 });
 
@@ -63,6 +57,24 @@ axios.interceptors.response.use(function (response) {
 const app = document.getElementById('app');
 const router = new Navigo(null, true, '#');
 window.state = {};
+initRouter();
+initBottomTab();
+
+router.hooks({
+    before: async function (done, params) {
+        if (!(window.location.hash === '#/' || window.location.hash === '#/join')) {
+            if (!(window.state && window.state.user) && Cookie.get('token')) {
+                console.log('Load My info');
+                await me.fetchData();
+            }
+            if (!(window.state && window.state.users)) {
+                console.log('Load Directory');
+                await directory.fetchData();
+            }
+        }
+        done();
+    }
+});
 
 router.on('/', function () {
     app.innerHTML = Home;
@@ -128,33 +140,3 @@ router.on('/chat/:id', async function () {
 router.notFound(function () {
     app.innerHTML = Error;
 }).resolve();
-
-<<<<<<< HEAD
-axios.interceptors.request.use(function (config) {
-    config.headers.token = Cookies.get('token');
-    return config;
-});
-
-axios.interceptors.response.use(function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    if (response.data.redirect === true) {
-        window.location.hash = '/';
-    }
-    return response;
-}, function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    console.log(error);
-    return Promise.reject(error);
-});
-
-initRouter();
-initBottomTab();
-// TODO: Check User Login, if Login, fetch all data from server, if not, redirect to login page;
-=======
-initRouter();
-initBottomTab();
-me.fetchData();
-directory.fetchData();
->>>>>>> origin/public-wall-dev

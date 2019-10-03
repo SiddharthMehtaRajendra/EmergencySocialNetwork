@@ -1,29 +1,21 @@
-<<<<<<< HEAD
-// Go Back Example
-// document.getElementById('js-go-back-test').addEventListener('click', function () {
-//     window.history.back(-1);
-// });
-import socket from './socket';
-// import axios from 'axios';
-// import { SERVER_ADDRESS } from './constant/serverInfo';
+import socket from './socket/config';
+import axios from 'axios';
+import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
+import processMessage from './lib/processMessage';
+import lodash from 'lodash';
+const pageSize = 20;
 
-function initChat() {
-    console.log(window.location.href);
-    socket.emit('MSG', {
-        test: 'test'
+async function getHistoryMessage() {
+    window.state.isLoading = true;
+    const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/historyMessage`, {
+        params: {
+            smallestMessageId: window.state.smallestMessageId,
+            pageSize: pageSize,
+            chatId: 0
+        }
     });
-
-    socket.on('redirect', function () {
-        window.location.hash = '/';
-    });
-
-    window.state = {};
-    window.state.Hello = 123;
-    console.log(window.state);
-    // axios({
-    //     method: 'get',
-    //     url: `${SERVER_ADDRESS}/heartbeat`
-    // });
+    window.state.isLoading = false;
+    return processMessage(res.data.messages);
 }
 
 export default initChat;
@@ -48,6 +40,7 @@ function createAvatar(msg) {
     const avatar = document.createElement('div');
     avatar.className = 'bubble-avatar';
     avatar.innerText = msg.from[0];
+    avatar.style.backgroundColor = msg.avatar;
     const statusDot = document.createElement('div');
     statusDot.className = `bubble-status-dot ${msg.status}`;
     const avatarContainer = document.createElement('div');
@@ -81,6 +74,7 @@ function createMessageContainer(msg) {
 function createSingleBubble(msg) {
     const singleBubble = document.createElement('div');
     singleBubble.className = 'single-bubble';
+    singleBubble.id = `message-${msg.id}`;
     if (msg.fromMe) {
         singleBubble.classList.add('from-me');
     }
@@ -99,13 +93,10 @@ function sendMessage() {
             to: 'public',
             type: 'public',
             content: content,
-            status: window.state.user.status
-        };
-        socket.emit('MESSAGE', message, (error) => {
-            if (error) {
-                return console.log(error);
-            }
-            console.log('Message delivered!');
+            type: 0,
+            to: 0,
+            chatId: 0,
+            status: (window.state && window.state.user && window.state.user.status) || 'ok'
         });
         document.getElementById('message-input').value = '';
         document.getElementById('message-input').focus();
@@ -113,34 +104,84 @@ function sendMessage() {
 }
 
 function renderOneMessage(msg) {
-    createSingleBubble(msg);
+    const bubbleWrap = document.getElementById('bubble-wrap');
+    const blankBubble = document.getElementById('blank-bubble');
+    bubbleWrap.insertBefore(createSingleBubble(msg), blankBubble);
+    if (msg.from === window.state.user.username || window.state.needScrollToBottom) {
+        scrollToBottom();
+    }
+    if (!window.state.needScrollToBottom) {
+        window.state.showMessageTip = true;
+    }
+    if (window.state.showMessageTip) {
+        setMessageTipVisible(true);
+    } else {
+        setMessageTipVisible(false);
+    }
 }
 
-async function renderBubbleList(msgList) {
+function setMessageTipVisible(visible) {
+    document.getElementById('new-message-tip').style.visibility = (visible ? 'visible' : 'hidden');
+}
+
+function renderMessages(msgList) {
     const bubbleWrap = document.getElementById('bubble-wrap');
-    for (let i = 0; i < msgList.length; i++) {
-        bubbleWrap.appendChild(createSingleBubble(msgList[i]));
+    const smallestMessageId = window.state.smallestMessageId || Infinity;
+    let beforeNode;
+    if (window.state.smallestMessageId === Infinity) {
+        beforeNode = document.getElementById('blank-bubble');
+    } else {
+        beforeNode = document.getElementById(`message-${smallestMessageId}`);
     }
-    const blankBubble = document.createElement('div');
-    blankBubble.id = 'blank-bubble';
-    bubbleWrap.appendChild(blankBubble);
+    for (let i = 0; i < msgList.length; i++) {
+        bubbleWrap.insertBefore(createSingleBubble(msgList[i]), beforeNode);
+    }
+    window.state.smallestMessageId = (msgList[0] && msgList[0].id) || 0;
+}
+
+function handleScroll() {
+    return lodash.debounce(async function () {
+        const container = document.getElementById('bubble-wrap');
+        const scrollTop = container.scrollTop;
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
+            window.state.needScrollToBottom = true;
+            window.state.showMessageTip = false;
+            setMessageTipVisible(false);
+        } else {
+            window.state.needScrollToBottom = false;
+        }
+        if (scrollTop === 0 && !window.state.isLoading) {
+            renderMessages(await getHistoryMessage());
+        }
+    }, 100);
+}
+
+function scrollToBottom() {
+    const container = document.getElementById('bubble-wrap');
+    container.scrollTop = container.scrollHeight;
 }
 
 async function render() {
+    window.state.smallestMessageId = Infinity;
+    window.state.isLoading = false;
+    window.state.needScrollToBottom = false;
+    window.state.showMessageTip = false;
     if (window.location.hash.indexOf('public') >= 0) {
         document.getElementById('single-chat-navbar-title').innerText = 'Public Wall';
     }
     document.getElementById('navbar-back-arrow').addEventListener('click', function () {
         window.history.go(-1);
     });
-    const messageList = await getHistoryMessage;
-    await renderBubbleList(messageList);
+    renderMessages(await getHistoryMessage());
     document.getElementById('send-btn').addEventListener('click', sendMessage);
     document.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             sendMessage();
         }
     });
+    document.getElementById('bubble-wrap').addEventListener('scroll', handleScroll());
+    document.getElementById('new-message-tip').addEventListener('click', scrollToBottom);
+    scrollToBottom();
 }
 
 const chat = {

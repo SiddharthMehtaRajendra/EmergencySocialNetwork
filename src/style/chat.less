@@ -99,7 +99,7 @@
         justify-content: space-between;
         align-items: center;
         background-color: white;
-        box-shadow: 0 -1px 6px 0 rgba(0, 0, 0, 0.05);
+        //box-shadow: 0 -1px 6px 0 rgba(0, 0, 0, 0.05);
         input{
             border: none;
             outline: none;
@@ -118,5 +118,25 @@
             font-size: 18px;
             cursor: pointer;
         }
+    }
+
+    .new-message-tip {
+        visibility: hidden;
+        position: fixed;
+        bottom: 80px;
+        background-color: white;
+        height: 36px;
+        border-radius: 18px;
+        line-height: 36px;
+        width: 120px;
+        transform: translateX(-60px);
+        color: #1983FF;
+        z-index: 101;
+        font-weight: 600;
+        font-size: 14px;
+        left: 50%;
+        cursor: pointer;
+        text-align: center;
+        border: 1px solid #1983FF;
     }
 }

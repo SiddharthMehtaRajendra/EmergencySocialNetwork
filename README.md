@@ -1,7 +1,14 @@
+[![BCH compliance](https://bettercodehub.com/edge/badge/cmusv-fse/f19-ESN-SB2?branch=master&token=ec3c9a3d44156002dd5e4debeec0dbbf05bebdbb)](https://bettercodehub.com/)
+
 # FSE SB2 ESN Project
 ## About
 * A Single Page Application based on hash
 * Vanilla JS(No Vue, Angular, React, JQuery)
+
+## Documents
+* [Architecture Haiku](https://drive.google.com/open?id=1XvmNesWl7x0G3_e_yFWfrFfvacbbHwhM)
+* [OOA/UML Diagram](https://drive.google.com/drive/folders/1JonuDBP1Gf3wSTkMVeVivOKOA34FsPI0?usp=sharing)
+* [Rest API](https://documenter.getpostman.com/view/3161844/SVn2PbnT?version=latest) 
 
 ## How to run
 Install all packages

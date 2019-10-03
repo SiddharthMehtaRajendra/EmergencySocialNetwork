@@ -9,6 +9,8 @@ import Cookies from 'js-cookie';
 =======
 import BottomPopCard from '../components/bottomPopCard';
 import socket from './socket/config';
+import me from './me';
+import directory from './directory';
 const Cookie = require('js-cookie');
 >>>>>>> origin/public-wall-dev
 
@@ -47,6 +49,8 @@ function register() {
             reset();
             setToken(res.data.token);
             socket.open();
+            me.fetchData();
+            directory.fetchData();
             Toast(res.data.message);
             // socket.connect();
             setTimeout(function () {
@@ -107,6 +111,8 @@ function join() {
                     reset();
                     setToken(res.data.token);
                     socket.open();
+                    me.fetchData();
+                    directory.fetchData();
                     window.location.hash = '/directory';
                 } else if (!res.data.success && res.data.exists === false && res.data.validationPass === null) {
                     BottomPopCard.setContent(buildBottomPopCardContent(username));

@@ -23,6 +23,9 @@ const MessageSchema = new mongoose.Schema({
     },
     chatId: {
         type: Number
+    },
+    status: {
+        type: String
     }
 });
 
@@ -39,14 +42,17 @@ MessageSchema.statics.insertOne = async function (message) {
     return { success, res };
 };
 
-MessageSchema.statics.getMessagesForPublicWall = async function () {
-    let res = {};
+MessageSchema.statics.history = async function (chatId, smallestMessageId, pageSize) {
+    let res = [];
+    let success = true;
     try {
-        res = await this.find({});
+        res = await Message.find({ chatId: chatId, id: { $lt: +smallestMessageId } }).sort({ id: -1 }).limit(pageSize);
+        res = res.reverse();
     } catch (e) {
         res = e._message;
+        success = false;
     }
-    return { res };
+    return { success, res };
 };
 
 MessageSchema.plugin(AutoIncrement, { inc_field: 'id' });

@@ -4,16 +4,23 @@ import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 async function fetchData() {
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`);
     if (res.status === 200 && res.data.success && res.data.users) {
-        window.state.users = res.data.users;
+        const users = res.data.users;
+        window.state.users = users;
+        const userMap = {};
+        for (let i = 0; i < users.length; i++) {
+            userMap[users[i].username] = users[i];
+        }
+        window.state.userMap = userMap;
     }
 }
 
 async function render() {
+    const directory = document.getElementById('user-directory');
+
     if (!window.state.users) {
         await fetchData();
     }
-    if (window.state.users) {
-        const directory = document.getElementById('user-directory');
+    if (window.state.users && directory) {
         directory.innerHTML = '';
         const users = window.state.users;
         users.forEach((user, index) => {
@@ -34,6 +41,9 @@ async function render() {
             userCard.appendChild(userAvatar);
             userCard.appendChild(userStatus);
             userCard.appendChild(userName);
+            if (!user.online) {
+                userCard.classList.add('offline');
+            }
             if (index !== users.length - 1) {
                 directory.appendChild(userCard);
                 directory.appendChild(bottomThinLine);

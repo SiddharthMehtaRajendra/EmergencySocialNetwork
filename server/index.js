@@ -3,7 +3,7 @@ const app = express();
 const path = require('path');
 const cors = require('cors');
 const http = require('http').createServer(app);
-const port = 8000;
+const port = 80;
 const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
@@ -70,7 +70,7 @@ io.use((socket, next) => {
     const token = parseCookies(socket.request.headers.cookie).token;
     jwt.verify(token, config.secret, (err, decoded) => {
         if (err) {
-            socket.emit('AUTH_FAILED');
+            socket.emit('AUTH_FAILED', {});
         } else {
             socket.handshake.username = decoded.username;
 >>>>>>> origin/public-wall-dev
@@ -81,48 +81,9 @@ io.use((socket, next) => {
 <<<<<<< HEAD
 */
 
-io.on('connection', function (socket) {
-    socket.on('MSG', async function (msg) {
-        console.log(socket.username);
-        console.log('Socket Msg here');
-        console.log(msg);
-        // const res = await Message.insertMessage({
-        //     chatId: '0',
-        //     from: 'Wayne',
-        //     to: 'public chat',
-        //     type: 'public',
-        //     content: 'hi there'
-        // });
-        // if (res.success) {
-        //     console.log(res);
-        //     console.log('insert success');
-        // }
-    });
-    // disconnected
-    /*
-    socket.on('disconnect', function () {
-        console.log('offline');
-        console.log(socket.username);
-    */
-    /*
-        console.log('offline');
-        const status = 'offline';
-        // console.log(socket.username);
-        const cookieStr = socket.request;
-        console.log(cookieStr);
-        var tokenString = parseCookies(cookieStr).token;
-        jwt.verify(tokenString, config.secret, (err, decoded) => {
-            if (err) {
-            } else {
-                console.log(decoded.username);
-            }
-        });
-        User.updateStatus(socket.username, status);
-    });
-    */
-=======
-
-io.on('connection', function (socket) {
+io.on('connection', async function (socket) {
+    await User.updateOnline(socket.handshake.username, true);
+    io.emit('UPDATE_DIRECTORY', { data: 'A User Online' });
     socket.on('MESSAGE', async function (msg) {
         const insertResult = await Message.insertOne({
             time: new Date(),
@@ -130,14 +91,17 @@ io.on('connection', function (socket) {
             to: msg.to,
             type: msg.type,
             content: msg.content,
-            status: msg.status,
-            chatId: msg.chatId
+            chatId: msg.chatId,
+            status: msg.status
         });
         if (insertResult.success) {
             io.emit('UPDATE_MESSAGE', insertResult.res);
         }
     });
->>>>>>> origin/public-wall-dev
+    socket.on('disconnect', async function () {
+        await User.updateOnline(socket.handshake.username, false);
+        io.emit('UPDATE_DIRECTORY', { data: 'A User Offline' });
+    });
 });
 
 app.get('/heartbeat', async function (req, res, next) {
@@ -184,7 +148,8 @@ app.post('/api/joinCheck', async function (req, res, next) {
 =======
                 // login successfully
                 const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: '24h' });
->>>>>>> origin/public-wall-dev
+                // await User.updateOnline(userObj.username, true);
+                // io.emit('UPDATE_DIRECTORY', { data: 'A User Online' });
                 res.status(200).json({
                     success: true,
                     message: 'Validation Passed',
@@ -210,10 +175,7 @@ app.post('/api/join', async function (req, res, next) {
         username: req.body.username,
         password: req.body.password,
         avatar: avatar,
-<<<<<<< HEAD
-        status: 'online'
-=======
-        status: 'OK',
+        status: 'ok',
         online: true
 >>>>>>> origin/public-wall-dev
     };
@@ -221,19 +183,8 @@ app.post('/api/join', async function (req, res, next) {
         const result = await User.addOneUser(userObj);
        //console.log(result);
         if (result.success) {
-<<<<<<< HEAD
-            // Register Success
-            const token = jwt.sign({ username: req.body.username },
-                config.secret,
-                {
-                    expiresIn: '24h' // expires in 24 hours
-                }
-            );
-            res.status(200).json({ success: true, message: 'Register Success', data: '', token: token });
-        } else {
-            // Username already exist
-            res.status(200).json({ success: false, message: result.res, data: '' });
-=======
+            // await User.updateOnline(userObj.username, true);
+            // io.emit('UPDATE_DIRECTORY', { data: 'A New User Created' });
             const token = jwt.sign({ username: req.body.username }, config.secret, { expiresIn: '24h' });
             res.status(200).json({ success: true, message: 'Register Success', token: token });
         } else {
@@ -247,7 +198,7 @@ app.post('/api/join', async function (req, res, next) {
 
 app.get('/api/users', async function (req, res) {
     try {
-        const result = await User.find().sort({ username: 1 });
+        const result = await User.find().sort({ online: -1, username: 1 });
         const all = result.map(item => ({
             username: item.username,
             avatar: item.avatar || '#ccc',
@@ -271,25 +222,20 @@ app.get('/api/user/:username?', async function (req, res) {
             username: user.username,
             avatar: user.avatar || '#ccc',
             online: user.online || false,
-            status: user.status || 'OK'
+            status: user.status || 'ok'
         }
     });
 });
 
-// register
-app.post('/api/chats/insertMessage', async function (req, res) {
-    const messageObj = {
-        from: req.body.username,
-        to: req.body.to || 'public',
-        type: req.body.type,
-        content: req.body.text,
-        status: req.body.status
-    }
-    const result = await Message.insertMessage(messageObj);
-    if (result.success) {
-        res.status(200).json({ success: true, message: 'Insert Success'});
+app.get('/api/historyMessage', async function (req, res) {
+    const smallestMessageId = +(req.query && req.query.smallestMessageId);
+    const pageSize = +(req.query && req.query.pageSize);
+    const chatId = +(req.query && req.query.chatId);
+    const dbResult = await Message.history(chatId, +smallestMessageId, pageSize);
+    if (dbResult.success) {
+        res.status(200).json({ success: true, message: 'Get Messages', messages: dbResult.res });
     } else {
-        res.status(200).json({ success: false, message: 'Insert Fail' });
+        res.status(200).json({ success: false, message: 'Load Messages Failed' });
     }
 });
 
