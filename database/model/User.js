@@ -17,9 +17,11 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    online: {
+        type: Boolean
+    },
     status: {
-        type: String,
-        required: true
+        type: String
     }
 });
 
@@ -29,8 +31,14 @@ UserSchema.statics.exists = async function (username) {
 };
 
 UserSchema.statics.getOneUserByUsername = async function (username) {
-    const res = await this.find({ username: username });
-    return res;
+    let res = {};
+    const success = true;
+    try {
+        res = await this.find({ username: username });
+    } catch (e) {
+        res = e._message;
+    }
+    return { success, res };
 };
 
 UserSchema.statics.updateStatus = async function (username, status) {

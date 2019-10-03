@@ -1,65 +1,42 @@
 .page-chats {
-    padding: 60px 20px 0 20px;
-    height: calc(100vh - 60px);
-    @media only screen and (min-width: 375px) {
-        width: 335px;
-        margin: 0 auto;
-    }
-  
-    .top-title {
-      margin-top: 0;
-      margin-bottom: 20px;
-      font-weight: 700;
-      color: #111111;
-    }
-
-    .border-card {
-        border: solid rgba(0, 0, 0, 0.06);
-        border-top: 0px;
-        border-right: 0px;
-        border-left: 0px;
-        border-width: 1px;
-    }
-
-    .avatar {
-        background-color: #f5f5f5;
-        width: 40px;
-        height: 40px;
-        margin-right: 10px; //if status-circle is not needed;
-        border-radius: 50%;
-        font-size: 22px;
-        font-weight: 900;
-        text-align: center;
-        line-height: 40px;
-    }
-
-    // .status-circle {
-    //     width: 10px;
-    //     height: 10px;
-    //     border: 1px solid white;
-    //     border-radius: 50%;
-    //     position: relative;
-    // }
-
-    .chatroom-card {
+    .single-chat {
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        padding: 20px 16px;
-        margin-top: 20px;
-        margin-bottom: 20px;
+        padding: 20px;
+        .avatar {
+            flex-shrink: 0;
+            background-color: #cccccc;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: 900;
+            text-align: center;
+            line-height: 40px;
+            margin-right: 20px;
+            &.public-wall{
+                font-size: 12px;
+                background-color: #1983FF;
+            }
+        }
 
-        .chatroom-btn {
-            color: #111111;
-            font-size: 16px;
-            font-weight: 600;
-            display: flex;
-            cursor: pointer;
-            a {
-                color: #111111;
-                text-decoration: none;
+        .chat-info{
+            width: 100%;
+            .title{
+                font-size: 16px;
+                font-weight: 600;
+            }
+            .latest-info {
+                display: flex;
+                justify-content: space-between;
+                font-size: 12px;
+                color: #999;
+                .message{
+                    max-width: 120px;
+                }
             }
         }
     }
 }
-  

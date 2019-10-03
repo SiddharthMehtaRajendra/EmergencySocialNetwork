@@ -1,3 +1,3 @@
 module.exports = {
-  secret: 'worldisfullofdevelopers'
+    secret: 'f19sb2-develop-with-love'
 };

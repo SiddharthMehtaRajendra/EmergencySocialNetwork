@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-// const path = require('path');
+const path = require('path');
 const cors = require('cors');
 const http = require('http').createServer(app);
 const port = 8000;
@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
 const Message = require('../database/model/Message');
+<<<<<<< HEAD
 const io = require('socket.io')(http);
 io.set('origins', '*:*');
 const jwt = require('jsonwebtoken');
@@ -15,7 +16,17 @@ const config = require('./auth/config');
 const cookieParser = require('cookie-parser');
 const checkToken = require('./auth/verifyToken');
 require('../database/connectdb');
+=======
+>>>>>>> origin/public-wall-dev
 const io = require('socket.io')(http);
+const jwt = require('jsonwebtoken');
+const config = require('./auth/config');
+const randomColor = require('randomcolor');
+const cookieParser = require('cookie-parser');
+const parseCookies = require('./lib/parseCookies');
+const checkToken = require('./auth/checkToken');
+require('../database/connectdb');
+
 io.set('origins', '*:*');
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -23,6 +34,7 @@ app.use(bodyParser.json());
 app.use(cors({ credentials: true, origin: true }));
 app.use(cookieParser());
 app.use(checkToken);
+<<<<<<< HEAD
 
 function parseCookies(cookieStr) {
     const list = {};
@@ -49,10 +61,24 @@ io.use((socket, next) => {
             const username = decoded.username;
             // console.log(username);
             //socket.username = username;
+=======
+
+// Serve static front-end files, for future use
+app.use(express.static(path.resolve(__dirname, '../dist')));
+
+io.use((socket, next) => {
+    const token = parseCookies(socket.request.headers.cookie).token;
+    jwt.verify(token, config.secret, (err, decoded) => {
+        if (err) {
+            socket.emit('AUTH_FAILED');
+        } else {
+            socket.handshake.username = decoded.username;
+>>>>>>> origin/public-wall-dev
         }
     });
     next();
 });
+<<<<<<< HEAD
 */
 
 io.on('connection', function (socket) {
@@ -94,11 +120,29 @@ io.on('connection', function (socket) {
         User.updateStatus(socket.username, status);
     });
     */
+=======
+
+io.on('connection', function (socket) {
+    socket.on('MESSAGE', async function (msg) {
+        const insertResult = await Message.insertOne({
+            time: new Date(),
+            from: socket.handshake.username,
+            to: msg.to,
+            type: msg.type,
+            content: msg.content,
+            status: msg.status,
+            chatId: msg.chatId
+        });
+        if (insertResult.success) {
+            io.emit('UPDATE_MESSAGE', insertResult.res);
+        }
+    });
+>>>>>>> origin/public-wall-dev
 });
 
 app.get('/heartbeat', async function (req, res, next) {
-    console.log('Hello ESN Node Server');
-    res.status(200).json({ success: true, message: 'Hello ESN Node Server', data: {} });
+    console.log('Hello ESN!');
+    res.status(200).json({ success: true, message: 'Hello ESN!' });
 });
 
 app.post('/api/updateStatus', async function (req, res, next) {
@@ -122,6 +166,7 @@ app.post('/api/joinCheck', async function (req, res, next) {
                 validationPass: null
             });
         } else {
+            // login failed
             if (!await User.validateCredentials(userObj.username, userObj.password)) {
                 res.status(200).json({
                     success: false,
@@ -130,11 +175,16 @@ app.post('/api/joinCheck', async function (req, res, next) {
                     validationPass: false
                 });
             } else {
+<<<<<<< HEAD
                 const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: '24h' });
                 res.cookie('token', token, {
                     maxAge: 60 * 60 * 24,
                     httpOnly: false
                 });
+=======
+                // login successfully
+                const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: '24h' });
+>>>>>>> origin/public-wall-dev
                 res.status(200).json({
                     success: true,
                     message: 'Validation Passed',
@@ -149,7 +199,10 @@ app.post('/api/joinCheck', async function (req, res, next) {
 
 // register
 app.post('/api/join', async function (req, res, next) {
+<<<<<<< HEAD
     const randomColor = require('randomcolor');
+=======
+>>>>>>> origin/public-wall-dev
     const avatar = randomColor({
         luminosity: 'light'
     });
@@ -157,12 +210,18 @@ app.post('/api/join', async function (req, res, next) {
         username: req.body.username,
         password: req.body.password,
         avatar: avatar,
+<<<<<<< HEAD
         status: 'online'
+=======
+        status: 'OK',
+        online: true
+>>>>>>> origin/public-wall-dev
     };
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
        //console.log(result);
         if (result.success) {
+<<<<<<< HEAD
             // Register Success
             const token = jwt.sign({ username: req.body.username },
                 config.secret,
@@ -174,19 +233,75 @@ app.post('/api/join', async function (req, res, next) {
         } else {
             // Username already exist
             res.status(200).json({ success: false, message: result.res, data: '' });
+=======
+            const token = jwt.sign({ username: req.body.username }, config.secret, { expiresIn: '24h' });
+            res.status(200).json({ success: true, message: 'Register Success', token: token });
+        } else {
+            res.status(200).json({ success: false, message: result.res });
+>>>>>>> origin/public-wall-dev
         }
     } else {
-        res.status(200).json({ success: false, message: 'Validate Failed', data: '' });
+        res.status(200).json({ success: false, message: 'Validate Failed' });
     }
 });
 
-app.get('/api/directory', async function (req, res) {
+app.get('/api/users', async function (req, res) {
     try {
-        const all = await User.find().sort({ username: 1 });
-        res.status(200).json({ users: all });
+        const result = await User.find().sort({ username: 1 });
+        const all = result.map(item => ({
+            username: item.username,
+            avatar: item.avatar || '#ccc',
+            status: item.status || 'ok',
+            online: item.online || false
+        }));
+        res.status(200).json({ success: true, message: 'All Directory', users: all });
     } catch (e) {
-        console.log(e);
+        res.status(200).json({ success: false, message: e._message });
     }
+});
+
+app.get('/api/user/:username?', async function (req, res) {
+    const username = (req.params && req.params.username) || req.username;
+    const result = await User.getOneUserByUsername(username);
+    const user = result.res[0];
+    res.status(200).json({
+        success: result.success,
+        message: result.success ? 'Get User info OK' : result.res,
+        user: {
+            username: user.username,
+            avatar: user.avatar || '#ccc',
+            online: user.online || false,
+            status: user.status || 'OK'
+        }
+    });
+});
+
+// register
+app.post('/api/chats/insertMessage', async function (req, res) {
+    const messageObj = {
+        from: req.body.username,
+        to: req.body.to || 'public',
+        type: req.body.type,
+        content: req.body.text,
+        status: req.body.status
+    }
+    const result = await Message.insertMessage(messageObj);
+    if (result.success) {
+        res.status(200).json({ success: true, message: 'Insert Success'});
+    } else {
+        res.status(200).json({ success: false, message: 'Insert Fail' });
+    }
+});
+
+app.get('/api/public-chats', async function (req, res) {
+    const result = await Message.getMessagesForPublicWall();
+    if(result && result.res.length > 0){
+        var publicMessages = result.res.filter(function(value) {
+            return value.type && value.type.trim().toLowerCase() === 'public';
+        })
+        res.status(200).json({ success: true, message: 'Public Wall', messages: publicMessages });
+    }
+        res.status(200).json({ success: false, message: ['No Message'] });
 });
 
 http.listen(port, function () {
