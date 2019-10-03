@@ -12,19 +12,11 @@ import Welcome from './view/welcome.html';
 import Home from './view/home.html';
 import Error from './view/error.html';
 import Join from './view/join.html';
-<<<<<<< HEAD
-import Me from './view/_me.html';
-import Directory from './view/_directory.html';
-import Chats from './view/_chats.html';
-import Chat from './view/chat.html';
-import Announcement from './view/_announcement.html';
-=======
 import Directory from './view/directory.html';
 import Chats from './view/chats.html';
 import Me from './view/me.html';
 import Chat from './view/chat.html';
 import Announcement from './view/announcement.html';
->>>>>>> origin/public-wall-dev
 import initRouter from './js/initRouter';
 import initJoinPage from './js/join';
 import initBottomTab from './components/bottomTab';

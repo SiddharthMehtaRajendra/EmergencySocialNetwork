@@ -8,16 +8,6 @@ const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
 const Message = require('../database/model/Message');
-<<<<<<< HEAD
-const io = require('socket.io')(http);
-io.set('origins', '*:*');
-const jwt = require('jsonwebtoken');
-const config = require('./auth/config');
-const cookieParser = require('cookie-parser');
-const checkToken = require('./auth/verifyToken');
-require('../database/connectdb');
-=======
->>>>>>> origin/public-wall-dev
 const io = require('socket.io')(http);
 const jwt = require('jsonwebtoken');
 const config = require('./auth/config');
@@ -34,34 +24,6 @@ app.use(bodyParser.json());
 app.use(cors({ credentials: true, origin: true }));
 app.use(cookieParser());
 app.use(checkToken);
-<<<<<<< HEAD
-
-function parseCookies(cookieStr) {
-    const list = {};
-    cookieStr && cookieStr.split(';').forEach(function (cookie) {
-        const parts = cookie.split('=');
-        list[parts.shift().trim()] = decodeURI(parts.join('='));
-    });
-    return list;
-}
-
-// Serve static front-end files, for future use
-// app.use(express.static(path.resolve(__dirname, '../dist')));
-/*
-io.use((socket, next) => {
-    console.log('--------');
-    // console.log(socket.request);
-    console.log('io.use1');
-    const cookieStr = socket.request.headers.cookie;
-    var tokenString = parseCookies(cookieStr).token;
-    jwt.verify(tokenString, config.secret, (err, decoded) => {
-        if (err) {
-            socket.emit('redirect');
-        } else {
-            const username = decoded.username;
-            // console.log(username);
-            //socket.username = username;
-=======
 
 // Serve static front-end files, for future use
 app.use(express.static(path.resolve(__dirname, '../dist')));
@@ -73,13 +35,10 @@ io.use((socket, next) => {
             socket.emit('AUTH_FAILED', {});
         } else {
             socket.handshake.username = decoded.username;
->>>>>>> origin/public-wall-dev
         }
     });
     next();
 });
-<<<<<<< HEAD
-*/
 
 io.on('connection', async function (socket) {
     await User.updateOnline(socket.handshake.username, true);
@@ -109,12 +68,6 @@ app.get('/heartbeat', async function (req, res, next) {
     res.status(200).json({ success: true, message: 'Hello ESN!' });
 });
 
-app.post('/api/updateStatus', async function (req, res, next) {
-    console.log('UpdateStatus');
-    const result = await User.updateStatus(req.body.username, req.body.status);
-    console.log('finishUpdateStatus');
-});
-
 app.post('/api/joinCheck', async function (req, res, next) {
     const userObj = {
         username: req.body.username,
@@ -139,13 +92,6 @@ app.post('/api/joinCheck', async function (req, res, next) {
                     validationPass: false
                 });
             } else {
-<<<<<<< HEAD
-                const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: '24h' });
-                res.cookie('token', token, {
-                    maxAge: 60 * 60 * 24,
-                    httpOnly: false
-                });
-=======
                 // login successfully
                 const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: '24h' });
                 // await User.updateOnline(userObj.username, true);
@@ -164,10 +110,6 @@ app.post('/api/joinCheck', async function (req, res, next) {
 
 // register
 app.post('/api/join', async function (req, res, next) {
-<<<<<<< HEAD
-    const randomColor = require('randomcolor');
-=======
->>>>>>> origin/public-wall-dev
     const avatar = randomColor({
         luminosity: 'light'
     });
@@ -177,11 +119,9 @@ app.post('/api/join', async function (req, res, next) {
         avatar: avatar,
         status: 'ok',
         online: true
->>>>>>> origin/public-wall-dev
     };
     if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
-       //console.log(result);
         if (result.success) {
             // await User.updateOnline(userObj.username, true);
             // io.emit('UPDATE_DIRECTORY', { data: 'A New User Created' });
@@ -189,7 +129,6 @@ app.post('/api/join', async function (req, res, next) {
             res.status(200).json({ success: true, message: 'Register Success', token: token });
         } else {
             res.status(200).json({ success: false, message: result.res });
->>>>>>> origin/public-wall-dev
         }
     } else {
         res.status(200).json({ success: false, message: 'Validate Failed' });
@@ -241,13 +180,13 @@ app.get('/api/historyMessage', async function (req, res) {
 
 app.get('/api/public-chats', async function (req, res) {
     const result = await Message.getMessagesForPublicWall();
-    if(result && result.res.length > 0){
-        var publicMessages = result.res.filter(function(value) {
+    if (result && result.res.length > 0) {
+        var publicMessages = result.res.filter(function (value) {
             return value.type && value.type.trim().toLowerCase() === 'public';
-        })
+        });
         res.status(200).json({ success: true, message: 'Public Wall', messages: publicMessages });
     }
-        res.status(200).json({ success: false, message: ['No Message'] });
+    res.status(200).json({ success: false, message: ['No Message'] });
 });
 
 http.listen(port, function () {
