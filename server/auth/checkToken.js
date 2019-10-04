@@ -5,7 +5,7 @@ const exclude = {
     '/heartbeat': true,
     '/api/joinCheck': true,
     '/api/join': true,
-    '/api/public-chats': true
+    '/app': true
 };
 
 const checkToken = (req, res, next) => {

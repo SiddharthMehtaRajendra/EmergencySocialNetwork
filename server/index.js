@@ -26,7 +26,7 @@ app.use(cookieParser());
 app.use(checkToken);
 
 // Serve static front-end files, for future use
-app.use(express.static(path.resolve(__dirname, '../dist')));
+app.use('/app', express.static(path.resolve(__dirname, '../dist')));
 
 io.use((socket, next) => {
     const token = parseCookies(socket.request.headers.cookie).token;

@@ -6,6 +6,8 @@ import BottomPopCard from '../components/bottomPopCard';
 import socket from './socket/config';
 import me from './me';
 import directory from './directory';
+import '../style/join.less';
+import Join from '../view/join.html';
 const Cookie = require('js-cookie');
 
 function initJoinPage() {
