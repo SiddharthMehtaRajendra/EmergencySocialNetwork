@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import '../style/directory.less';
-import Directory from '../view/directory.html';
 
 async function fetchData() {
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`);

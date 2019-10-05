@@ -8,9 +8,11 @@ import Navigo from 'navigo';
 import Welcome from './view/welcome.html';
 import Home from './view/home.html';
 import Error from './view/error.html';
-
 import Chat from './view/chat.html';
 import Chats from './view/chats.html';
+import Directory from './view/directory.html';
+import Join from './view/join.html';
+import Me from './view/me.html';
 
 import guide from './js/guide';
 import chats from './js/chats';
