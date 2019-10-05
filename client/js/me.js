@@ -3,6 +3,7 @@ import socket from './socket/config';
 import { API_PREFIX, SERVER_ADDRESS } from './constant/serverInfo';
 import Cookie from 'js-cookie';
 import '../style/me.less';
+import Me from './view/me.html';
 
 function logout() {
     Cookie.remove('token');
@@ -19,6 +20,8 @@ async function fetchData() {
 }
 
 async function render() {
+    const app = document.getElementById('app');
+    app.innerHTML = Me;
     if (!window.state.user) {
         await fetchData();
     }

@@ -7,11 +7,14 @@ import socket from './socket/config';
 import me from './me';
 import directory from './directory';
 import '../style/join.less';
+import JoinPage from '../view/join.html';
 
 const Cookie = require('js-cookie');
 
 function initJoinPage() {
+    const app = document.getElementById('app');
     const registerBtn = document.getElementById('register-btn');
+    app.innerHTML = JoinPage;
     registerBtn.addEventListener('click', join);
     BottomPopCard.init('Are you sure to create a new user with this username?', register);
 }

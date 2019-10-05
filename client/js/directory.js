@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import '../style/directory.less';
+import Directory from '../view/directory.html';
 
 async function fetchData() {
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`);
@@ -17,6 +18,8 @@ async function fetchData() {
 
 async function render() {
     const directory = document.getElementById('user-directory');
+    const app = document.getElementById('app');
+    app.innerHTML = Directory;
 
     if (!window.state.users) {
         await fetchData();
