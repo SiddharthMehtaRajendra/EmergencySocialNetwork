@@ -17,10 +17,9 @@ async function fetchData() {
 }
 
 async function render() {
-    const directory = document.getElementById('user-directory');
     const app = document.getElementById('app');
     app.innerHTML = Directory;
-
+    const directory = document.getElementById('user-directory');
     if (!window.state.users) {
         await fetchData();
     }

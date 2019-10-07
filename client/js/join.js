@@ -13,8 +13,8 @@ const Cookie = require('js-cookie');
 
 function initJoinPage() {
     const app = document.getElementById('app');
-    const registerBtn = document.getElementById('register-btn');
     app.innerHTML = JoinPage;
+    const registerBtn = document.getElementById('register-btn');
     registerBtn.addEventListener('click', join);
     BottomPopCard.init('Are you sure to create a new user with this username?', register);
 }

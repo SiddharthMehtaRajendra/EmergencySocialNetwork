@@ -1,6 +1,6 @@
 
 import '../style/chats.less';
-import Chats from './view/chats.html';
+import Chats from '../view/chats.html';
 
 function render() {
     const app = document.getElementById('app');
