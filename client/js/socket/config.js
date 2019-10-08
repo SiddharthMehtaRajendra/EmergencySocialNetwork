@@ -13,7 +13,9 @@ socket.on('UPDATE_MESSAGE', function (msg) {
 });
 
 socket.on('AUTH_FAILED', function () {
-    window.location.hash = '/join';
+    if (window.location.hash !== '#/') {
+        window.location.hash = '/join';
+    }
 });
 
 socket.on('UPDATE_DIRECTORY', async function (data) {

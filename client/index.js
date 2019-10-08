@@ -21,9 +21,10 @@ import initBottomTab from './components/bottomTab';
 
 import axios from 'axios';
 import Cookie from 'js-cookie';
+
 axios.defaults.withCredentials = true;
 axios.interceptors.request.use(function (config) {
-    if (!Cookie.get('token')) {
+    if (!Cookie.get('token') && window.location.hash !== '#/') {
         window.location.hash = '/join';
     }
     config.headers.token = Cookie.get('token');
@@ -31,7 +32,7 @@ axios.interceptors.request.use(function (config) {
 });
 
 axios.interceptors.response.use(function (response) {
-    if (response.data && !response.data.success && response.data.redirect) {
+    if (response.data && !response.data.success && response.data.redirect && window.location.hash !== '#/') {
         window.location.hash = '/join';
         return response;
     } else {

@@ -15,7 +15,7 @@ config.plugins = (config.plugins || []).concat([
 
 config.devServer = {
     contentBase: path.resolve(__dirname, './dist'),
-    publicPath: '/',
+    publicPath: '/app/',
     historyApiFallback: false,
     disableHostCheck: true,
     hot: true,

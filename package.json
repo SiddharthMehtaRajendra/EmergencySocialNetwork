@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "start": "node webpack-dev-server.js",
+    "watch": "node webpack-dev-server.js",
+    "start": "node server/index.js",
     "server": "node server/index.js"
   },
   "keywords": [],

@@ -3,7 +3,6 @@ const app = express();
 const path = require('path');
 const cors = require('cors');
 const http = require('http').createServer(app);
-// const port = 80;
 const port = process.env.PORT || 80;
 const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
