@@ -25,6 +25,7 @@ import Cookie from 'js-cookie';
 axios.defaults.withCredentials = true;
 axios.interceptors.request.use(function (config) {
     if (!Cookie.get('token') && window.location.hash !== '#/') {
+        console.log('Request Auth Failed, Redirect');
         window.location.hash = '/join';
     }
     config.headers.token = Cookie.get('token');
@@ -33,6 +34,7 @@ axios.interceptors.request.use(function (config) {
 
 axios.interceptors.response.use(function (response) {
     if (response.data && !response.data.success && response.data.redirect && window.location.hash !== '#/') {
+        console.log('Response Auth Failed, Redirect');
         window.location.hash = '/join';
         return response;
     } else {
