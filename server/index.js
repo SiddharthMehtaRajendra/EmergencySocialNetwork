@@ -3,7 +3,8 @@ const app = express();
 const path = require('path');
 const cors = require('cors');
 const http = require('http').createServer(app);
-const port = 80;
+// const port = 80;
+const port = process.env.PORT || 80;
 const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
@@ -26,7 +27,7 @@ app.use(cookieParser());
 app.use(checkToken);
 
 // Serve static front-end files, for future use
-app.use(express.static(path.resolve(__dirname, '../dist')));
+app.use('/app', express.static(path.resolve(__dirname, '../dist')));
 
 io.use((socket, next) => {
     const token = parseCookies(socket.request.headers.cookie).token;
