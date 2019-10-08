@@ -1,4 +1,4 @@
-import bottomPopCard from './View.html';
+import bottomPopCard from './view.html';
 import './style.less';
 
 function mount() {
