@@ -6,8 +6,13 @@ function updateUrl() {
     }
 }
 
+function reloadData() {
+    console.log('Reload From Server');
+}
+
 function initRouter() {
     window.addEventListener('load', updateUrl);
+    window.addEventListener('load', reloadData);
     window.addEventListener('hashchange', updateUrl);
 }
 

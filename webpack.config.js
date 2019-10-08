@@ -5,7 +5,7 @@ const HappyPack = require('happypack');
 module.exports = {
     mode: 'production',
     entry: {
-        app: './client/index.js'
+        app: './src/index.js'
     },
     devtool: 'inline-source-map',
     output: {

@@ -1,25 +1,15 @@
 const jwt = require('jsonwebtoken');
 const config = require('./config.js');
 
-function exclude(url) {
-    const urlTable = {
-        '/heartbeat': true,
-        '/api/joinCheck': true,
-        '/api/join': true,
-        '/': true,
-        '/app': true
-    };
-    if (urlTable[url]) {
-        return true;
-    }
-    if (url.indexOf('app') >= 0) {
-        return true;
-    }
-    return false;
-}
+const exclude = {
+    '/heartbeat': true,
+    '/api/joinCheck': true,
+    '/api/join': true,
+    '/api/public-chats': true
+};
 
 const checkToken = (req, res, next) => {
-    if (exclude(req.originalUrl)) {
+    if (exclude[req.originalUrl]) {
         next();
     } else {
         const token = (req.cookies && req.cookies.token) || (req.headers && req.headers.token);
