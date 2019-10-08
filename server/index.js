@@ -21,7 +21,10 @@ io.set('origins', '*:*');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors({ credentials: true, origin: true }));
+app.use(cors({
+    credentials: true,
+    origin: true
+}));
 app.use(cookieParser());
 app.use(checkToken);
 
@@ -65,7 +68,10 @@ io.on('connection', async function (socket) {
 
 app.get('/heartbeat', async function (req, res, next) {
     console.log('Hello ESN!');
-    res.status(200).json({ success: true, message: 'Hello ESN!' });
+    res.status(200).json({
+        success: true,
+        message: 'Hello ESN!'
+    });
 });
 
 app.post('/api/joinCheck', async function (req, res, next) {
@@ -126,27 +132,47 @@ app.post('/api/join', async function (req, res, next) {
             // await User.updateOnline(userObj.username, true);
             // io.emit('UPDATE_DIRECTORY', { data: 'A New User Created' });
             const token = jwt.sign({ username: req.body.username }, config.secret, { expiresIn: '24h' });
-            res.status(200).json({ success: true, message: 'Register Success', token: token });
+            res.status(200).json({
+                success: true,
+                message: 'Register Success',
+                token: token
+            });
         } else {
-            res.status(200).json({ success: false, message: result.res });
+            res.status(200).json({
+                success: false,
+                message: result.res
+            });
         }
     } else {
-        res.status(200).json({ success: false, message: 'Validate Failed' });
+        res.status(200).json({
+            success: false,
+            message: 'Validate Failed'
+        });
     }
 });
 
 app.get('/api/users', async function (req, res) {
     try {
-        const result = await User.find().sort({ online: -1, username: 1 });
+        const result = await User.find().sort({
+            online: -1,
+            username: 1
+        });
         const all = result.map(item => ({
             username: item.username,
             avatar: item.avatar || '#ccc',
             status: item.status || 'ok',
             online: item.online || false
         }));
-        res.status(200).json({ success: true, message: 'All Directory', users: all });
+        res.status(200).json({
+            success: true,
+            message: 'All Directory',
+            users: all
+        });
     } catch (e) {
-        res.status(200).json({ success: false, message: e._message });
+        res.status(200).json({
+            success: false,
+            message: e._message
+        });
     }
 });
 
@@ -158,7 +184,7 @@ app.get('/api/user/:username?', async function (req, res) {
         success: result.success,
         message: result.success ? 'Get User info OK' : result.res,
         user: {
-            username: user.username,
+            username: user.username || null,
             avatar: user.avatar || '#ccc',
             online: user.online || false,
             status: user.status || 'ok'
@@ -172,9 +198,16 @@ app.get('/api/historyMessage', async function (req, res) {
     const chatId = +(req.query && req.query.chatId);
     const dbResult = await Message.history(chatId, +smallestMessageId, pageSize);
     if (dbResult.success) {
-        res.status(200).json({ success: true, message: 'Get Messages', messages: dbResult.res });
+        res.status(200).json({
+            success: true,
+            message: 'Get Messages',
+            messages: dbResult.res
+        });
     } else {
-        res.status(200).json({ success: false, message: 'Load Messages Failed' });
+        res.status(200).json({
+            success: false,
+            message: 'Load Messages Failed'
+        });
     }
 });
 
@@ -184,9 +217,16 @@ app.get('/api/public-chats', async function (req, res) {
         var publicMessages = result.res.filter(function (value) {
             return value.type && value.type.trim().toLowerCase() === 'public';
         });
-        res.status(200).json({ success: true, message: 'Public Wall', messages: publicMessages });
+        res.status(200).json({
+            success: true,
+            message: 'Public Wall',
+            messages: publicMessages
+        });
     }
-    res.status(200).json({ success: false, message: ['No Message'] });
+    res.status(200).json({
+        success: false,
+        message: ['No Message']
+    });
 });
 
 http.listen(port, function () {

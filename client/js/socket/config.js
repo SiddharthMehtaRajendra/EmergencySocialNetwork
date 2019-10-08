@@ -14,6 +14,7 @@ socket.on('UPDATE_MESSAGE', function (msg) {
 
 socket.on('AUTH_FAILED', function () {
     if (window.location.hash !== '#/') {
+        console.log('Socket Auth Failed, Redirect');
         window.location.hash = '/join';
     }
 });
