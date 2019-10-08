@@ -10,7 +10,7 @@
 * [OOA/UML Diagram](https://drive.google.com/drive/folders/1JonuDBP1Gf3wSTkMVeVivOKOA34FsPI0?usp=sharing)
 * [Rest API](https://documenter.getpostman.com/view/3161844/SVn2PbnT?version=latest) 
 
-## How to run
+## How to run the project
 Install all packages
 ```
 npm install
