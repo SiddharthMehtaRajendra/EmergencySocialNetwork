@@ -9,7 +9,7 @@ function getServerAddress() {
     const url = window.location.href;
     for (let i = 0; i < localKeyWords.length; i++) {
         if (url.includes(localKeyWords[i])) {
-            return 'http://localhost/';
+            return 'http://localhost';
         }
     }
     return '';
