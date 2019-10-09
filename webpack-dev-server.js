@@ -6,7 +6,6 @@ const path = require('path');
 const port = 3000;
 const config = require('./webpack.config.js');
 config.mode = 'development';
-config.output.publicPath = `http://${localIP}:${port}/`;
 config.devtool = 'source-map';
 config.plugins = (config.plugins || []).concat([
     new webpack.HotModuleReplacementPlugin(),
@@ -15,7 +14,7 @@ config.plugins = (config.plugins || []).concat([
 
 config.devServer = {
     contentBase: path.resolve(__dirname, './dist'),
-    publicPath: '/',
+    publicPath: '/app',
     historyApiFallback: false,
     disableHostCheck: true,
     hot: true,

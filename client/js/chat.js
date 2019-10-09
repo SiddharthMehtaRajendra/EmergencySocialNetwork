@@ -3,6 +3,8 @@ import axios from 'axios';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import processMessage from './lib/processMessage';
 import lodash from 'lodash';
+import '../style/chat.less';
+import Chat from '../view/chat.html';
 
 const pageSize = 20;
 
@@ -86,10 +88,15 @@ function renderOneMessage(msg) {
     const bubbleWrap = document.getElementById('bubble-wrap');
     const blankBubble = document.getElementById('blank-bubble');
     bubbleWrap.insertBefore(createSingleBubble(msg), blankBubble);
-    if (msg.from === window.state.user.username || window.state.needScrollToBottom) {
+    if (msg.from === window.state.user.username && !window.state.bubbleIsBottom) {
         scrollToBottom();
     }
-    if (!window.state.needScrollToBottom) {
+
+    if (window.state.bubbleIsBottom) {
+        scrollToBottom();
+    }
+
+    if (!window.state.bubbleIsBottom) {
         window.state.showMessageTip = true;
     }
     if (window.state.showMessageTip) {
@@ -122,12 +129,13 @@ function handleScroll() {
     return lodash.debounce(async function () {
         const container = document.getElementById('bubble-wrap');
         const scrollTop = container.scrollTop;
+        // console.log(container.scrollTop, container.clientHeight, container.scrollHeight);
         if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
-            window.state.needScrollToBottom = true;
+            window.state.bubbleIsBottom = true;
             window.state.showMessageTip = false;
             setMessageTipVisible(false);
         } else {
-            window.state.needScrollToBottom = false;
+            window.state.bubbleIsBottom = false;
         }
         if (scrollTop === 0 && !window.state.isLoading) {
             renderMessages(await getHistoryMessage());
@@ -141,9 +149,11 @@ function scrollToBottom() {
 }
 
 async function render() {
+    const app = document.getElementById('app');
+    app.innerHTML = Chat;
     window.state.smallestMessageId = Infinity;
     window.state.isLoading = false;
-    window.state.needScrollToBottom = false;
+    window.state.bubbleIsBottom = true;
     window.state.showMessageTip = false;
     if (window.location.hash.indexOf('public') >= 0) {
         document.getElementById('single-chat-navbar-title').innerText = 'Public Wall';

@@ -13,7 +13,10 @@ socket.on('UPDATE_MESSAGE', function (msg) {
 });
 
 socket.on('AUTH_FAILED', function () {
-    window.location.hash = '/join';
+    if (window.location.hash !== '#/') {
+        console.log('Socket Auth Failed, Redirect');
+        window.location.hash = '/join';
+    }
 });
 
 socket.on('UPDATE_DIRECTORY', async function (data) {
