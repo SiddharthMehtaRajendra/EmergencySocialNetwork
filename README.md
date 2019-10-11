@@ -17,7 +17,7 @@ npm install
 ```
 Start express server
 ```
-npm run server
+npm run watch
 ```
 Start front-end resource server (support hot module reload)
 ```

@@ -33,7 +33,7 @@ const checkToken = (req, res, next) => {
                 }
             });
         } else {
-            res.status(200).json({ success: false, message: 'Auth Failed', redirect: true });
+            res.status(200).json({ success: false, message: 'No token recieved', redirect: true });
         }
     }
 };
