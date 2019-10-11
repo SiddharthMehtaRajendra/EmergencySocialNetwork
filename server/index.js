@@ -49,11 +49,10 @@ io.on('connection', async function (socket) {
     socket.on('MESSAGE', async function (msg) {
         const insertResult = await Message.insertOne({
             time: new Date(),
-            from: socket.handshake.username,
-            to: msg.to,
+            from: msg.fromUser,
+            to: msg.toUser,
             type: msg.type,
             content: msg.content,
-            chatId: msg.chatId,
             status: msg.status
         });
         if (insertResult.success) {
@@ -195,15 +194,20 @@ app.get('/api/user/:username?', async function (req, res) {
 app.get('/api/historyMessage', async function (req, res) {
     const smallestMessageId = +(req.query && req.query.smallestMessageId);
     const pageSize = +(req.query && req.query.pageSize);
-    const chatId = +(req.query && req.query.chatId);
-    const dbResult = await Message.history(chatId, +smallestMessageId, pageSize);
+    const fromUser = +(req.query && req.query.fromUser);
+    const toUser = +(req.query && req.query.toUser);
+    console.log(fromUser);
+    console.log(toUser);
+    const dbResult = await Message.history(fromUser, toUser, +smallestMessageId, pageSize);
     if (dbResult.success) {
+        console.log('success');
         res.status(200).json({
             success: true,
             message: 'Get Messages',
             messages: dbResult.res
         });
     } else {
+        console.log('failure');
         res.status(200).json({
             success: false,
             message: 'Load Messages Failed'

@@ -32,8 +32,10 @@ async function render() {
             const userAvatar = document.createElement('div');
             const userStatus = document.createElement('div');
             const bottomThinLine = document.createElement('div');
-
             userCard.className = 'single-user common-list-item';
+            userCard.addEventListener('click', function () {
+                window.location.hash = '/chat/' + user.username;
+            });
             userName.className = 'username';
             userAvatar.className = 'avatar';
             userStatus.className = 'status-circle';

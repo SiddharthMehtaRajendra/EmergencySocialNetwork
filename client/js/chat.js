@@ -14,7 +14,8 @@ async function getHistoryMessage() {
         params: {
             smallestMessageId: window.state.smallestMessageId,
             pageSize: pageSize,
-            chatId: 0
+            fromUser: window.state.user.username,
+            toUser: window.location.href.split('/').pop()
         }
     });
     window.state.isLoading = false;
@@ -76,8 +77,8 @@ function sendMessage() {
         socket.emit('MESSAGE', {
             content: content,
             type: 0,
-            to: 0,
-            chatId: 0,
+            fromUser: window.state.user.username,
+            toUser: window.location.href.split('/').pop(),
             status: (window.state && window.state.user && window.state.user.status) || 'ok'
         });
         document.getElementById('message-input').value = '';

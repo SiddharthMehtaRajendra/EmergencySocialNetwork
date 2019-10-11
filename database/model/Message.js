@@ -18,9 +18,6 @@ const MessageSchema = new mongoose.Schema({
     content: {
         type: String
     },
-    chatId: {
-        type: Number
-    },
     status: {
         type: String
     }
@@ -39,11 +36,11 @@ MessageSchema.statics.insertOne = async function (message) {
     return { success, res };
 };
 
-MessageSchema.statics.history = async function (chatId, smallestMessageId, pageSize) {
+MessageSchema.statics.history = async function (fromUser, toUser, smallestMessageId, pageSize) {
     let res = [];
     let success = true;
     try {
-        res = await Message.find({ chatId: chatId, id: { $lt: +smallestMessageId } }).sort({ id: -1 }).limit(pageSize);
+        res = await Message.find({ $or: [{ from: fromUser, to: toUser }, { to: fromUser, from: toUser }], id: { $lt: +smallestMessageId } }).sort({ id: -1 }).limit(pageSize);
         res = res.reverse();
     } catch (e) {
         res = e._message;
