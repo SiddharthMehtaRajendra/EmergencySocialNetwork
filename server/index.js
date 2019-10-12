@@ -45,6 +45,7 @@ io.use((socket, next) => {
 
 io.on('connection', async function (socket) {
     await User.updateOnline(socket.handshake.username, true);
+    await User.updateSocketId(socket.handshake.username, socket.id);
     io.emit('UPDATE_DIRECTORY', { data: 'A User Online' });
     socket.on('MESSAGE', async function (msg) {
         const insertResult = await Message.insertOne({
@@ -56,7 +57,15 @@ io.on('connection', async function (socket) {
             status: msg.status
         });
         if (insertResult.success) {
-            io.emit('UPDATE_MESSAGE', insertResult.res);
+            if (msg.toUser === 'public') {
+                io.emit('UPDATE_MESSAGE', insertResult.res);
+            } else {
+                const fromUserId = socket.id;
+                const res = await User.getOneUserByUsername(msg.toUser);
+                const toUserId = res.res[0].socketID;
+                io.to(fromUserId).emit('UPDATE_MESSAGE', insertResult.res);
+                io.to(toUserId).emit('UPDATE_MESSAGE', insertResult.res);
+            };
         }
     });
     socket.on('disconnect', async function () {
@@ -196,19 +205,14 @@ app.get('/api/historyMessage', async function (req, res) {
     const pageSize = +(req.query && req.query.pageSize);
     const fromUser = (req.query && req.query.fromUser);
     const toUser = (req.query && req.query.toUser);
-    const publicWall = (req.query && req.query.publicWall);
-    console.log(fromUser);
-    console.log(toUser);
     const dbResult = await Message.history(fromUser, toUser, +smallestMessageId, pageSize);
     if (dbResult.success) {
-        console.log('success');
         res.status(200).json({
             success: true,
             message: 'Get Messages',
             messages: dbResult.res
         });
     } else {
-        console.log('failure');
         res.status(200).json({
             success: false,
             message: 'Load Messages Failed'
