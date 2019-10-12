@@ -39,13 +39,13 @@ MessageSchema.statics.insertOne = async function (message) {
 MessageSchema.statics.history = async function (fromUser, toUser, smallestMessageId, pageSize) {
     let res = [];
     let success = true;
-    try {
+    if (toUser === 'public') {
+        res = await Message.find({ to: 'public', id: { $lt: +smallestMessageId } }).sort({ id: -1 }).limit(pageSize);
+    } else {
         res = await Message.find({ $or: [{ from: fromUser, to: toUser }, { to: fromUser, from: toUser }], id: { $lt: +smallestMessageId } }).sort({ id: -1 }).limit(pageSize);
-        res = res.reverse();
-    } catch (e) {
-        res = e._message;
-        success = false;
-    }
+    };
+    res = res.reverse();
+    success = 'true';
     return { success, res };
 };
 

@@ -194,8 +194,9 @@ app.get('/api/user/:username?', async function (req, res) {
 app.get('/api/historyMessage', async function (req, res) {
     const smallestMessageId = +(req.query && req.query.smallestMessageId);
     const pageSize = +(req.query && req.query.pageSize);
-    const fromUser = +(req.query && req.query.fromUser);
-    const toUser = +(req.query && req.query.toUser);
+    const fromUser = (req.query && req.query.fromUser);
+    const toUser = (req.query && req.query.toUser);
+    const publicWall = (req.query && req.query.publicWall);
     console.log(fromUser);
     console.log(toUser);
     const dbResult = await Message.history(fromUser, toUser, +smallestMessageId, pageSize);
