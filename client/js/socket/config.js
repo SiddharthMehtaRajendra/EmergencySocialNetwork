@@ -3,12 +3,21 @@ import chat from '../chat';
 import processMessage from '../lib/processMessage';
 import directory from '../directory';
 import { SERVER_ADDRESS } from '../constant/serverInfo';
+import Toast from '../lib/toast';
 
 const socket = io(SERVER_ADDRESS);
 
 socket.on('UPDATE_MESSAGE', function (msg) {
-    if (msg && window.location.hash.indexOf('#/chat/') >= 0) {
+    const user = window.location.href.split('/').pop();
+    console.log(user);
+    if (user === msg.from || user === msg.to) {
         chat.renderOneMessage(processMessage(msg));
+    } else {
+        if (msg.to === 'public') {
+            msg.from = '(Public Board) ' + msg.from;
+        }
+        const newMessage = msg.from + ':\r\n' + msg.content;
+        Toast(newMessage, '#F41C3B');
     }
 });
 

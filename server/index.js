@@ -64,6 +64,7 @@ io.on('connection', async function (socket) {
                 const res = await User.getOneUserByUsername(msg.toUser);
                 const toUserId = res.res[0].socketID;
                 io.to(fromUserId).emit('UPDATE_MESSAGE', insertResult.res);
+                console.log(insertResult.res);
                 io.to(toUserId).emit('UPDATE_MESSAGE', insertResult.res);
             };
         }
