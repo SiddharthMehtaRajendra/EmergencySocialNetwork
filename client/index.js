@@ -98,6 +98,7 @@ router.on('/me', async function () {
 }).resolve();
 
 router.on('/chat/:id', async function () {
+    console.log(window.location.hash);
     await chat.render();
 }).resolve();
 

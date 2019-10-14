@@ -36,16 +36,20 @@ MessageSchema.statics.insertOne = async function (message) {
     return { success, res };
 };
 
-MessageSchema.statics.history = async function (fromUser, toUser, smallestMessageId, pageSize) {
+MessageSchema.statics.history = async function (from, to, smallestMessageId, pageSize) {
     let res = [];
     let success = true;
-    if (toUser === 'public') {
-        res = await Message.find({ to: 'public', id: { $lt: +smallestMessageId } }).sort({ id: -1 }).limit(pageSize);
-    } else {
-        res = await Message.find({ $or: [{ from: fromUser, to: toUser }, { to: fromUser, from: toUser }], id: { $lt: +smallestMessageId } }).sort({ id: -1 }).limit(pageSize);
-    };
-    res = res.reverse();
-    success = 'true';
+    try{
+        if (to === 'public') {
+            res = await Message.find({ to: 'public', id: { $lt: +smallestMessageId } }).sort({ id: -1 }).limit(pageSize);
+        } else {
+            res = await Message.find({ $or: [{ from: from, to: to }, { to: from, from: to }], id: { $lt: +smallestMessageId } }).sort({ id: -1 }).limit(pageSize);
+        }
+        res = res.reverse();
+    } catch (e) {
+        res = e._message;
+        success = false;
+    }
     return { success, res };
 };
 

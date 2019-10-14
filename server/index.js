@@ -50,23 +50,22 @@ io.on('connection', async function (socket) {
     socket.on('MESSAGE', async function (msg) {
         const insertResult = await Message.insertOne({
             time: new Date(),
-            from: msg.fromUser,
-            to: msg.toUser,
+            from: msg.from,
+            to: msg.to,
             type: msg.type,
             content: msg.content,
             status: msg.status
         });
         if (insertResult.success) {
-            if (msg.toUser === 'public') {
+            if (msg.to === 'public') {
                 io.emit('UPDATE_MESSAGE', insertResult.res);
             } else {
-                const fromUserId = socket.id;
-                const res = await User.getOneUserByUsername(msg.toUser);
-                const toUserId = res.res[0].socketID;
-                io.to(fromUserId).emit('UPDATE_MESSAGE', insertResult.res);
-                console.log(insertResult.res);
-                io.to(toUserId).emit('UPDATE_MESSAGE', insertResult.res);
-            };
+                const fromId = socket.id;
+                const res = await User.getOneUserByUsername(msg.to);
+                const toId = res.res[0].socketID;
+                io.to(fromId).emit('UPDATE_MESSAGE', insertResult.res);
+                io.to(toId).emit('UPDATE_MESSAGE', insertResult.res);
+            }
         }
     });
     socket.on('disconnect', async function () {
@@ -204,9 +203,9 @@ app.get('/api/user/:username?', async function (req, res) {
 app.get('/api/historyMessage', async function (req, res) {
     const smallestMessageId = +(req.query && req.query.smallestMessageId);
     const pageSize = +(req.query && req.query.pageSize);
-    const fromUser = (req.query && req.query.fromUser);
-    const toUser = (req.query && req.query.toUser);
-    const dbResult = await Message.history(fromUser, toUser, +smallestMessageId, pageSize);
+    const from = (req.query && req.query.from);
+    const to = (req.query && req.query.to);
+    const dbResult = await Message.history(from, to, +smallestMessageId, pageSize);
     if (dbResult.success) {
         res.status(200).json({
             success: true,

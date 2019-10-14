@@ -10,6 +10,7 @@ const socket = io(SERVER_ADDRESS);
 socket.on('UPDATE_MESSAGE', function (msg) {
     const user = window.location.href.split('/').pop();
     console.log(user);
+    console.log(msg);
     if (user === msg.from || user === msg.to) {
         chat.renderOneMessage(processMessage(msg));
     } else {
@@ -17,7 +18,7 @@ socket.on('UPDATE_MESSAGE', function (msg) {
             msg.from = '(Public Board) ' + msg.from;
         }
         const newMessage = msg.from + ':\r\n' + msg.content;
-        Toast(newMessage, '#F41C3B');
+        Toast(newMessage, '#1983ff');
     }
 });
 
