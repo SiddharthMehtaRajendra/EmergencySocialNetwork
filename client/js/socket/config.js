@@ -32,6 +32,8 @@ socket.on('UPDATE_DIRECTORY', async function () {
     await directory.fetchData();
     if (window.location.hash === '#/directory') {
         await directory.render();
+    } else if (window.location.hash === '#/chats') {
+        await chats.render();
     }
 });
 
