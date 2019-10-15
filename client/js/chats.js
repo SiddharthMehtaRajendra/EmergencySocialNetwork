@@ -24,6 +24,9 @@ async function fetchData() {
         window.state.chatsMap = chatsMap;
         sortChats();
     }
+    if (res.status === 200 && res.data.success && res.data.public) {
+        window.state.latestPublic = res.data.public;
+    }
 }
 
 async function render() {
@@ -37,6 +40,10 @@ async function render() {
         document.getElementById('public-chat-entrance').addEventListener('click', function () {
             window.location.hash = '/chat/public';
         });
+        const latestPublicMessage = window.state.latestPublic && window.state.latestPublic.latestMessage;
+        document.getElementById('latest-public-message-content').innerText = latestPublicMessage.content;
+        document.getElementById('latest-public-message-time').innerText = dateFormat(latestPublicMessage.time, 'mm/dd HH:MM');
+
         allChats.innerHTML = '';
         const chats = window.state.chats;
         chats.forEach((chat, index) => {

@@ -36,13 +36,17 @@ socket.on('UPDATE_DIRECTORY', async function () {
 });
 
 socket.on('UPDATE_CHATS', async function (chat) {
-    if (!window.state.chatsMap[chat.otherUser]) {
-        window.state.chats.push(chat);
-        window.state.chatsMap[chat.otherUser] = chat;
+    if (chat.to !== 'public') {
+        if (!window.state.chatsMap[chat.otherUser]) {
+            window.state.chats.push(chat);
+            window.state.chatsMap[chat.otherUser] = chat;
+        } else {
+            window.state.chatsMap[chat.otherUser].latestMessage = chat.latestMessage;
+        }
+        chats.sortChats();
     } else {
-        window.state.chatsMap[chat.otherUser].latestMessage = chat.latestMessage;
+        window.state.latestPublic = chat;
     }
-    chats.sortChats();
     if (window.location.hash === '#/chats') {
         await chats.render();
     }

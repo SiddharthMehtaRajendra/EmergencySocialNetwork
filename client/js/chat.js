@@ -75,7 +75,7 @@ function sendMessage() {
     const content = document.getElementById('message-input').value;
     if (content && content.length > 0) {
         const toUser = window.location.href.split('/').pop();
-        const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || null;
+        const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === 'public' ? -1 : null);
         socket.emit('MESSAGE', {
             content: content,
             type: 0,

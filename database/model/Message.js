@@ -45,6 +45,26 @@ MessageSchema.statics.insertOne = async function (message) {
     };
 };
 
+MessageSchema.statics.latestPublic = async function () {
+    let res = {};
+    let success = true;
+    try {
+        res = await this.find({
+            to: 'public'
+        }).sort({ id: -1 }).limit(1);
+        if (res && res.length > 0) {
+            res = res[0];
+        }
+    } catch (e) {
+        res = e._message;
+        success = false;
+    }
+    return {
+        success,
+        res
+    };
+};
+
 MessageSchema.statics.history = async function (from, to, smallestMessageId, pageSize) {
     let res = [];
     let success = true;

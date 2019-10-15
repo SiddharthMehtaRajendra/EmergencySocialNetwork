@@ -61,36 +61,46 @@ io.on('connection', async function (socket) {
     await User.updateSocketId(socket.handshake.username, socket.id);
     io.emit('UPDATE_DIRECTORY', { data: 'A User Online' });
     socket.on('MESSAGE', async function (msg) {
-        // TODO: Refactor the message insertion logic
-        msg = processMsg(msg);
-        const fromSocketId = socket.id;
-        const toSocketId = (await User.getOneUserByUsername(msg.to)).res[0].socketID;
-        let ChatInsert;
-        if (!msg.chatId && msg.to !== 'public') {
-            ChatInsert = await Chat.insertOne({
-                type: 'private',
-                from: msg.from,
-                to: msg.to,
-                latestMessage: msg
-            });
-        } else {
-            ChatInsert = await Chat.updateLatestMessage(msg.chatId, msg);
-        }
-        if (ChatInsert.success) {
-            const result = JSON.parse(JSON.stringify(ChatInsert.res));
-            result.otherUser = msg.to;
-            io.to(fromSocketId).emit('UPDATE_CHATS', result);
-            result.otherUser = msg.from;
-            io.to(toSocketId).emit('UPDATE_CHATS', result);
-        }
+        if (msg.chatId) {
+            msg = processMsg(msg);
+            if (msg.to !== 'public') {
+                const fromSocketId = socket.id;
+                const toSocketId = (await User.getOneUserByUsername(msg.to)).res[0].socketID;
+                let ChatInsert;
+                if (!msg.chatId) {
+                    ChatInsert = await Chat.insertOne({
+                        type: 'private',
+                        from: msg.from,
+                        to: msg.to,
+                        latestMessage: msg
+                    });
+                } else {
+                    ChatInsert = await Chat.updateLatestMessage(msg.chatId, msg);
+                }
+                if (ChatInsert.success) {
+                    const result = JSON.parse(JSON.stringify(ChatInsert.res));
+                    result.otherUser = msg.to;
+                    io.to(fromSocketId).emit('UPDATE_CHATS', result);
+                    result.otherUser = msg.from;
+                    io.to(toSocketId).emit('UPDATE_CHATS', result);
+                }
 
-        const MessageInsert = await Message.insertOne(msg);
-        if (MessageInsert.success) {
-            if (msg.to === 'public') {
-                io.emit('UPDATE_MESSAGE', MessageInsert.res);
+                const MessageInsert = await Message.insertOne(msg);
+                if (MessageInsert.success) {
+                    io.to(fromSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
+                    io.to(toSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
+                }
             } else {
-                io.to(fromSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
-                io.to(toSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
+                io.emit('UPDATE_CHATS', {
+                    chatId: -1,
+                    from: msg.from,
+                    latestMessage: msg,
+                    otherUser: 'public',
+                    to: 'public',
+                    type: 'public'
+                });
+                const MessageInsert = await Message.insertOne(msg);
+                io.emit('UPDATE_MESSAGE', MessageInsert.res);
             }
         }
     });
@@ -247,6 +257,15 @@ app.get('/api/historyMessage', async function (req, res) {
 });
 
 app.get('/api/chats', async function (req, res) {
+    const latestPublicMessage = (await Message.latestPublic()).res;
+    const publicResult = {
+        chatId: -1,
+        from: latestPublicMessage.from,
+        latestMessage: latestPublicMessage,
+        otherUser: 'public',
+        to: 'public',
+        type: 'public'
+    };
     const username = (req.params && req.params.username) || req.username;
     const dbResult = await Chat.related(username);
     const chats = JSON.parse(JSON.stringify(dbResult.res)); // Mongoose Result can't be modified
@@ -260,7 +279,8 @@ app.get('/api/chats', async function (req, res) {
     res.status(200).json({
         success: true,
         message: 'Get Chats',
-        chats: chatsWithOtherUser
+        chats: chatsWithOtherUser,
+        public: publicResult
     });
 });
 
