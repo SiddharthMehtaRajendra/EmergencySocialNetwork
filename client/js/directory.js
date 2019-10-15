@@ -2,6 +2,7 @@ import axios from 'axios';
 import { SERVER_ADDRESS, API_PREFIX } from './constant/serverInfo';
 import '../style/directory.less';
 import Directory from '../view/directory.html';
+import Utils from './lib/appUtils';
 
 async function fetchData() {
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`);
@@ -43,6 +44,7 @@ async function render() {
             userName.innerText = user.username;
             userAvatar.innerText = user.username.charAt(0);
             userAvatar.setAttribute('style', `background-color: ${user.avatar || '#CCC'};`);
+            Utils.renderStatusColor(user.status, userStatus);
             userCard.appendChild(userAvatar);
             userCard.appendChild(userStatus);
             userCard.appendChild(userName);

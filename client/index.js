@@ -17,7 +17,7 @@ import directory from './js/directory';
 
 import initRouter from './js/initRouter';
 import initJoinPage from './js/join';
-import initBottomTab from './components/bottomTab';
+import BottomTab from './components/bottomTab';
 
 import axios from 'axios';
 import Cookie from 'js-cookie';
@@ -46,7 +46,7 @@ const app = document.getElementById('app');
 const router = new Navigo(null, true, '#');
 window.state = {};
 initRouter();
-initBottomTab();
+BottomTab.initBottomTab();
 
 router.hooks({
     before: async function (done, params) {

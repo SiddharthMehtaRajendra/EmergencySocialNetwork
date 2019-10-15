@@ -233,6 +233,13 @@ app.get('/api/public-chats', async function (req, res) {
     });
 });
 
+app.post('/api/mystatus', async function (req, res, next){
+    await User.updateStatus(req.body.username, req.body.status);
+    res.status(200).json({
+        success: true
+    });
+});
+
 http.listen(port, function () {
     console.log(`Express server start, listening on port:${port} ...`);
 });
