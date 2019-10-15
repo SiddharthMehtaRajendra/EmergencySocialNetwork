@@ -47,12 +47,8 @@ jobs:
           name: test
           command: |
             nyc grunt test
-      - store_test_results:
-          path: test
-          destination: result
       - store_artifacts:
-          path: artifacts
-          destination: result
+          path: coverage
 
 
 
