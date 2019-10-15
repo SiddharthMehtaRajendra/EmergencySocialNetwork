@@ -61,6 +61,7 @@ io.on('connection', async function (socket) {
     await User.updateSocketId(socket.handshake.username, socket.id);
     io.emit('UPDATE_DIRECTORY', { data: 'A User Online' });
     socket.on('MESSAGE', async function (msg) {
+        // TODO: Refactor the message insertion logic
         msg = processMsg(msg);
         const fromSocketId = socket.id;
         const toSocketId = (await User.getOneUserByUsername(msg.to)).res[0].socketID;

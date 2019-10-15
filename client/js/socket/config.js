@@ -17,7 +17,7 @@ socket.on('UPDATE_MESSAGE', function (msg) {
             msg.from = '(Public Board) ' + msg.from;
         }
         const newMessage = msg.from + ':\r\n' + msg.content;
-        Toast(newMessage, '#1983ff');
+        Toast(newMessage, null, null, 5000);
     }
 });
 
