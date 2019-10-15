@@ -17,7 +17,7 @@ import directory from './js/directory';
 
 import initRouter from './js/initRouter';
 import initJoinPage from './js/join';
-import initBottomTab from './components/bottomTab';
+import BottomTab from './components/bottomTab';
 
 import axios from 'axios';
 import Cookie from 'js-cookie';
@@ -46,7 +46,7 @@ const app = document.getElementById('app');
 const router = new Navigo(null, true, '#');
 window.state = {};
 initRouter();
-initBottomTab();
+BottomTab.initBottomTab();
 
 router.hooks({
     before: async function (done, params) {
@@ -58,6 +58,10 @@ router.hooks({
             if (!(window.state && window.state.users)) {
                 console.log('Load Directory');
                 await directory.fetchData();
+            }
+            if (!(window.state && window.state.chats)) {
+                console.log('Load Chats');
+                await chats.fetchData();
             }
         }
         done();
@@ -89,8 +93,9 @@ router.on('/guide', function () {
     guide.render();
 });
 
-router.on('/chats', function () {
-    chats.render();
+router.on('/chats', async function () {
+    console.log('Re render');
+    await chats.render();
 }).resolve();
 
 router.on('/me', async function () {
@@ -98,6 +103,7 @@ router.on('/me', async function () {
 }).resolve();
 
 router.on('/chat/:id', async function () {
+    console.log(window.location.hash);
     await chat.render();
 }).resolve();
 

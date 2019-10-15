@@ -1,5 +1,7 @@
 [![BCH compliance](https://bettercodehub.com/edge/badge/cmusv-fse/f19-ESN-SB2?branch=master&token=ec3c9a3d44156002dd5e4debeec0dbbf05bebdbb)](https://bettercodehub.com/)
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/dac6b348ac82979bd235/maintainability)](https://codeclimate.com/repos/5d9be414914c0a01790082c9/maintainability)
+
 # FSE SB2 ESN Project
 ## About
 * A Single Page Application based on hash

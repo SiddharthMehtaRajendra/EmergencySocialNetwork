@@ -4,6 +4,9 @@ import { API_PREFIX, SERVER_ADDRESS } from './constant/serverInfo';
 import Cookie from 'js-cookie';
 import '../style/me.less';
 import Me from '../view/me.html';
+import StatusPopCard from '../components/statusPopCard';
+import Utils from './lib/appUtils';
+import directory from './directory';
 
 function logout() {
     Cookie.remove('token');
@@ -33,11 +36,42 @@ async function render() {
         }
         document.getElementById('page-me-username').innerText = user.username;
         document.getElementById('page-me-status').innerText = user.status;
+        Utils.renderStatusColor(user.status, document.getElementById('page-me-status'));
         document.getElementById('logout-menu').addEventListener('click', logout);
+        document.getElementById('user-status').addEventListener('click', renderStatusPopCard);
         document.getElementById('user-guide-entrance').addEventListener('click', function () {
             window.location.hash = '/guide';
         });
     }
+}
+
+async function renderStatusPopCard() {
+    StatusPopCard.init(updateStatus);
+    StatusPopCard.show();
+}
+
+async function updateStatus(event) {
+    const statusElement = event.currentTarget.children;
+    if (statusElement && statusElement[0].id) {
+        const userStatus = document.getElementById(statusElement[0].id).innerHTML;
+        if (userStatus) {
+            window.state.user.status = userStatus;
+            axios.post(`${SERVER_ADDRESS}${API_PREFIX}/mystatus/`, {
+                username: window.state.user.username,
+                status: userStatus
+            }).then(async (res) => {
+                if (res && res.status === 200) {
+                    await directory.fetchData();
+                    await render();
+                } else {
+                    console.log('Response Invalid!');
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+        }
+    }
+    StatusPopCard.close();
 }
 
 const me = {
