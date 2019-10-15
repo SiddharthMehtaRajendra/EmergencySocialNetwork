@@ -8,6 +8,7 @@ function renderStatusColor(userStatus, statusElement) {
             statusElement.setAttribute('style', 'background-color: #F41C3B');
             break;
         case 'help':
+        case 'need help':
             statusElement.setAttribute('style', 'background-color: #FFCC00');
             break;
         case 'no status':

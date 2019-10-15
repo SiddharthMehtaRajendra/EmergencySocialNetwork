@@ -283,10 +283,15 @@ app.get('/api/chats', async function (req, res) {
 });
 
 app.post('/api/mystatus', async function (req, res, next) {
-    await User.updateStatus(req.body.username, req.body.status);
-    res.status(200).json({
-        success: true
-    });
+    try {
+        await User.updateStatus(req.body.username, req.body.status);
+        io.emit('UPDATE_DIRECTORY', { data: 'User Status Change' });
+        res.status(200).json({
+            success: true
+        });
+    } catch (e) {
+        console.log(e);
+    }
 });
 
 http.listen(port, function () {
