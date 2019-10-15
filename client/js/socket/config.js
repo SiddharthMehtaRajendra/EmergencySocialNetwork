@@ -9,8 +9,6 @@ const socket = io(SERVER_ADDRESS);
 
 socket.on('UPDATE_MESSAGE', function (msg) {
     const user = window.location.href.split('/').pop();
-    console.log(user);
-    console.log(msg);
     if (user === msg.from || user === msg.to) {
         chat.renderOneMessage(processMessage(msg));
     } else {
@@ -29,11 +27,15 @@ socket.on('AUTH_FAILED', function () {
     }
 });
 
-socket.on('UPDATE_DIRECTORY', async function (data) {
+socket.on('UPDATE_DIRECTORY', async function () {
     await directory.fetchData();
     if (window.location.hash === '#/directory') {
         await directory.render();
     }
+});
+
+socket.on('UPDATE_CHATS', async function (data) {
+    console.log(data);
 });
 
 export default socket;

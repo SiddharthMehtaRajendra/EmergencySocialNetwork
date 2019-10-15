@@ -10,8 +10,6 @@ const pageSize = 20;
 
 async function getHistoryMessage() {
     window.state.isLoading = true;
-    console.log(window.state.user.username);
-    console.log(window.location.href.split('/').pop());
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/historyMessage`, {
         params: {
             smallestMessageId: window.state.smallestMessageId,
@@ -158,6 +156,7 @@ async function render() {
     window.state.isLoading = false;
     window.state.bubbleIsBottom = true;
     window.state.showMessageTip = false;
+    window.state.to = window.location.href.split('/').pop();
     document.getElementById('single-chat-navbar-title').innerText = window.location.href.split('/').pop();
     document.getElementById('navbar-back-arrow').addEventListener('click', function () {
         window.history.go(-1);

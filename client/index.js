@@ -59,6 +59,10 @@ router.hooks({
                 console.log('Load Directory');
                 await directory.fetchData();
             }
+            if (!(window.state && window.state.chats)) {
+                console.log('Load Chats');
+                await chats.fetchData();
+            }
         }
         done();
     }

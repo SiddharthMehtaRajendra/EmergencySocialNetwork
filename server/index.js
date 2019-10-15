@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const validate = require('./lib/server-validation');
 const User = require('../database/model/User');
 const Message = require('../database/model/Message');
+const Chat = require('../database/model/Chat');
 const io = require('socket.io')(http);
 const jwt = require('jsonwebtoken');
 const config = require('./auth/config');
@@ -43,28 +44,62 @@ io.use((socket, next) => {
     next();
 });
 
+// type: {
+//     type: String
+// },
+// from: {
+//     type: String
+// },
+// to: {
+//     type: String
+// },
+// mostRecentMessage: {
+//     type: Object
+// }
+
+function processMsg(msg) {
+    return {
+        time: new Date(),
+        from: msg.from,
+        to: msg.to,
+        type: msg.type,
+        content: msg.content,
+        status: msg.status,
+        chatId: msg.chatId
+    };
+}
+
 io.on('connection', async function (socket) {
     await User.updateOnline(socket.handshake.username, true);
     await User.updateSocketId(socket.handshake.username, socket.id);
     io.emit('UPDATE_DIRECTORY', { data: 'A User Online' });
     socket.on('MESSAGE', async function (msg) {
-        const insertResult = await Message.insertOne({
-            time: new Date(),
-            from: msg.from,
-            to: msg.to,
-            type: msg.type,
-            content: msg.content,
-            status: msg.status
-        });
-        if (insertResult.success) {
+        msg = processMsg(msg);
+        const fromSocketId = socket.id;
+        const toSocketId = (await User.getOneUserByUsername(msg.to)).res[0].socketID;
+        let ChatInsert;
+        if (!msg.chatId && msg.to !== 'public') {
+            ChatInsert = await Chat.insertOne({
+                type: 'private',
+                from: msg.from,
+                to: msg.to,
+                latestMessage: msg
+            });
+        } else {
+            ChatInsert = await Chat.updateLatestMessage(msg.chatId, msg);
+        }
+        if (ChatInsert.success) {
+            io.to(fromSocketId).emit('UPDATE_CHATS', ChatInsert.res);
+            io.to(toSocketId).emit('UPDATE_CHATS', ChatInsert.res);
+        }
+
+        const MessageInsert = await Message.insertOne(msg);
+        if (MessageInsert.success) {
             if (msg.to === 'public') {
-                io.emit('UPDATE_MESSAGE', insertResult.res);
+                io.emit('UPDATE_MESSAGE', MessageInsert.res);
             } else {
-                const fromId = socket.id;
-                const res = await User.getOneUserByUsername(msg.to);
-                const toId = res.res[0].socketID;
-                io.to(fromId).emit('UPDATE_MESSAGE', insertResult.res);
-                io.to(toId).emit('UPDATE_MESSAGE', insertResult.res);
+                io.to(fromSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
+                io.to(toSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
             }
         }
     });
@@ -218,6 +253,16 @@ app.get('/api/historyMessage', async function (req, res) {
             message: 'Load Messages Failed'
         });
     }
+});
+
+app.get('/api/chats', async function (req, res) {
+    const username = (req.params && req.params.username) || req.username;
+    const chats = await Chat.related(username);
+    res.status(200).json({
+        success: true,
+        message: 'Get Chats',
+        chats: chats
+    });
 });
 
 app.get('/api/public-chats', async function (req, res) {

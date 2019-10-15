@@ -20,6 +20,12 @@ const MessageSchema = new mongoose.Schema({
     },
     status: {
         type: String
+    },
+    read: {
+        type: Boolean
+    },
+    chatId: {
+        type: Number
     }
 });
 
@@ -33,24 +39,42 @@ MessageSchema.statics.insertOne = async function (message) {
         res = e._message;
         success = false;
     }
-    return { success, res };
+    return {
+        success,
+        res
+    };
 };
 
 MessageSchema.statics.history = async function (from, to, smallestMessageId, pageSize) {
     let res = [];
     let success = true;
-    try{
+    try {
         if (to === 'public') {
-            res = await Message.find({ to: 'public', id: { $lt: +smallestMessageId } }).sort({ id: -1 }).limit(pageSize);
+            res = await Message.find({
+                to: 'public',
+                id: { $lt: +smallestMessageId }
+            }).sort({ id: -1 }).limit(pageSize);
         } else {
-            res = await Message.find({ $or: [{ from: from, to: to }, { to: from, from: to }], id: { $lt: +smallestMessageId } }).sort({ id: -1 }).limit(pageSize);
+            res = await Message.find({
+                $or: [{
+                    from: from,
+                    to: to
+                }, {
+                    to: from,
+                    from: to
+                }],
+                id: { $lt: +smallestMessageId }
+            }).sort({ id: -1 }).limit(pageSize);
         }
         res = res.reverse();
     } catch (e) {
         res = e._message;
         success = false;
     }
-    return { success, res };
+    return {
+        success,
+        res
+    };
 };
 
 MessageSchema.plugin(AutoIncrement, { inc_field: 'id' });
