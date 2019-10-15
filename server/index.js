@@ -242,3 +242,8 @@ app.get('/api/public-chats', async function (req, res) {
 http.listen(port, function () {
     console.log(`Express server start, listening on port:${port} ...`);
 });
+
+function sum(a, b) {
+    return a + b;
+}
+module.exports = sum;
