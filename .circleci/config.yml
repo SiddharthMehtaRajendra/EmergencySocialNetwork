@@ -27,7 +27,7 @@ jobs:
             - v1-dependencies-
       - run:
           name: install-npm-tools
-          command: npm install -g grunt-cli mocha nyc
+          command: sudo npm install -g grunt-cli mocha nyc
       - run:
           name: install-new-modules
           command: npm install
