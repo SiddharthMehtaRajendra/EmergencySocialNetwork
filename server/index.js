@@ -284,25 +284,7 @@ app.get('/api/chats', async function (req, res) {
     });
 });
 
-app.get('/api/public-chats', async function (req, res) {
-    const result = await Message.getMessagesForPublicWall();
-    if (result && result.res.length > 0) {
-        var publicMessages = result.res.filter(function (value) {
-            return value.type && value.type.trim().toLowerCase() === 'public';
-        });
-        res.status(200).json({
-            success: true,
-            message: 'Public Wall',
-            messages: publicMessages
-        });
-    }
-    res.status(200).json({
-        success: false,
-        message: ['No Message']
-    });
-});
-
-app.post('/api/mystatus', async function (req, res, next){
+app.post('/api/mystatus', async function (req, res, next) {
     await User.updateStatus(req.body.username, req.body.status);
     res.status(200).json({
         success: true

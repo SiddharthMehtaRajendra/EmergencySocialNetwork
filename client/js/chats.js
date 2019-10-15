@@ -3,6 +3,7 @@ import Chats from '../view/chats.html';
 import axios from 'axios';
 import { API_PREFIX, SERVER_ADDRESS } from './constant/serverInfo';
 import dateFormat from './lib/dateFormat';
+import Utils from './lib/appUtils';
 
 function sortChats() {
     function compare(chatA, chatB) {
@@ -66,6 +67,7 @@ async function render() {
             userName.className = 'username';
             userAvatar.className = 'avatar';
             userStatus.className = 'status-circle';
+            Utils.renderStatusColor(otherUser.status, userStatus);
             bottomThinLine.className = 'right-thin-line';
             latestMessage.className = 'latest-message';
             latestMessageContent.className = 'latest-message-content';
