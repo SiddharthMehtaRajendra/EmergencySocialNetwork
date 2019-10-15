@@ -44,6 +44,16 @@ function updateBottomTab() {
     }
 }
 
+function hideBottomTab() {
+    const bottomTabDom = document.getElementById('bottom-tab');
+    bottomTabDom.style.visibility = 'hidden';
+}
+
+function showBottomTab() {
+    const bottomTabDom = document.getElementById('bottom-tab');
+    bottomTabDom.style.visibility = 'visible';
+}
+
 function addNavigationListener() {
     for (const item of Object.entries(tabItemToHash)) {
         document.getElementById(item[0]).addEventListener('click', () => {
@@ -52,4 +62,10 @@ function addNavigationListener() {
     }
 }
 
-export default initBottomTab;
+const BottomTab = {
+    hideBottomTab,
+    showBottomTab,
+    initBottomTab
+};
+
+export default BottomTab;
