@@ -46,7 +46,7 @@ jobs:
       - run: # run tests
           name: test
           command: |
-            nyc grunt circleci
+            nyc grunt test
       - store_test_results:
           path: test
           destination: result
