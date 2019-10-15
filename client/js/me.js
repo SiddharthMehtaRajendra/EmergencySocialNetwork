@@ -5,7 +5,6 @@ import Cookie from 'js-cookie';
 import '../style/me.less';
 import Me from '../view/me.html';
 import StatusPopCard from '../components/statusPopCard';
-import BottomTab from '../components/bottomTab/';
 import Utils from './lib/appUtils';
 import directory from './directory';
 
@@ -48,7 +47,6 @@ async function render() {
 
 async function renderStatusPopCard() {
     StatusPopCard.init(updateStatus);
-    BottomTab.hideBottomTab();
     StatusPopCard.show();
 }
 
@@ -74,7 +72,6 @@ async function updateStatus(event) {
         }
     }
     StatusPopCard.close();
-    BottomTab.showBottomTab();
 }
 
 const me = {
