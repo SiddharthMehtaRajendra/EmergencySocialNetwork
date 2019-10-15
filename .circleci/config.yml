@@ -26,9 +26,6 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
       - run:
-          name: install-npm-tools
-          command: sudo npm install -g grunt-cli mocha nyc
-      - run:
           name: install-new-modules
           command: npm install
       - save_cache:
@@ -37,7 +34,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run:
           name: tests
-          command: npm tests
+          command: npm test
 
       - store_artifacts:
           path: coverage
