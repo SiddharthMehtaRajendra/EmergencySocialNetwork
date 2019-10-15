@@ -6,7 +6,7 @@
     }
 
     .single-chat {
-        .chat-info{
+        .chat-info {
             width: 100%;
         }
 
@@ -55,8 +55,12 @@
             justify-content: space-between;
             font-size: 14px;
             color: #ccc;
-            .latest-message-content{
+
+            .latest-message-content {
                 flex-grow: 1;
+                max-width: 120px;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
 
