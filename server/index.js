@@ -61,47 +61,45 @@ io.on('connection', async function (socket) {
     await User.updateSocketId(socket.handshake.username, socket.id);
     io.emit('UPDATE_DIRECTORY', { data: 'A User Online' });
     socket.on('MESSAGE', async function (msg) {
-        if (msg.chatId) {
-            msg = processMsg(msg);
-            if (msg.to !== 'public') {
-                const fromSocketId = socket.id;
-                const toSocketId = (await User.getOneUserByUsername(msg.to)).res[0].socketID;
-                let ChatInsert;
-                if (!msg.chatId) {
-                    ChatInsert = await Chat.insertOne({
-                        type: 'private',
-                        from: msg.from,
-                        to: msg.to,
-                        latestMessage: msg
-                    });
-                } else {
-                    ChatInsert = await Chat.updateLatestMessage(msg.chatId, msg);
-                }
-                if (ChatInsert.success) {
-                    const result = JSON.parse(JSON.stringify(ChatInsert.res));
-                    result.otherUser = msg.to;
-                    io.to(fromSocketId).emit('UPDATE_CHATS', result);
-                    result.otherUser = msg.from;
-                    io.to(toSocketId).emit('UPDATE_CHATS', result);
-                }
-
-                const MessageInsert = await Message.insertOne(msg);
-                if (MessageInsert.success) {
-                    io.to(fromSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
-                    io.to(toSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
-                }
-            } else {
-                io.emit('UPDATE_CHATS', {
-                    chatId: -1,
+        msg = processMsg(msg);
+        if (msg.to !== 'public') {
+            const fromSocketId = socket.id;
+            const toSocketId = (await User.getOneUserByUsername(msg.to)).res[0].socketID;
+            let ChatInsert;
+            if (!msg.chatId) {
+                ChatInsert = await Chat.insertOne({
+                    type: 'private',
                     from: msg.from,
-                    latestMessage: msg,
-                    otherUser: 'public',
-                    to: 'public',
-                    type: 'public'
+                    to: msg.to,
+                    latestMessage: msg
                 });
-                const MessageInsert = await Message.insertOne(msg);
-                io.emit('UPDATE_MESSAGE', MessageInsert.res);
+            } else {
+                ChatInsert = await Chat.updateLatestMessage(msg.chatId, msg);
             }
+            if (ChatInsert.success) {
+                const result = JSON.parse(JSON.stringify(ChatInsert.res));
+                result.otherUser = msg.to;
+                io.to(fromSocketId).emit('UPDATE_CHATS', result);
+                result.otherUser = msg.from;
+                io.to(toSocketId).emit('UPDATE_CHATS', result);
+            }
+
+            const MessageInsert = await Message.insertOne(msg);
+            if (MessageInsert.success) {
+                io.to(fromSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
+                io.to(toSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
+            }
+        } else {
+            io.emit('UPDATE_CHATS', {
+                chatId: -1,
+                from: msg.from,
+                latestMessage: msg,
+                otherUser: 'public',
+                to: 'public',
+                type: 'public'
+            });
+            const MessageInsert = await Message.insertOne(msg);
+            io.emit('UPDATE_MESSAGE', MessageInsert.res);
         }
     });
     socket.on('disconnect', async function () {
