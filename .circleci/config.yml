@@ -36,17 +36,9 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run:
-          name: cc-test-reporter
-          command: |
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x ./cc-test-reporter
-      - run: # run tests
-          name: make_dir
-          command: sudo mkdir -p $CIRCLE_TEST_REPORTS/mocha
-      - run: # run tests
-          name: test
-          command: |
-            nyc grunt test
+          name: tests
+          command: npm tests
+
       - store_artifacts:
           path: coverage
 
