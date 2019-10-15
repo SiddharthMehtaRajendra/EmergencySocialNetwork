@@ -31,11 +31,26 @@ ChatSchema.statics.insertOne = async function (chat) {
     };
 };
 
+ChatSchema.statics.getByChatId = async function (chatId) {
+    let res = {};
+    const success = true;
+    try {
+        res = await this.find({ chatId: chatId });
+    } catch (e) {
+        res = e._message;
+    }
+    return {
+        success,
+        res
+    };
+};
+
 ChatSchema.statics.updateLatestMessage = async function (chatId, msg) {
     let res = {};
     let success = true;
     try {
-        res = await this.updateOne({ chatId: chatId }, { latestMessage: msg });
+        await this.updateOne({ chatId: chatId }, { latestMessage: msg });
+        res = (await this.getByChatId(chatId)).res[0];
     } catch (e) {
         res = e._message;
         success = false;

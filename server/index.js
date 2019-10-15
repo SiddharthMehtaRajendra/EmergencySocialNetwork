@@ -44,19 +44,6 @@ io.use((socket, next) => {
     next();
 });
 
-// type: {
-//     type: String
-// },
-// from: {
-//     type: String
-// },
-// to: {
-//     type: String
-// },
-// mostRecentMessage: {
-//     type: Object
-// }
-
 function processMsg(msg) {
     return {
         time: new Date(),
@@ -89,8 +76,11 @@ io.on('connection', async function (socket) {
             ChatInsert = await Chat.updateLatestMessage(msg.chatId, msg);
         }
         if (ChatInsert.success) {
-            io.to(fromSocketId).emit('UPDATE_CHATS', ChatInsert.res);
-            io.to(toSocketId).emit('UPDATE_CHATS', ChatInsert.res);
+            const result = JSON.parse(JSON.stringify(ChatInsert.res));
+            result.otherUser = msg.to;
+            io.to(fromSocketId).emit('UPDATE_CHATS', result);
+            result.otherUser = msg.from;
+            io.to(toSocketId).emit('UPDATE_CHATS', result);
         }
 
         const MessageInsert = await Message.insertOne(msg);
@@ -257,11 +247,19 @@ app.get('/api/historyMessage', async function (req, res) {
 
 app.get('/api/chats', async function (req, res) {
     const username = (req.params && req.params.username) || req.username;
-    const chats = await Chat.related(username);
+    const dbResult = await Chat.related(username);
+    const chats = JSON.parse(JSON.stringify(dbResult.res)); // Mongoose Result can't be modified
+    const chatsWithOtherUser = [];
+    for (let i = 0; i < chats.length; i++) {
+        if (chats[i].from !== username || chats[i].to !== username) {
+            chats[i].otherUser = chats[i].from === username ? chats[i].to : chats[i].from;
+            chatsWithOtherUser.push(chats[i]);
+        }
+    }
     res.status(200).json({
         success: true,
         message: 'Get Chats',
-        chats: chats
+        chats: chatsWithOtherUser
     });
 });
 

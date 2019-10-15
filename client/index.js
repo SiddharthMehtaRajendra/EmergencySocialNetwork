@@ -93,8 +93,9 @@ router.on('/guide', function () {
     guide.render();
 });
 
-router.on('/chats', function () {
-    chats.render();
+router.on('/chats', async function () {
+    console.log('Re render');
+    await chats.render();
 }).resolve();
 
 router.on('/me', async function () {

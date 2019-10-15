@@ -2,6 +2,7 @@ import io from 'socket.io-client';
 import chat from '../chat';
 import processMessage from '../lib/processMessage';
 import directory from '../directory';
+import chats from '../chats';
 import { SERVER_ADDRESS } from '../constant/serverInfo';
 import Toast from '../lib/toast';
 
@@ -34,8 +35,17 @@ socket.on('UPDATE_DIRECTORY', async function () {
     }
 });
 
-socket.on('UPDATE_CHATS', async function (data) {
-    console.log(data);
+socket.on('UPDATE_CHATS', async function (chat) {
+    if (!window.state.chatsMap[chat.otherUser]) {
+        window.state.chats.push(chat);
+        window.state.chatsMap[chat.otherUser] = chat;
+    } else {
+        window.state.chatsMap[chat.otherUser].latestMessage = chat.latestMessage;
+    }
+    chats.sortChats();
+    if (window.location.hash === '#/chats') {
+        await chats.render();
+    }
 });
 
 export default socket;

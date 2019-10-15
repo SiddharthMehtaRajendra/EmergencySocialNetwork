@@ -74,12 +74,15 @@ function createSingleBubble(msg) {
 function sendMessage() {
     const content = document.getElementById('message-input').value;
     if (content && content.length > 0) {
+        const toUser = window.location.href.split('/').pop();
+        const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || null;
         socket.emit('MESSAGE', {
             content: content,
             type: 0,
             from: window.state.user.username,
-            to: window.location.href.split('/').pop(),
-            status: (window.state && window.state.user && window.state.user.status) || 'ok'
+            to: toUser,
+            status: (window.state && window.state.user && window.state.user.status) || 'ok',
+            chatId: chatId
         });
         document.getElementById('message-input').value = '';
     }
