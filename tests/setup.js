@@ -2,8 +2,8 @@
 const mongoose = require('mongoose');
 const TestDbUrl = 'mongodb+srv://f19sb2test:f19sb2test1234@cluster0-hfvai.mongodb.net/tests?retryWrites=true&w=majority';
 require('../database/model/User');
-require('../database/model/Chat');
 require('../database/model/Message');
+require('../database/model/Chat');
 
 beforeAll(async () => {
     await mongoose.connect(TestDbUrl, {
@@ -13,7 +13,9 @@ beforeAll(async () => {
 
     await Promise.all(
         Object.keys(mongoose.connection.collections).map(async key => {
-            return mongoose.connection.collections[key].remove({});
+            if (key !== 'counters') {
+                return mongoose.connection.collections[key].remove({});
+            }
         })
     );
 });
