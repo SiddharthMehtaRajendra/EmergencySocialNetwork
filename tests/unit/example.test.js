@@ -23,7 +23,7 @@ test('messageParsing', () => {
     expect(processMsg(obj).to).toBe(expected.to);
 });
 
-const { checkToken, exclude } = require('../../server/auth/checkToken');
+const { checkToken, tokenParsing, exclude } = require('../../server/auth/checkToken');
 
 test('excludeUrls', () => {
     expect(exclude('/')).toBe(true);
@@ -31,10 +31,12 @@ test('excludeUrls', () => {
     expect(exclude('')).toBe(false);
 });
 
-/*
-test('noTokenReceived', () => {
-	const req = { originalUrl: '/my' };
-	const res = { status: 200 };
-    expect(checkToken(req, res, function () { return 'pass'; })).toBe('No token recieved');
+test('invalidTokenParsing', () => {
+    expect(tokenParsing('123').error).toBe(true);
 });
-*/
+
+test('validTokenParsing', () => {
+	const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjExMTEiLCJpYXQiOjE1NzExNzc1MzIsImV4cCI6MTU3MTI2MzkzMn0.HuzAcqFwTJuqaMmqNhlRlVjDaG2819QVwCUVOXF8BIg';
+    expect(tokenParsing(token).error).toBe(false);
+    expect(tokenParsing(token).decodedInfo.username).toBe('1111');
+});

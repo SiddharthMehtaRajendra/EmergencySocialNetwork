@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const config = require('./config.js');
 
 function exclude(url) {
-    console.log(url);
     const urlTable = {
         '/heartbeat': true,
         '/api/joinCheck': true,
@@ -20,25 +19,26 @@ function exclude(url) {
 }
 
 function tokenParsing(token) {
+    const parsedToken = {};
     jwt.verify(token, config.secret, (err, decoded) => {
         if (err) {
-            return { err: true };
+            parsedToken.error = true;
         } else {
-            return { err: false, decodedInfo: decoded };
+            parsedToken.error = false;
+            parsedToken.decodedInfo = decoded;
         };
     });
+    return parsedToken;
 }
 
 const checkToken = (req, res, next) => {
-    console.log(typeof (res));
     if (exclude(req.originalUrl)) {
         next();
     } else {
         const token = (req.cookies && req.cookies.token) || (req.headers && req.headers.token);
         if (token) {
             const parsingResult = tokenParsing(token);
-            console.log(parsingResult);
-            if (parsingResult.err) {
+            if (parsingResult.error) {
                 res.status(200).json({ success: false, message: 'Auth Failed', redirect: true });
             } else {
                 req.username = parsingResult.decodedInfo.username;
@@ -50,4 +50,4 @@ const checkToken = (req, res, next) => {
     }
 };
 
-module.exports = { checkToken, exclude } ;
+module.exports = { checkToken, tokenParsing, exclude } ;
