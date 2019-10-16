@@ -35,7 +35,8 @@ jobs:
       - run:
           name: tests
           command: npm test
-
+      - store_test_results:
+          path: test-results
       - store_artifacts:
           path: coverage
 
