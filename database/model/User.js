@@ -1,4 +1,4 @@
-const mongoose = require('../connectdb');
+const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const bcrypt = require('bcryptjs');
 
@@ -25,6 +25,9 @@ const UserSchema = new mongoose.Schema({
     },
     socketID: {
         type: String
+    },
+    statusUpdateTime: {
+        type: Date
     }
 });
 
@@ -41,11 +44,17 @@ UserSchema.statics.getOneUserByUsername = async function (username) {
     } catch (e) {
         res = e._message;
     }
-    return { success, res };
+    return {
+        success,
+        res
+    };
 };
 
 UserSchema.statics.updateStatus = async function (username, status) {
-    const res = await this.updateOne({ username: username }, { status: status });
+    const res = await this.updateOne({ username: username }, {
+        status: status,
+        statusUpdateTime: new Date()
+    });
     return res;
 };
 
@@ -72,7 +81,10 @@ UserSchema.statics.addOneUser = async function (userObject) {
         }
         success = false;
     }
-    return { success, res };
+    return {
+        success,
+        res
+    };
 };
 
 UserSchema.statics.validateCredentials = async function (username, password) {

@@ -26,9 +26,6 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
       - run:
-          name: install-npm-tools
-          command: sudo npm install -g grunt-cli mocha nyc
-      - run:
           name: install-new-modules
           command: npm install
       - save_cache:
@@ -36,25 +33,12 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run:
-          name: cc-test-reporter
-          command: |
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x ./cc-test-reporter
-      - run: # run tests
-          name: make_dir
-          command: sudo mkdir -p $CIRCLE_TEST_REPORTS/mocha
-      - run: # run tests
-          name: test
-          environment:
-            CC_TEST_REPORTER_ID: 3f28740af30153569a3c81da5948b1c12aa13760212b2f2cf59cc8c585e78871
-          command: |
-            if [ "$CIRCLE_BRANCH" == "master" ];
-            then
-              ./cc-test-reporter before-build
-            fi
-            grunt circleci
-            if [ "$CIRCLE_BRANCH" == "master" ];
-            then
-              ./cc-test-reporter after-build -p "/home/circleci/project/" -t lcov --debug --exit-code $?
-            fi
+          name: tests
+          command: npm test
+      - store_artifacts:
+          path: coverage
+      - store_test_results:
+          path: coverage
+
+
 

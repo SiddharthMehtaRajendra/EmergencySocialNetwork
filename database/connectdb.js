@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-// const url = 'mongodb://127.0.0.1/SB2ESN';
-// { user: "heroku_n79vmv8t", account: "heroku_n79vmv8t",password:"f19sb2no1" }
-// const url = 'mongodb://heroku_n79vmv8t:heroku_n79vmv8t@ds029824.mlab.com:29824/heroku_n79vmv8t';
 let url = 'mongodb://127.0.0.1/SB2ESN';
 if (process.env.MONGODB_URI) {
     url = process.env.MONGODB_URI;

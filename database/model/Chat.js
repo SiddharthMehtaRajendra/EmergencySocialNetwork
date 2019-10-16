@@ -1,4 +1,4 @@
-const mongoose = require('../connectdb');
+const mongoose = require('mongoose');
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const ChatSchema = new mongoose.Schema({
