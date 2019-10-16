@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "test": "jest tests --coverage --ci --reporters=default --reporters=jest-junit",
+    "test": "jest tests --coverage --ci",
     "build": "webpack",
     "watch": "node webpack-dev-server.js",
     "start": "node server/index.js",
@@ -68,6 +68,16 @@
     "setupFilesAfterEnv": [
       "./tests/setup.js"
     ],
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "reporters": [
+      "default",
+      [
+        "jest-junit",
+        {
+          "outputDirectory": ".",
+          "outputName": "coverage/junit/results.xml"
+        }
+      ]
+    ]
   }
 }
