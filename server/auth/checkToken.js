@@ -19,7 +19,7 @@ function exclude(url) {
     return false;
 }
 
-const checkToken = (req, res, next) => {
+const {checkToken = (req, res, next) => {
     if (exclude(req.originalUrl)) {
         next();
     } else {
@@ -37,6 +37,6 @@ const checkToken = (req, res, next) => {
             res.status(200).json({ success: false, message: 'No token recieved', redirect: true });
         }
     }
-};
+}
 
-module.exports = checkToken;
+module.exports = { checkToken, exclude };

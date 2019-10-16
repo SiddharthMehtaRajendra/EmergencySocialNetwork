@@ -23,7 +23,7 @@ test('messageParsing', () => {
     expect(processMsg(obj).to).toBe(expected.to);
 });
 
-const checkToken = require('../../server/auth/checkToken');
+const { checkToken, exclude } = require('../../server/auth/checkToken');
 
 test('excludeUrls', () => {
 	const req = { originalUrl: '/heartbeat' };
