@@ -19,7 +19,8 @@ function exclude(url) {
     return false;
 }
 
-const {checkToken = (req, res, next) => {
+const checkToken = (req, res, next) => {
+    console.log(typeof (res));
     if (exclude(req.originalUrl)) {
         next();
     } else {
@@ -37,6 +38,6 @@ const {checkToken = (req, res, next) => {
             res.status(200).json({ success: false, message: 'No token recieved', redirect: true });
         }
     }
-}
+};
 
 module.exports = { checkToken, exclude };

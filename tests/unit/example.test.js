@@ -26,9 +26,15 @@ test('messageParsing', () => {
 const { checkToken, exclude } = require('../../server/auth/checkToken');
 
 test('excludeUrls', () => {
-	const req = { originalUrl: '/heartbeat' };
-	const res = { status: 200 };
-    expect(checkToken(req, res, function() {return 'pass'})).toEqual('pass');
-    // expect(exclude('/')).toBe(true);
-    // expect(exclude('/my')).toBe(false);
+    expect(exclude('/')).toBe(true);
+    expect(exclude('/my')).toBe(false);
+    expect(exclude('')).toBe(false);
 });
+
+/*
+test('noTokenReceived', () => {
+	const req = { originalUrl: '/my' };
+	const res = { status: 200 };
+    expect(checkToken(req, res, function () { return 'pass'; })).toBe('No token recieved');
+});
+*/
