@@ -6,7 +6,6 @@ require('../database/model/Chat');
 require('../database/model/Message');
 
 beforeAll(async () => {
-    console.log('Before All');
     await mongoose.connect(TestDbUrl, {
         useNewUrlParser: true,
         useUnifiedTopology: true
@@ -21,5 +20,4 @@ beforeAll(async () => {
 
 afterAll(async () => {
     await mongoose.disconnect();
-    console.log('After All');
 });

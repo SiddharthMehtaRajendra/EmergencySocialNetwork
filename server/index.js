@@ -166,6 +166,7 @@ app.post('/api/join', async function (req, res, next) {
         password: req.body.password,
         avatar: avatar,
         status: 'ok',
+        statusUpdateTime: new Date(),
         online: true
     };
     if (validate(userObj.username, userObj.password)) {
