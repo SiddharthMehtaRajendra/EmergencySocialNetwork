@@ -30,6 +30,7 @@ describe('Chat DB Test', async () => {
     };
     test('test add chat', async () => {
         const resultObj = (await Chat.insertOne(oneChat)).res;
+        // console.log(resultObj);
         const chatId = resultObj.chatId;
         expect(resultObj).toEqual(expect.objectContaining(oneChat));
         const updateResult = (await Chat.updateLatestMessage(chatId, newMessage)).res;

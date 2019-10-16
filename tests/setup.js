@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const mongoose = require('mongoose');
-const TestDbUrl = 'mongodb+srv://f19sb2test:f19sb2test1234@cluster0-hfvai.mongodb.net/tests?retryWrites=true&w=majority';
+let TestDbUrl = 'mongodb+srv://f19sb2test:f19sb2test1234@cluster0-hfvai.mongodb.net/tests?retryWrites=true&w=majority';
+// TestDbUrl = 'mongodb://127.0.0.1/TEST';
 require('../database/model/User');
 require('../database/model/Message');
 require('../database/model/Chat');

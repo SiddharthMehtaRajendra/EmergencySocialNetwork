@@ -41,7 +41,7 @@ describe('Message DB Test', async () => {
     test('test history message', async () => {
         for (let i = 0; i < messageList.length; i++) {
             const temp = await Message.insertOne(messageList[i]);
-            console.log(temp.res);
+            console.log(temp.res.message);
         }
         const historyMessages = (await Message.history('test', 'public', Infinity, 5)).res;
         for (let i = 0; i < messageList.length; i++) {
