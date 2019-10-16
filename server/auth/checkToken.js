@@ -19,6 +19,16 @@ function exclude(url) {
     return false;
 }
 
+function tokenParsing(token) {
+    jwt.verify(token, config.secret, (err, decoded) => {
+        if (err) {
+            return { err: true };
+        } else {
+            return { err: false, decodedInfo: decoded };
+        };
+    });
+}
+
 const checkToken = (req, res, next) => {
     console.log(typeof (res));
     if (exclude(req.originalUrl)) {
@@ -26,18 +36,18 @@ const checkToken = (req, res, next) => {
     } else {
         const token = (req.cookies && req.cookies.token) || (req.headers && req.headers.token);
         if (token) {
-            jwt.verify(token, config.secret, (err, decoded) => {
-                if (err) {
-                    res.status(200).json({ success: false, message: 'Auth Failed', redirect: true });
-                } else {
-                    req.username = decoded.username;
-                    next();
-                }
-            });
+            const parsingResult = tokenParsing(token);
+            console.log(parsingResult);
+            if (parsingResult.err) {
+                res.status(200).json({ success: false, message: 'Auth Failed', redirect: true });
+            } else {
+                req.username = parsingResult.decodedInfo.username;
+                next();
+            }
         } else {
             res.status(200).json({ success: false, message: 'No token recieved', redirect: true });
         }
     }
 };
 
-module.exports = { checkToken, exclude };
+module.exports = { checkToken, exclude } ;

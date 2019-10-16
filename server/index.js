@@ -166,6 +166,7 @@ app.post('/api/join', async function (req, res, next) {
         password: req.body.password,
         avatar: avatar,
         status: 'ok',
+        statusUpdateTime: new Date(),
         online: true
     };
     if (validate(userObj.username, userObj.password)) {
@@ -259,7 +260,7 @@ app.get('/api/chats', async function (req, res) {
     const publicResult = {
         chatId: -1,
         from: latestPublicMessage.from,
-        latestMessage: latestPublicMessage,
+        latestMessage: latestPublicMessage[0],
         otherUser: 'public',
         to: 'public',
         type: 'public'
