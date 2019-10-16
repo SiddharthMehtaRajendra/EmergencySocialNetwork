@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const config = require('./config.js');
 
 function exclude(url) {
+    console.log(url);
     const urlTable = {
         '/heartbeat': true,
         '/api/joinCheck': true,
