@@ -11,6 +11,7 @@
 * [Architecture Haiku](https://drive.google.com/open?id=1XvmNesWl7x0G3_e_yFWfrFfvacbbHwhM)
 * [OOA/UML Diagram](https://drive.google.com/drive/folders/1JonuDBP1Gf3wSTkMVeVivOKOA34FsPI0?usp=sharing)
 * [Rest API](https://documenter.getpostman.com/view/3161844/SVn2PbnT?version=latest) 
+* [Quality Report](https://docs.google.com/spreadsheets/d/10x1RHufcKx3DV2VFiztSRqnD0doYwRJ4EzPV5T2iI8Q/edit?usp=sharing)
 
 ## How to run the project
 Install all packages
