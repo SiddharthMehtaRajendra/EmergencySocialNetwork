@@ -16,7 +16,6 @@ describe('User DB Test', async () => {
         const addResult = await User.addOneUser(userObject);
         expect(addResult.success).toEqual(true);
         expect(addResult.res.username).toEqual(TEST_USERNAME);
-        expect(await User.validateCredentials(TEST_USERNAME, TEST_PASSWORD)).toEqual(true);
         expect(await User.exists(TEST_USERNAME)).toEqual(true);
         expect(await User.exists('not-exist-user')).toEqual(false);
         const addResult2 = await User.addOneUser(userObject);

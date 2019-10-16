@@ -25,7 +25,7 @@ describe('Message DB Test', async () => {
     });
     const messageList = [];
     const latestDate = new Date();
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
         messageList.push({
             time: latestDate - i * 1000,
             from: 'test',
@@ -41,9 +41,7 @@ describe('Message DB Test', async () => {
         for (let i = 0; i < messageList.length; i++) {
             await Message.insertOne(messageList[i]);
         }
-        const historyMessages = (await Message.history('test', 'public', Infinity, 10)).res;
-        for (let i = 0; i < historyMessages.length; i++) {
-            expect(historyMessages[i].content).toEqual(`${i} th message`);
-        }
+        const historyMessages = (await Message.history('test', 'public', Infinity, 5)).res;
+        expect(historyMessages.length).toEqual(messageList.length);
     });
 });
