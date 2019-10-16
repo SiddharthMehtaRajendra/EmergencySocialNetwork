@@ -42,9 +42,10 @@ async function render() {
             window.location.hash = '/chat/public';
         });
         const latestPublicMessage = window.state.latestPublic && window.state.latestPublic.latestMessage;
-        document.getElementById('latest-public-message-content').innerText = latestPublicMessage.content;
-        document.getElementById('latest-public-message-time').innerText = dateFormat(latestPublicMessage.time, 'mm/dd HH:MM');
-
+        if (latestPublicMessage) {
+            document.getElementById('latest-public-message-content').innerText = latestPublicMessage.content;
+            document.getElementById('latest-public-message-time').innerText = dateFormat(latestPublicMessage.time, 'mm/dd HH:MM');
+        }
         allChats.innerHTML = '';
         const chats = window.state.chats;
         chats.forEach((chat, index) => {
