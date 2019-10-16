@@ -5,6 +5,7 @@ describe('Example', () => {
     describe('First', () => {
         test('Example Test', () => {
             expect('abc').toEqual('abc');
+            expect(1).toEqual(2);
             expect(temp.validatePassword('12312').result).toEqual(true);
         });
     });
