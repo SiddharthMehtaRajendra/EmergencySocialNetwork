@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+
 const Message = require('../../database/model/Message');
 
 describe('Message DB Test', async () => {
@@ -39,9 +40,12 @@ describe('Message DB Test', async () => {
     }
     test('test history message', async () => {
         for (let i = 0; i < messageList.length; i++) {
-            await Message.insertOne(messageList[i]);
+            const temp = await Message.insertOne(messageList[i]);
+            console.log(temp.res);
         }
         const historyMessages = (await Message.history('test', 'public', Infinity, 5)).res;
-        expect(historyMessages.length).toEqual(messageList.length);
+        for (let i = 0; i < messageList.length; i++) {
+            expect(historyMessages[i].content).toEqual(`${i} th message`);
+        }
     });
 });

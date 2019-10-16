@@ -33,6 +33,7 @@ describe('Chat DB Test', async () => {
         const chatId = resultObj.chatId;
         expect(resultObj).toEqual(expect.objectContaining(oneChat));
         const updateResult = (await Chat.updateLatestMessage(chatId, newMessage)).res;
+        console.log(updateResult);
         expect(updateResult.latestMessage).toEqual(expect.objectContaining(newMessage));
     });
 
