@@ -32,13 +32,6 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run:
-          name: tests
-          command: npm test
-      - store_artifacts:
-          path: coverage
-      - store_test_results:
-          path: coverage
 
 
 
