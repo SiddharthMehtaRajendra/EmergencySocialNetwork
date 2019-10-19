@@ -49,7 +49,7 @@ jobs:
             npm test
             if [ "$CIRCLE_BRANCH" == "master" ];
             then
-              ./cc-test-reporter after-build --coverage-input-type lcov --exit-code $?
+              ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
             fi
       - store_artifacts:
           path: coverage
