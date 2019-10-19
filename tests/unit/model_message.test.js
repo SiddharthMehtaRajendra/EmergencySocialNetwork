@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-
+process.env.TEST_DB = 'test_message';
 const Message = require('../../database/model/Message');
 
 describe('Message DB Test', async () => {
@@ -40,8 +40,7 @@ describe('Message DB Test', async () => {
     }
     test('test history message', async () => {
         for (let i = 0; i < messageList.length; i++) {
-            const temp = await Message.insertOne(messageList[i]);
-            console.log(temp.res.message);
+            await Message.insertOne(messageList[i]);
         }
         const historyMessages = (await Message.history('test', 'public', Infinity, 5)).res;
         for (let i = 0; i < messageList.length; i++) {

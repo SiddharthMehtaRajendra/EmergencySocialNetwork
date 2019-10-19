@@ -15,7 +15,7 @@ const config = require('./auth/config');
 const randomColor = require('randomcolor');
 const cookieParser = require('cookie-parser');
 const parseCookies = require('./lib/parseCookies');
-const { checkToken, tokenParsing, exclude } = require('./auth/checkToken');
+const { checkToken } = require('./auth/checkToken');
 require('../database/connectdb');
 
 io.set('origins', '*:*');

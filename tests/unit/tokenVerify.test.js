@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
 
+const jwt = require('jsonwebtoken');
+const config = require('../../server/auth/config');
 const { tokenParsing, exclude } = require('../../server/auth/checkToken');
 
 test('excludeUrls', () => {
@@ -13,7 +15,7 @@ test('invalidTokenParsing', () => {
 });
 
 test('validTokenParsing', () => {
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjExMTEiLCJpYXQiOjE1NzExNzc1MzIsImV4cCI6MTU3MTI2MzkzMn0.HuzAcqFwTJuqaMmqNhlRlVjDaG2819QVwCUVOXF8BIg';
+    const token = jwt.sign({ username: 'test' }, config.secret, { expiresIn: '24h' });
     expect(tokenParsing(token).error).toBe(false);
-    expect(tokenParsing(token).decodedInfo.username).toBe('1111');
+    expect(tokenParsing(token).decodedInfo.username).toBe('test');
 });

@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+process.env.TEST_DB = 'test_user';
 const User = require('../../database/model/User');
 
 describe('User DB Test', async () => {
