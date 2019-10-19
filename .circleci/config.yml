@@ -5,6 +5,8 @@
 version: 2
 jobs:
   build:
+    environment:
+      CC_TEST_REPORTER_ID: f62cfad01862d67c9d101a667125a70ad42c342180af1c94bb09b4c0b11ea9a0
     docker:
       # specify the version you desire here
       - image: circleci/node:12.6.0
@@ -18,7 +20,6 @@ jobs:
 
     steps:
       - checkout
-
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -33,8 +34,23 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            # download test reporter as a static binary
+              curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+              chmod +x ./cc-test-reporter
+      - run:
           name: tests
-          command: npm test
+          command: |
+            if [ "$CIRCLE_BRANCH" == "master" ];
+            then
+              ./cc-test-reporter before-build
+            fi
+            npm test
+            if [ "$CIRCLE_BRANCH" == "master" ];
+            then
+              ./cc-test-reporter after-build --coverage-input-type lcov --exit-code $?
+            fi
       - store_artifacts:
           path: coverage
       - store_test_results:
