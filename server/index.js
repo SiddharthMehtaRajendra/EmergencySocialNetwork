@@ -121,8 +121,11 @@ app.post('/api/joinCheck', async function (req, res, next) {
         username: req.body.username,
         password: req.body.password
     };
+    console.log(userObj);
     if (validate(userObj.username, userObj.password)) {
+        console.log('Before DB');
         const exist = await User.exists(userObj.username);
+        console.log(exist);
         if (!exist) {
             res.status(200).json({
                 success: false,
@@ -153,6 +156,13 @@ app.post('/api/joinCheck', async function (req, res, next) {
                 });
             }
         }
+    } else {
+        res.status(200).json({
+            success: false,
+            message: 'Validation Failed',
+            exists: null,
+            validationPass: false
+        });
     }
 });
 
@@ -324,7 +334,4 @@ http.listen(port, function () {
     console.log(`Express server start, listening on port:${port} ...`);
 });
 
-function sum(a, b) {
-    return a + b;
-}
 module.exports = processMsg;
