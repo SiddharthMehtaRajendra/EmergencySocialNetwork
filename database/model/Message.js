@@ -97,6 +97,24 @@ MessageSchema.statics.history = async function (from, to, smallestMessageId, pag
     };
 };
 
+MessageSchema.statics.searchPublicMessage = async function (searchContent, to) {
+    let res = [];
+    let success = true;
+    try {
+        res = await Message.find({
+            to: 'public',
+            content: { $regex: searchContent }
+        }).sort({ id: -1 });
+    } catch (e) {
+        res = e._message;
+        success = false;
+    }
+    return {
+        success,
+        res
+    };
+};
+
 MessageSchema.plugin(AutoIncrement, { inc_field: 'id' });
 
 const Message = mongoose.model('Message', MessageSchema);

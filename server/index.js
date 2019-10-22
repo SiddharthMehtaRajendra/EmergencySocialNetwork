@@ -236,8 +236,28 @@ app.get('/api/user/:username?', async function (req, res) {
 });
 
 app.post('/api/searchPublicMessage', async function (req, res) {
+    const searchContent = req.body.searchMessage;
+    // const smallestMessageId = +(req.query && req.query.smallestMessageId);
+    const dbResult = await Message.searchPublicMessage(searchContent);
+    if (dbResult.success) {
+        res.status(200).json({
+            success: true,
+            message: 'Get Messages',
+            messages: dbResult.res
+        });
+    } else {
+        res.status(200).json({
+            success: false,
+            message: 'Load Messages Failed'
+        });
+    }
+});
+
+app.post('/api/searchPrivateMessage', async function (req, res) {
     const searchMessage = req.body.searchMessage;
+    const username = req.username;
     console.log(searchMessage);
+    console.log(username);
 });
 
 app.get('/api/historyMessage', async function (req, res) {
