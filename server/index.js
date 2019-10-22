@@ -235,6 +235,11 @@ app.get('/api/user/:username?', async function (req, res) {
     });
 });
 
+app.post('/api/searchPublicMessage', async function (req, res) {
+    const searchMessage = req.body.searchMessage;
+    console.log(searchMessage);
+});
+
 app.get('/api/historyMessage', async function (req, res) {
     const smallestMessageId = +(req.query && req.query.smallestMessageId);
     const pageSize = +(req.query && req.query.pageSize);

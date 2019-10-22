@@ -4,6 +4,7 @@ import axios from 'axios';
 import { API_PREFIX, SERVER_ADDRESS } from './constant/serverInfo';
 import dateFormat from './lib/dateFormat';
 import Utils from './lib/appUtils';
+import addSearchMessageBox from './lib/searchMessage';
 
 function sortChats() {
     function compare(chatA, chatB) {
@@ -11,6 +12,12 @@ function sortChats() {
     }
 
     window.state.chats.sort(compare);
+}
+
+function addSearchBoxListener() {
+    document.getElementsByClassName('search-icon')[0].addEventListener('click', function () {
+        addSearchMessageBox();
+    });
 }
 
 async function fetchData() {
@@ -37,6 +44,7 @@ async function render() {
     if (!window.state.chats) {
         await fetchData();
     }
+    addSearchBoxListener();
     if (window.state.chats && allChats) {
         document.getElementById('public-chat-entrance').addEventListener('click', function () {
             window.location.hash = '/chat/public';

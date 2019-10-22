@@ -1,0 +1,43 @@
+.search-message {
+    .input-container {
+        padding: 16px 20px 10px 20px;
+        box-sizing: border-box;
+        position: fixed;
+        width: 100%;
+        left: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: white;
+        //box-shadow: 0 -1px 6px 0 rgba(0, 0, 0, 0.05);
+
+        .navbar-back-arrow {
+            background: url("../resource/back-arrow.svg");
+            width: 24px;
+            height: 24px;
+            margin-right: 4px;
+            cursor: pointer;
+        }
+        input {
+            border: none;
+            outline: none;
+            border-radius: 0;
+            border-bottom: 1px solid #ccc;
+            font-size: 18px;
+            width: 100%;
+            margin-right: 14px;
+            padding: 6px 0;
+
+            &:active, &:focus {
+                border-bottom: 1px solid #111;
+            }
+        }
+
+        .send-btn {
+            font-weight: 800;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    }
+
+}
