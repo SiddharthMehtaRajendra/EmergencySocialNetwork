@@ -2,6 +2,7 @@ import './style/index.less';
 import './style/welcome.less';
 import './style/home.less';
 import './style/announcement.less';
+import './style/searchMessage.less';
 
 import Navigo from 'navigo';
 import Welcome from './view/welcome.html';
@@ -14,6 +15,7 @@ import chats from './js/chats';
 import chat from './js/chat';
 import me from './js/me';
 import directory from './js/directory';
+import search from './js/lib/searchMessage';
 
 import initRouter from './js/initRouter';
 import initJoinPage from './js/join';
@@ -105,6 +107,11 @@ router.on('/me', async function () {
 router.on('/chat/:id', async function () {
     console.log(window.location.hash);
     await chat.render();
+}).resolve();
+
+router.on('/search/:contextual', async function () {
+    console.log(window.location.hash);
+    await search.render();
 }).resolve();
 
 router.notFound(function () {

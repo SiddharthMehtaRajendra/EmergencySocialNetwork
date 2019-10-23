@@ -4,9 +4,9 @@ import axios from 'axios';
 import { SERVER_ADDRESS, API_PREFIX } from '../constant/serverInfo';
 import processMessage from './processMessage';
 
-function addArrowBackListener(node) {
+function addArrowBackListener() {
     document.getElementsByClassName('navbar-back-arrow')[0].addEventListener('click', function () {
-        document.body.removeChild(node);
+        window.history.go(-1);
     });
 }
 
@@ -96,27 +96,22 @@ async function getSearchResult() {
     }
 }
 
-function addSearchIconListener(node) {
+function addSearchIconListener() {
     document.getElementsByClassName('message-search-icon')[0].addEventListener('click', function () {
         document.getElementById('bubble-wrap').innerHTML = '';
         getSearchResult();
     });
 }
 
-export default function createSearchBox(bgColor = '#FFFFFF', color = '#999999', height = '800px') {
-    const node = document.createElement('div');
-    node.setAttribute('class', 'toast');
-    node.innerHTML = SearchMessage;
-    if (bgColor) {
-        node.style.backgroundColor = bgColor;
-    }
-    if (color) {
-        node.style.color = color;
-    }
-    if (height) {
-        node.style.height = height;
-    }
-    document.body.appendChild(node);
-    addArrowBackListener(node);
-    addSearchIconListener(node);
+async function render() {
+    const app = document.getElementById('app');
+    app.innerHTML = SearchMessage;
+    addArrowBackListener();
+    addSearchIconListener();
 }
+
+const search = {
+    render
+};
+
+export default search;

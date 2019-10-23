@@ -4,7 +4,6 @@ import axios from 'axios';
 import { API_PREFIX, SERVER_ADDRESS } from './constant/serverInfo';
 import dateFormat from './lib/dateFormat';
 import Utils from './lib/appUtils';
-import addSearchMessageBox from './lib/searchMessage';
 
 function sortChats() {
     function compare(chatA, chatB) {
@@ -16,7 +15,7 @@ function sortChats() {
 
 function addSearchBoxListener() {
     document.getElementsByClassName('search-icon')[0].addEventListener('click', function () {
-        addSearchMessageBox();
+        window.location.hash = '/search/message';
     });
 }
 
