@@ -118,6 +118,7 @@ function setMessageTipVisible(visible) {
 
 function renderMessages(msgList) {
     const bubbleWrap = document.getElementById('bubble-wrap');
+    console.log(document);
     const smallestMessageId = window.state.smallestMessageId || Infinity;
     let beforeNode;
     if (window.state.smallestMessageId === Infinity) {
@@ -180,7 +181,8 @@ async function render() {
 const chat = {
     render,
     getHistoryMessage,
-    renderOneMessage
+    renderOneMessage,
+    renderMessages
 };
 
 export default chat;

@@ -3,6 +3,8 @@ import '../../style/searchMessage.less';
 import axios from 'axios';
 import { SERVER_ADDRESS, API_PREFIX } from '../constant/serverInfo';
 import processMessage from './processMessage';
+// import renderMessages from '../../js/chat';
+const maxMessageNum = 9999;
 
 function addArrowBackListener() {
     document.getElementsByClassName('navbar-back-arrow')[0].addEventListener('click', function () {
@@ -11,19 +13,13 @@ function addArrowBackListener() {
 }
 
 function renderMessages(msgList) {
-    console.log(msgList);
     const bubbleWrap = document.getElementById('bubble-wrap');
-    const smallestMessageId = window.state.smallestMessageId || Infinity;
-    let beforeNode;
-    if (window.state.smallestMessageId === Infinity) {
-        beforeNode = document.getElementById('blank-bubble');
-    } else {
-        beforeNode = document.getElementById(`message-${smallestMessageId}`);
-    }
+    const beforeNode = document.getElementsByClassName('blank-bubble')[0];
     for (let i = 0; i < msgList.length; i++) {
         bubbleWrap.insertBefore(createSingleBubble(msgList[i]), beforeNode);
     }
-    window.state.smallestMessageId = (msgList[0] && msgList[0].id) || 0;
+    window.state.smallestMessageId = (msgList[msgList.length - 1] && msgList[msgList.length - 1].id) || 0;
+    console.log(window.state.smallestMessageId);
 }
 
 function createAvatar(msg) {
@@ -76,29 +72,55 @@ function createSingleBubble(msg) {
 }
 
 function showResult(res) {
-    console.log(res.data);
     const searchResult = processMessage(res.data.messages);
-    console.log(searchResult);
     renderMessages(searchResult);
 }
 
 async function getSearchResult() {
-    const content = document.getElementById('search-message').value;
-    console.log(content);
+    const newContent = document.getElementById('search-message').value;
+    if (newContent) {
+        window.state.content = newContent;
+    }
+    console.log(window.state.smallestMessageId);
+    const content = window.state.content;
+    const pageSize = 2;
     if (content && content.length > 0) {
-        const res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/searchPublicMessage`, {
-            searchMessage: content
+        const res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/search/publicMessage`, {
+            searchMessage: content,
+            smallestMessageId: window.state.smallestMessageId,
+            pageSize: pageSize
         });
+        if (res.data.end) {
+            document.getElementById('show-more').innerText = 'end';
+        } else {
+            document.getElementById('show-more').innerText = 'view more';
+        }
         if (res) {
             showResult(res);
         }
         document.getElementById('search-message').value = '';
+        console.log(res);
+    }
+}
+
+function removeElementsByClass(className) {
+    var elements = document.getElementsByClassName(className);
+    while (elements.length > 0) {
+        elements[0].parentNode.removeChild(elements[0]);
     }
 }
 
 function addSearchIconListener() {
     document.getElementsByClassName('message-search-icon')[0].addEventListener('click', function () {
-        document.getElementById('bubble-wrap').innerHTML = '';
+        removeElementsByClass('single-bubble');
+        window.state.smallestMessageId = maxMessageNum;
+        getSearchResult();
+    });
+}
+
+function addViewMoreListener() {
+    document.getElementsByClassName('show-more')[0].addEventListener('click', function () {
+        // window.state.smallestMessageId = maxMessageNum;
         getSearchResult();
     });
 }
@@ -106,8 +128,10 @@ function addSearchIconListener() {
 async function render() {
     const app = document.getElementById('app');
     app.innerHTML = SearchMessage;
+    window.state.content = null;
     addArrowBackListener();
     addSearchIconListener();
+    addViewMoreListener();
 }
 
 const search = {

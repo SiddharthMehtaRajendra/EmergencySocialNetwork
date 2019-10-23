@@ -235,15 +235,34 @@ app.get('/api/user/:username?', async function (req, res) {
     });
 });
 
-app.post('/api/searchPublicMessage', async function (req, res) {
+async function searchPublicMessage(req) {
     const searchContent = req.body.searchMessage;
-    // const smallestMessageId = +(req.query && req.query.smallestMessageId);
-    const dbResult = await Message.searchPublicMessage(searchContent);
+    const smallestMessageId = req.body.smallestMessageId;
+    const pageSize = +(req.query && req.body.pageSize);
+    // console.log(pageSize);
+    const dbResult = await Message.searchPublicMessage(searchContent, smallestMessageId, pageSize);
+    return dbResult;
+};
+
+app.post('/api/search/:contextual?', async function (req, res) {
+    var dbResult = null;
+    const contextual = req.params.contextual;
+    var endSign = true;
+    if (contextual === 'publicMessage') {
+        dbResult = await searchPublicMessage(req);
+        endSign = dbResult.res.length <= req.body.pageSize;
+        var messages = dbResult.res;
+        if (!endSign & dbResult.res.length > 0) {
+            messages = JSON.parse(JSON.stringify(dbResult.res));
+            messages.pop();
+        }
+    };
     if (dbResult.success) {
         res.status(200).json({
             success: true,
             message: 'Get Messages',
-            messages: dbResult.res
+            messages: messages,
+            end: endSign
         });
     } else {
         res.status(200).json({
@@ -324,7 +343,4 @@ http.listen(port, function () {
     console.log(`Express server start, listening on port:${port} ...`);
 });
 
-function sum(a, b) {
-    return a + b;
-}
 module.exports = processMsg;

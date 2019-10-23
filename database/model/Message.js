@@ -97,14 +97,15 @@ MessageSchema.statics.history = async function (from, to, smallestMessageId, pag
     };
 };
 
-MessageSchema.statics.searchPublicMessage = async function (searchContent, to) {
+MessageSchema.statics.searchPublicMessage = async function (searchContent, smallestMessageId, pageSize) {
     let res = [];
     let success = true;
     try {
         res = await Message.find({
             to: 'public',
-            content: { $regex: searchContent }
-        }).sort({ id: -1 });
+            content: { $regex: searchContent },
+            id: { $lt: +smallestMessageId }
+        }).sort({ id: -1 }).limit(pageSize + 1);
     } catch (e) {
         res = e._message;
         success = false;
