@@ -59,7 +59,6 @@ Open localhost:3000 in browser
 │       └── register.html
 ├── webpack-dev-server.js   Webpack dev server config
 └── webpack.config.js       Webpack config
-
 ```
 
 ## Notes
