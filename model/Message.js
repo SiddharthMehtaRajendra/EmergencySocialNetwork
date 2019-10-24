@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const AutoIncrement = require('mongoose-sequence')(mongoose);
+const mongoose = require("mongoose");
+const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const MessageSchema = new mongoose.Schema({
     time: {
@@ -50,9 +50,9 @@ MessageSchema.statics.latestPublic = async function () {
     let success = true;
     try {
         res = await this.find({
-            to: 'public'
+            to: "public"
         }).sort({ id: -1 }).limit(1);
-        if (res && res.length > 0) {
+        if(res && res.length > 0) {
             res = res[0];
         }
     } catch (e) {
@@ -69,13 +69,13 @@ MessageSchema.statics.history = async function (from, to, smallestMessageId, pag
     let res = [];
     let success = true;
     try {
-        if (to === 'public') {
-            res = await Message.find({
-                to: 'public',
+        if(to === "public") {
+            res = await this.find({
+                to: "public",
                 id: { $lt: +smallestMessageId }
             }).sort({ id: -1 }).limit(pageSize);
         } else {
-            res = await Message.find({
+            res = await this.find({
                 $or: [{
                     from: from,
                     to: to
@@ -117,6 +117,6 @@ MessageSchema.statics.searchPublicMessage = async function (searchContent, to) {
 
 MessageSchema.plugin(AutoIncrement, { inc_field: 'id' });
 
-const Message = mongoose.model('Message', MessageSchema);
+const Message = mongoose.model("Message", MessageSchema);
 
 module.exports = Message;

@@ -7,7 +7,8 @@
     "es6": true,
     "mocha": true,
     "jest": true,
-    "node": true
+    "node": true,
+    "browser": true
   },
   "rules": {
     "no-console": "warn",
@@ -19,7 +20,7 @@
     "no-irregular-whitespace": "warn",
     "no-unreachable": "error",
     "use-isnan": "error",
-    "complexity": ["error", 6],
+    "complexity": ["error", 12],
     "curly": "warn",
     "default-case": "error",
     "eqeqeq": "error",
@@ -50,12 +51,11 @@
     "no-this-before-super": "warn",
     "no-var": "error",
     "prefer-const": "warn",
+    "semi": ["error", "always"],
     "prefer-arrow-callback": "warn",
     "template-curly-spacing": "warn",
     "array-bracket-spacing": "warn",
     "array-element-newline": "off",
-    "camelcase": "warn",
-    "func-style": ["error", "expression"],
     "indent": ["error", 4],
     "key-spacing": ["warn", {
       "singleLine": {
@@ -63,9 +63,8 @@
         "afterColon": true
       },
       "multiLine": {
-        "beforeColon": true,
-        "afterColon": true,
-        "align": "value"
+        "beforeColon": false,
+        "afterColon": true
       }
     }],
     "keyword-spacing": ["error", {
@@ -79,7 +78,7 @@
     "new-parens": "error",
     "no-mixed-spaces-and-tabs": "warn",
     "no-multi-assign": "warn",
-    "no-trailing-spaces": "warn",
+//    "no-trailing-spaces": "warn",
     "no-whitespace-before-property": "warn",
     "nonblock-statement-body-position": ["error", "below"],
     "quotes": ["error", "double"],

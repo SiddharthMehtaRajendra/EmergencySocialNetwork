@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const AutoIncrement = require('mongoose-sequence')(mongoose);
+const mongoose = require("mongoose");
+const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const ChatSchema = new mongoose.Schema({
     type: {
@@ -82,8 +82,8 @@ ChatSchema.statics.related = async function (username) {
     };
 };
 
-ChatSchema.plugin(AutoIncrement, { inc_field: 'chatId' });
+ChatSchema.plugin(AutoIncrement, { inc_field: "chatId" });
 
-const Chat = mongoose.model('Chat', ChatSchema);
+const Chat = mongoose.model("Chat", ChatSchema);
 
 module.exports = Chat;
