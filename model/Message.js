@@ -101,8 +101,8 @@ MessageSchema.statics.searchPublicMessage = async function (searchContent, to) {
     let res = [];
     let success = true;
     try {
-        res = await Message.find({
-            to: 'public',
+        res = await this.find({
+            to: "public",
             content: { $regex: searchContent }
         }).sort({ id: -1 });
     } catch (e) {
@@ -115,7 +115,7 @@ MessageSchema.statics.searchPublicMessage = async function (searchContent, to) {
     };
 };
 
-MessageSchema.plugin(AutoIncrement, { inc_field: 'id' });
+MessageSchema.plugin(AutoIncrement, { inc_field: "id" });
 
 const Message = mongoose.model("Message", MessageSchema);
 
