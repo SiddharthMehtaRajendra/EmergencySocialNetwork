@@ -91,9 +91,14 @@ async function getSearchResult() {
             pageSize: pageSize
         });
         if (res.data.end) {
-            document.getElementById('show-more').innerText = 'end';
+            const node = document.getElementById('show-more');
+            node.innerText = 'end';
+            node.style.color = '#111';
         } else {
-            document.getElementById('show-more').innerText = 'view more';
+            const node = document.getElementById('show-more');
+            node.innerText = 'view more';
+            node.style.color = '#1983FF';
+            // node.style.color = '#111';
         }
         if (res) {
             showResult(res);
