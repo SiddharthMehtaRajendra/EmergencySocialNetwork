@@ -57,6 +57,7 @@
     "array-bracket-spacing": "warn",
     "array-element-newline": "off",
     "indent": ["error", 4],
+    "func-style": ["warn", "expression"],
     "key-spacing": ["warn", {
       "singleLine": {
         "beforeColon": false,
@@ -78,7 +79,7 @@
     "new-parens": "error",
     "no-mixed-spaces-and-tabs": "warn",
     "no-multi-assign": "warn",
-//    "no-trailing-spaces": "warn",
+    "no-trailing-spaces": "warn",
     "no-whitespace-before-property": "warn",
     "nonblock-statement-body-position": ["error", "below"],
     "quotes": ["error", "double"],
