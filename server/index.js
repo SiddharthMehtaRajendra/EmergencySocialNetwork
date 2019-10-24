@@ -81,13 +81,19 @@ io.on('connection', async function (socket) {
                 result.otherUser = msg.to;
                 io.to(fromSocketId).emit('UPDATE_CHATS', result);
                 result.otherUser = msg.from;
-                io.to(toSocketId).emit('UPDATE_CHATS', result);
+                console.log(msg.to);
+                console.log(msg.from);
+                if (msg.from !== msg.to) {
+                    io.to(toSocketId).emit('UPDATE_CHATS', result);
+                };
             }
 
             const MessageInsert = await Message.insertOne(msg);
             if (MessageInsert.success) {
                 io.to(fromSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
-                io.to(toSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
+                if (fromSocketId !== toSocketId) {
+                    io.to(toSocketId).emit('UPDATE_MESSAGE', MessageInsert.res);
+                };     
             }
         } else {
             io.emit('UPDATE_CHATS', {
@@ -244,14 +250,35 @@ async function searchPublicMessage(req) {
     return dbResult;
 };
 
+async function searchPrivateMessage(req) {
+    const searchContent = req.body.searchMessage;
+    const smallestMessageId = req.body.smallestMessageId;
+    const pageSize = +(req.query && req.body.pageSize);
+    const username = req.body.username;
+    console.log(username);
+    const dbResult = await Message.searchPrivateMessage(username, searchContent, smallestMessageId, pageSize);
+    return dbResult;
+};
+
 app.post('/api/search/:contextual?', async function (req, res) {
     var dbResult = null;
     const contextual = req.params.contextual;
     var endSign = true;
+    var messages = null;
     if (contextual === 'publicMessage') {
         dbResult = await searchPublicMessage(req);
         endSign = dbResult.res.length <= req.body.pageSize;
-        var messages = dbResult.res;
+        messages = dbResult.res;
+        if (!endSign & dbResult.res.length > 0) {
+            messages = JSON.parse(JSON.stringify(dbResult.res));
+            messages.pop();
+        }
+    };
+    if (contextual === 'privateMessage') {
+        dbResult = await searchPrivateMessage(req);
+        console.log(dbResult);
+        endSign = dbResult.res.length <= req.body.pageSize;
+        messages = dbResult.res;
         if (!endSign & dbResult.res.length > 0) {
             messages = JSON.parse(JSON.stringify(dbResult.res));
             messages.pop();

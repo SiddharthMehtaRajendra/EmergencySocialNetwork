@@ -19,7 +19,6 @@ function renderMessages(msgList) {
         bubbleWrap.insertBefore(createSingleBubble(msgList[i]), beforeNode);
     }
     window.state.smallestMessageId = (msgList[msgList.length - 1] && msgList[msgList.length - 1].id) || 0;
-    console.log(window.state.smallestMessageId);
 }
 
 function createAvatar(msg) {
@@ -71,6 +70,19 @@ function createSingleBubble(msg) {
     return singleBubble;
 }
 
+function getContextual() {
+    const publicSearchButton = document.getElementById('public-option');
+    const privateSearchButton = document.getElementById('private-option');
+    if (publicSearchButton.checked) {
+        return 'publicMessage';
+    } else {
+        if (privateSearchButton.checked) {
+            return 'privateMessage';
+        }
+        return null;
+    }
+}
+
 function showResult(res) {
     const searchResult = processMessage(res.data.messages);
     renderMessages(searchResult);
@@ -81,14 +93,15 @@ async function getSearchResult() {
     if (newContent) {
         window.state.content = newContent;
     }
-    console.log(window.state.smallestMessageId);
+    const contextual = getContextual();
     const content = window.state.content;
     const pageSize = 2;
-    if (content && content.length > 0) {
-        const res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/search/publicMessage`, {
+    if (content && content.length > 0 && contextual) {
+        const res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/search/` + contextual, {
             searchMessage: content,
             smallestMessageId: window.state.smallestMessageId,
-            pageSize: pageSize
+            pageSize: pageSize,
+            username: window.state.user.username
         });
         if (res.data.end) {
             const node = document.getElementById('show-more');
@@ -104,7 +117,6 @@ async function getSearchResult() {
             showResult(res);
         }
         document.getElementById('search-message').value = '';
-        console.log(res);
     }
 }
 
