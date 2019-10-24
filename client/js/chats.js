@@ -14,8 +14,8 @@ function sortChats() {
 }
 
 function addSearchBoxListener() {
-    document.getElementsByClassName('search-icon')[0].addEventListener('click', function () {
-        window.location.hash = '/search/message';
+    document.getElementsByClassName("search-icon")[0].addEventListener("click", () => {
+        window.location.hash = "/search/message";
     });
 }
 
@@ -44,9 +44,9 @@ async function render() {
         await fetchData();
     }
     addSearchBoxListener();
-    if (window.state.chats && allChats) {
-        document.getElementById('public-chat-entrance').addEventListener('click', function () {
-            window.location.hash = '/chat/public';
+    if(window.state.chats && allChats) {
+        document.getElementById("public-chat-entrance").addEventListener("click", () => {
+            window.location.hash = "/chat/public";
         });
         const latestPublicMessage = window.state.latestPublic && window.state.latestPublic.latestMessage;
         if(latestPublicMessage) {
