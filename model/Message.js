@@ -101,8 +101,8 @@ MessageSchema.statics.searchPublicMessage = async function (searchContent, small
     let res = [];
     let success = true;
     try {
-        res = await Message.find({
-            to: 'public',
+        res = await this.find({
+            to: "public",
             content: { $regex: searchContent },
             id: { $lt: +smallestMessageId }
         }).sort({ id: -1 }).limit(pageSize + 1);
@@ -120,16 +120,16 @@ MessageSchema.statics.searchPrivateMessage = async function (username, searchCon
     let res = [];
     let success = true;
     try {
-        res = await Message.find({
+        res = await this.find({
             $or: [{
                 from: username,
-                to: { $nin: ['public'] }
+                to: { $nin: ["public"] }
             }, {
                 to: username
             }],
             content: { $regex: searchContent },
             id: { $lt: +smallestMessageId }
-        }).sort({ id: -1 }).limit(pageSize + 1);  
+        }).sort({ id: -1 }).limit(pageSize + 1);
     } catch (e) {
         res = e._message;
         success = false;
@@ -140,7 +140,7 @@ MessageSchema.statics.searchPrivateMessage = async function (username, searchCon
     };
 };
 
-MessageSchema.plugin(AutoIncrement, { inc_field: 'id' });
+MessageSchema.plugin(AutoIncrement, { inc_field: "id" });
 
 const Message = mongoose.model("Message", MessageSchema);
 

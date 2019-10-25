@@ -99,21 +99,6 @@ function setMessageTipVisible(visible) {
     document.getElementById("new-message-tip").style.visibility = (visible ? "visible" : "hidden");
 }
 
-function renderMessages(msgList) {
-    const bubbleWrap = document.getElementById("bubble-wrap");
-    const smallestMessageId = window.state.smallestMessageId || Infinity;
-    let beforeNode;
-    if(window.state.smallestMessageId === Infinity) {
-        beforeNode = document.getElementById("blank-bubble");
-    } else {
-        beforeNode = document.getElementById(`message-${smallestMessageId}`);
-    }
-    for(let i = 0; i < msgList.length; i++) {
-        bubbleWrap.insertBefore(createSingleBubble(msgList[i]), beforeNode);
-    }
-    window.state.smallestMessageId = (msgList[0] && msgList[0].id) || 0;
-}
-
 function renderOneMessage(msg) {
     const bubbleWrap = document.getElementById("bubble-wrap");
     const blankBubble = document.getElementById("blank-bubble");
@@ -136,21 +121,17 @@ function renderOneMessage(msg) {
     }
 }
 
-function setMessageTipVisible(visible) {
-    document.getElementById('new-message-tip').style.visibility = (visible ? 'visible' : 'hidden');
-}
-
 function renderMessages(msgList) {
-    const bubbleWrap = document.getElementById('bubble-wrap');
+    const bubbleWrap = document.getElementById("bubble-wrap");
     console.log(document);
     const smallestMessageId = window.state.smallestMessageId || Infinity;
     let beforeNode;
-    if (window.state.smallestMessageId === Infinity) {
-        beforeNode = document.getElementById('blank-bubble');
+    if(window.state.smallestMessageId === Infinity) {
+        beforeNode = document.getElementById("blank-bubble");
     } else {
         beforeNode = document.getElementById(`message-${smallestMessageId}`);
     }
-    for (let i = 0; i < msgList.length; i++) {
+    for(let i = 0; i < msgList.length; i++) {
         bubbleWrap.insertBefore(createSingleBubble(msgList[i]), beforeNode);
     }
     window.state.smallestMessageId = (msgList[0] && msgList[0].id) || 0;
