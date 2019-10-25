@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
-const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
+const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
     username: {
@@ -74,8 +74,8 @@ UserSchema.statics.addOneUser = async function (userObject) {
     try {
         res = await this.create(userObject);
     } catch (e) {
-        if (e.errors && e.errors.username && e.errors.username.kind && e.errors.username.kind === 'unique') {
-            res = 'Username already exist';
+        if(e.errors && e.errors.username && e.errors.username.kind && e.errors.username.kind === "unique") {
+            res = "Username already exist";
         } else {
             res = e._message;
         }
@@ -89,7 +89,7 @@ UserSchema.statics.addOneUser = async function (userObject) {
 
 UserSchema.statics.validateCredentials = async function (username, password) {
     const user = await this.findOne({ username: username });
-    if (!user) {
+    if(!user) {
         return false;
     } else {
         const isMatch = await bcrypt.compare(password, user.password);
@@ -97,14 +97,14 @@ UserSchema.statics.validateCredentials = async function (username, password) {
     }
 };
 
-UserSchema.pre('save', async function (next) {
-    if (this.isModified('password')) {
+UserSchema.pre("save", async function (next) {
+    if(this.isModified("password")) {
         this.password = await bcrypt.hash(this.password, 8);
     }
     next();
 });
 
 UserSchema.plugin(uniqueValidator);
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.model("User", UserSchema);
 
 module.exports = User;
