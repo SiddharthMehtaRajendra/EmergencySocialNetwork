@@ -270,49 +270,89 @@ async function searchPrivateMessage(req) {
     return dbResult;
 };
 
+async function searchUser(req) {
+    const searchContent = req.body.searchUser;
+    // const pageSize = +(req.query && req.body.pageSize);
+    // console.log(pageSize);
+    console.log("searchContent" + searchContent);
+    const dbResult = await User.searchUser(searchContent);
+    return dbResult;
+};
+
 app.post("/api/search/:contextual?", async (req, res) => {
     let dbResult = null;
     const contextual = req.params.contextual;
-    let endSign = true;
-    let messages = null;
-    if(contextual === "publicMessage") {
-        dbResult = await searchPublicMessage(req);
-        endSign = dbResult.res.length <= req.body.pageSize;
-        messages = dbResult.res;
-        if(!endSign & dbResult.res.length > 0) {
-            messages = JSON.parse(JSON.stringify(dbResult.res));
-            messages.pop();
+    if(contextual === "publicMessage" || contextual === "privateMessage" || contextual === "message") {
+        let endSign = true;
+        let messages = null;
+        if(contextual === "publicMessage") {
+            dbResult = await searchPublicMessage(req);
+            endSign = dbResult.res.length <= req.body.pageSize;
+            messages = dbResult.res;
+            if(!endSign & dbResult.res.length > 0) {
+                messages = JSON.parse(JSON.stringify(dbResult.res));
+                messages.pop();
+            }
+        };
+        if(contextual === "privateMessage") {
+            dbResult = await searchPrivateMessage(req);
+            console.log(dbResult);
+            endSign = dbResult.res.length <= req.body.pageSize;
+            messages = dbResult.res;
+            if(!endSign & dbResult.res.length > 0) {
+                messages = JSON.parse(JSON.stringify(dbResult.res));
+                messages.pop();
+            }
+        };
+        if(dbResult.success) {
+            res.status(200).json({
+                success: true,
+                message: "Get Messages",
+                messages: messages,
+                end: endSign
+            });
+        } else {
+            res.status(200).json({
+                success: false,
+                message: "Load Messages Failed"
+            });
         }
-    };
-    if(contextual === "privateMessage") {
-        dbResult = await searchPrivateMessage(req);
-        console.log(dbResult);
-        endSign = dbResult.res.length <= req.body.pageSize;
-        messages = dbResult.res;
-        if(!endSign & dbResult.res.length > 0) {
-            messages = JSON.parse(JSON.stringify(dbResult.res));
-            messages.pop();
-        }
-    };
-    if(dbResult.success) {
-        res.status(200).json({
-            success: true,
-            message: "Get Messages",
-            messages: messages,
-            end: endSign
-        });
-    } else {
-        res.status(200).json({
-            success: false,
-            message: "Load Messages Failed"
-        });
     }
+    if(contextual === "user") {
+        let users = null;
+        dbResult = await searchUser(req);
+        console.log("searchUserResults" + dbResult);
+        users = dbResult.res;
+        if(dbResult.res.length > 0) {
+            users = JSON.parse(JSON.stringify(dbResult.res));
+            users.pop();
+        }
+        if(dbResult.success) {
+            res.status(200).json({
+                success: true,
+                message: "Get Users",
+                users: users,
+            });
+        } else {
+            res.status(200).json({
+                success: false,
+                message: "Load Users Failed"
+            });
+        }
+    };
 });
 
 app.post("/api/searchPrivateMessage", async (req, res) => {
     const searchMessage = req.body.searchMessage;
     const username = req.username;
     console.log(searchMessage);
+    console.log(username);
+});
+
+app.post("/api/searchUser", async (req, res) => {
+    const searchUser = req.body.searchUser;
+    const username = req.username;
+    console.log(searchUser);
     console.log(username);
 });
 
