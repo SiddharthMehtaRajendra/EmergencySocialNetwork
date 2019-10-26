@@ -3,14 +3,13 @@ import "../../style/searchMessage.less";
 import axios from "axios";
 import { SERVER_ADDRESS, API_PREFIX } from "../constant/serverInfo";
 import processMessage from "./processMessage";
-// import renderMessages from '../../js/chat';
 const maxMessageNum = 9999;
 
-function addArrowBackListener() {
+const addArrowBackListener = function() {
     document.getElementsByClassName("navbar-back-arrow")[0].addEventListener("click", () => {
         window.history.go(-1);
     });
-}
+};
 
 function createAvatar(msg) {
     const avatar = document.createElement("div");
@@ -70,32 +69,33 @@ function renderMessages(msgList) {
     window.state.smallestMessageId = (msgList[msgList.length - 1] && msgList[msgList.length - 1].id) || 0;
 }
 
-function getContextual() {
-    const publicSearchButton = document.getElementById("public-option");
-    const privateSearchButton = document.getElementById("private-option");
-    if(publicSearchButton.checked) {
+const getContextual = function() {
+    const privateSearchNode = document.getElementsByClassName("private-checkbox")[0];
+    const publicSearchNode = document.getElementsByClassName("public-checkbox")[0];
+    if(publicSearchNode.value === "selected") {
         return "publicMessage";
     } else {
-        if(privateSearchButton.checked) {
+        if(privateSearchNode.value === "selected") {
             return "privateMessage";
         }
         return null;
     }
-}
+};
 
 function showResult(res) {
     const searchResult = processMessage(res.data.messages);
     renderMessages(searchResult);
 }
 
-async function getSearchResult() {
+const getSearchResult = async function() {
     const newContent = document.getElementById("search-message").value;
     if(newContent) {
         window.state.content = newContent;
     }
     const contextual = getContextual();
+    console.log(contextual);
     const content = window.state.content;
-    const pageSize = 2;
+    const pageSize = 10;
     if(content && content.length > 0 && contextual) {
         const res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/search/` + contextual, {
             searchMessage: content,
@@ -118,7 +118,7 @@ async function getSearchResult() {
         }
         document.getElementById("search-message").value = "";
     }
-}
+};
 
 function removeElementsByClass(className) {
     const elements = document.getElementsByClassName(className);
@@ -127,29 +127,52 @@ function removeElementsByClass(className) {
     }
 }
 
+const displayShowMoreButton = function(){
+    const showMoreNode = document.getElementById("show-more");
+    showMoreNode.style.display = "block";
+};
+
 function addSearchIconListener() {
     document.getElementsByClassName("message-search-icon")[0].addEventListener("click", () => {
         removeElementsByClass("single-bubble");
         window.state.smallestMessageId = maxMessageNum;
         getSearchResult();
+        displayShowMoreButton();
     });
 }
 
-function addViewMoreListener() {
+const addViewMoreListener = function() {
     document.getElementsByClassName("show-more")[0].addEventListener("click", () => {
-        // window.state.smallestMessageId = maxMessageNum;
         getSearchResult();
     });
-}
+};
 
-async function render() {
+const addSearchOptionListener = function() {
+    const privateSearchNode = document.getElementsByClassName("private-checkbox")[0];
+    const publicSearchNode = document.getElementsByClassName("public-checkbox")[0];
+    privateSearchNode.addEventListener("click", () => {
+        privateSearchNode.style.backgroundColor = "#000";
+        publicSearchNode.style.backgroundColor = "#fff";
+        privateSearchNode.value = "selected";
+        publicSearchNode.value = "unselected";
+    });
+    publicSearchNode.addEventListener("click", () => {
+        publicSearchNode.style.backgroundColor = "#000";
+        privateSearchNode.style.backgroundColor = "#fff";
+        privateSearchNode.value = "unselected";
+        publicSearchNode.value = "selected";
+    });
+};
+
+const render = async function() {
     const app = document.getElementById("app");
     app.innerHTML = SearchMessage;
     window.state.content = null;
     addArrowBackListener();
     addSearchIconListener();
     addViewMoreListener();
-}
+    addSearchOptionListener();
+};
 
 const search = {
     render

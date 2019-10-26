@@ -122,6 +122,7 @@ function renderOneMessage(msg) {
 }
 
 function renderMessages(msgList) {
+    console.log(12345);
     const bubbleWrap = document.getElementById("bubble-wrap");
     console.log(document);
     const smallestMessageId = window.state.smallestMessageId || Infinity;

@@ -251,21 +251,19 @@ app.get("/api/user/:username?", async (req, res) => {
     });
 });
 
-async function searchPublicMessage(req) {
+const searchPublicMessage = async function (req) {
     const searchContent = req.body.searchMessage;
     const smallestMessageId = req.body.smallestMessageId;
     const pageSize = +(req.query && req.body.pageSize);
-    // console.log(pageSize);
     const dbResult = await Message.searchPublicMessage(searchContent, smallestMessageId, pageSize);
     return dbResult;
 };
 
-async function searchPrivateMessage(req) {
+const searchPrivateMessage = async function(req) {
     const searchContent = req.body.searchMessage;
     const smallestMessageId = req.body.smallestMessageId;
     const pageSize = +(req.query && req.body.pageSize);
     const username = req.body.username;
-    console.log(username);
     const dbResult = await Message.searchPrivateMessage(username, searchContent, smallestMessageId, pageSize);
     return dbResult;
 };
@@ -286,7 +284,6 @@ app.post("/api/search/:contextual?", async (req, res) => {
     };
     if(contextual === "privateMessage") {
         dbResult = await searchPrivateMessage(req);
-        console.log(dbResult);
         endSign = dbResult.res.length <= req.body.pageSize;
         messages = dbResult.res;
         if(!endSign & dbResult.res.length > 0) {
@@ -307,13 +304,6 @@ app.post("/api/search/:contextual?", async (req, res) => {
             message: "Load Messages Failed"
         });
     }
-});
-
-app.post("/api/searchPrivateMessage", async (req, res) => {
-    const searchMessage = req.body.searchMessage;
-    const username = req.username;
-    console.log(searchMessage);
-    console.log(username);
 });
 
 app.get("/api/historyMessage", async (req, res) => {
