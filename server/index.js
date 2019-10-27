@@ -258,7 +258,7 @@ async function searchPublicMessage(req) {
     // console.log(pageSize);
     const dbResult = await Message.searchPublicMessage(searchContent, smallestMessageId, pageSize);
     return dbResult;
-};
+}
 
 async function searchPrivateMessage(req) {
     const searchContent = req.body.searchMessage;
@@ -268,7 +268,7 @@ async function searchPrivateMessage(req) {
     console.log(username);
     const dbResult = await Message.searchPrivateMessage(username, searchContent, smallestMessageId, pageSize);
     return dbResult;
-};
+}
 
 async function searchUser(req) {
     const searchContent = req.body.searchUser;
@@ -277,7 +277,7 @@ async function searchUser(req) {
     console.log("searchContent" + searchContent);
     const dbResult = await User.searchUser(searchContent);
     return dbResult;
-};
+}
 
 app.post("/api/search/:contextual?", async (req, res) => {
     let dbResult = null;
@@ -325,7 +325,6 @@ app.post("/api/search/:contextual?", async (req, res) => {
         users = dbResult.res;
         if(dbResult.res.length > 0) {
             users = JSON.parse(JSON.stringify(dbResult.res));
-            users.pop();
         }
         if(dbResult.success) {
             res.status(200).json({
@@ -339,7 +338,7 @@ app.post("/api/search/:contextual?", async (req, res) => {
                 message: "Load Users Failed"
             });
         }
-    };
+    }
 });
 
 app.post("/api/searchPrivateMessage", async (req, res) => {
