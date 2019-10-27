@@ -1,4 +1,3 @@
-/* eslint-disable func-style */
 import SearchUser from "../../view/searchUser.html";
 import "../../style/searchUser.less";
 import axios from "axios";

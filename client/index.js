@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import "./style/index.less";
 import "./style/welcome.less";
 import "./style/home.less";

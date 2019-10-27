@@ -272,9 +272,7 @@ async function searchPrivateMessage(req) {
 
 async function searchUser(req) {
     const searchContent = req.body.searchUser;
-    // const pageSize = +(req.query && req.body.pageSize);
-    // console.log(pageSize);
-    console.log("searchContent" + searchContent);
+    console.log("searchContent: " + searchContent);
     const dbResult = await User.searchUser(searchContent);
     return dbResult;
 }
@@ -293,7 +291,7 @@ app.post("/api/search/:contextual?", async (req, res) => {
                 messages = JSON.parse(JSON.stringify(dbResult.res));
                 messages.pop();
             }
-        };
+        }
         if(contextual === "privateMessage") {
             dbResult = await searchPrivateMessage(req);
             console.log(dbResult);
@@ -303,7 +301,7 @@ app.post("/api/search/:contextual?", async (req, res) => {
                 messages = JSON.parse(JSON.stringify(dbResult.res));
                 messages.pop();
             }
-        };
+        }
         if(dbResult.success) {
             res.status(200).json({
                 success: true,
