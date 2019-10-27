@@ -18,6 +18,7 @@ import me from "./js/me";
 import directory from "./js/directory";
 import search from "./js/lib/searchMessage";
 import searchAnnouncement from "./js/lib/searchAnnouncement";
+import postAnnouncement from "./js/lib/postAnnouncement";
 
 import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";
@@ -119,6 +120,10 @@ router.on("/search/:contextual", async () => {
 
 router.on("/searchAnnouncement", async () => {
     await searchAnnouncement.render();
+}).resolve();
+
+router.on("/postAnnouncement", async () => {
+    await postAnnouncement.render();
 }).resolve();
 
 router.notFound(() => {

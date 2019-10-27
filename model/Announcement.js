@@ -9,6 +9,9 @@ const AnnouncementSchema = new mongoose.Schema({
     from: {
         type: String
     },
+    title: {
+        type: String
+    },
     content: {
         type: String
     },
@@ -51,12 +54,16 @@ AnnouncementSchema.statics.announcementHistory = async function (smallestAnnounc
     };
 };
 
-AnnouncementSchema.statics.searchAnnouncements = async function (searchContent, smallestAnnouncementId, pageSize) {
+AnnouncementSchema.statics.searchAnnouncements = async function (searchTitle, searchContent, smallestAnnouncementId, pageSize) {
     let res = [];
     let success = true;
     try {
         res = await this.find({
-            content: { $regex: searchContent },
+            $or: [{
+                title: {$regex: searchTitle }
+            }, {
+                content: { $regex: searchContent }
+            }],
             announcement_id: { $lt: + smallestAnnouncementId }
         }).sort({ announcement_id: -1 }).limit(pageSize + 1);
     } catch (e) {

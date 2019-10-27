@@ -3,7 +3,6 @@ import "../../style/searchAnnouncement.less";
 import dateFormat from "./dateFormat";
 import axios from "axios";
 import { SERVER_ADDRESS, API_PREFIX } from "../constant/serverInfo";
-import processMessage from "./processMessage";
 // import renderMessages from '../../js/chat';
 const maxAnnouncementNum = 9999;
 
@@ -21,6 +20,7 @@ function renderAnnouncements(announcements) {
         announcements.forEach((announcement, index) => {
             const announcementItem = document.createElement("div");
             const citizenName = document.createElement("div");
+            const announcementTitle = document.createElement("div");
             const announcementContent = document.createElement("div");
             const announcementTime = document.createElement("div");
             const announcementInfo = document.createElement("div");
@@ -30,13 +30,16 @@ function renderAnnouncements(announcements) {
             announcementInfo.className = "announcement-info";
             citizenName.className = "name";
             bottomThinLine.className = "right-thin-line";
+            announcementTitle.className = "title";
             announcementContent.className = "content";
             announcementTime.className = "latest-message-time";
             citizenName.innerText = announcement.from;
+            announcementTitle.innerText = announcement.title;
             announcementContent.innerText = announcement.content;
             announcementTime.innerText = dateFormat(announcement.time, "mm/dd HH:MM");
             announcementInfo.appendChild(citizenName);
             announcementInfo.appendChild(announcementTime);
+            announcementItem.appendChild(announcementTitle);
             announcementItem.appendChild(announcementContent);
             announcementItem.appendChild(announcementInfo);
             if(index !== announcements.length - 1) {
@@ -68,6 +71,7 @@ async function getSearchResult() {
     const pageSize = 2;
     if(content && content.length > 0 && contextual) {
         const res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/search/` + contextual, {
+            searchTitle: content,
             searchAnnouncement: content,
             smallestAnnouncementId: window.state.smallestAnnouncementId,
             pageSize: pageSize

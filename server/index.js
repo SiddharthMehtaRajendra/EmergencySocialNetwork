@@ -61,6 +61,7 @@ function processAnnouncements(announcement){
     return {
         time: new Date(),
         from: announcement.from,
+        title: announcement.title,
         content: announcement.content,
         status: announcement.status
     };
@@ -277,10 +278,11 @@ async function searchPublicMessage(req) {
 };
 
 async function searchAnnouncements(req) {
+    const searchTitle = req.body.searchTitle;
     const searchContent = req.body.searchAnnouncement;
     const smallestAnnouncementId = req.body.smallestAnnouncementId;
     const pageSize = +(req.query && req.body.pageSize);
-    const dbResult = await Announcement.searchAnnouncements(searchContent, smallestAnnouncementId, pageSize);
+    const dbResult = await Announcement.searchAnnouncements(searchTitle, searchContent, smallestAnnouncementId, pageSize);
     return dbResult;
 };
 

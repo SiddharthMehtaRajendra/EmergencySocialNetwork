@@ -43,6 +43,7 @@ async function renderAnnouncements(announcements) {
         announcements.forEach((announcement, index) => {
             const announcementItem = document.createElement("div");
             const citizenName = document.createElement("div");
+            const announcementTitle = document.createElement("div");
             const announcementContent = document.createElement("div");
             const announcementTime = document.createElement("div");
             const announcementInfo = document.createElement("div");
@@ -52,12 +53,15 @@ async function renderAnnouncements(announcements) {
             announcementInfo.className = "announcement-info";
             citizenName.className = "name";
             bottomThinLine.className = "right-thin-line";
+            announcementTitle.className = "title";
             announcementContent.className = "content";
             citizenName.innerText = announcement.from;
+            announcementTitle.innerText = announcement.title;
             announcementContent.innerText = announcement.content;
             announcementTime.innerText = dateFormat(announcement.time, "mm/dd HH:MM");
             announcementInfo.appendChild(citizenName);
             announcementInfo.appendChild(announcementTime);
+            announcementItem.appendChild(announcementTitle);
             announcementItem.appendChild(announcementContent);
             announcementItem.appendChild(announcementInfo);
             if(index !== announcements.length - 1) {
@@ -70,17 +74,8 @@ async function renderAnnouncements(announcements) {
     }
 }
 
-function sendAnnouncement() {
-    const content = document.getElementById("announcement-input").value;
-    if(content && content.length > 0) {
-        socket.emit("ANNOUNCEMENT", {
-            content: content,
-            type: 0,
-            from: window.state.user.username,
-            status: (window.state && window.state.user && window.state.user.status) || "ok"
-        });
-        document.getElementById("announcement-input").value = "";
-    }
+function loadPostAnnouncement(){
+    window.location.hash = "/postAnnouncement";
 }
 
 function setAnnouncementTipVisible(visible) {
@@ -115,6 +110,7 @@ async function renderOneAnnouncement(announcement) {
     const allAnnouncements = document.getElementById("all-announcement");
     const announcementItem = document.createElement("div");
     const citizenName = document.createElement("div");
+    const announcementTitle = document.createElement("div");
     const announcementContent = document.createElement("div");
     const announcementTime = document.createElement("div");
     const announcementInfo = document.createElement("div");
@@ -124,12 +120,15 @@ async function renderOneAnnouncement(announcement) {
     announcementInfo.className = "announcement-info";
     citizenName.className = "name";
     bottomThinLine.className = "right-thin-line";
+    announcementTitle.className = "title";
     announcementContent.className = "content";
     citizenName.innerText = announcement.from;
+    announcementTitle.innerText = announcement.title;
     announcementContent.innerText = announcement.content;
     announcementTime.innerText = dateFormat(announcement.time, "mm/dd HH:MM");
     announcementInfo.appendChild(citizenName);
     announcementInfo.appendChild(announcementTime);
+    announcementItem.appendChild(announcementTitle);
     announcementItem.appendChild(announcementContent);
     announcementItem.appendChild(announcementInfo);
     allAnnouncements.appendChild(announcementItem);
@@ -161,7 +160,7 @@ async function render() {
         await fetchData();
     }
     addSearchBoxListener();
-    document.getElementById("send-btn").addEventListener("click", sendAnnouncement);
+    document.getElementById("post-btn").addEventListener("click", loadPostAnnouncement);
     document.addEventListener("keypress", (e) => {
         if(e.key === "Enter") {
             sendAnnouncement();
