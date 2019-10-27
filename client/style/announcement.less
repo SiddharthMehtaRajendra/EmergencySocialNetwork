@@ -2,19 +2,14 @@
     .single-announcement {
         padding: 20px;
 
-        .title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
         .content {
             font-size: 14px;
-            color: #999;
+            font-weight: 700;
+            color: #000;
             margin-bottom: 18px;
         }
 
-        .sub-info {
+        .announcement-info {
             display: flex;
             justify-content: flex-start;
             font-size: 14px;
@@ -23,5 +18,60 @@
                 margin-right: 28px;
             }
         }
+    }
+    
+    .input-container {
+        padding: 16px 20px 10px 20px;
+        box-sizing: border-box;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: white;
+        margin-bottom: 80px;
+
+        input {
+            border: none;
+            outline: none;
+            border-radius: 0;
+            border-bottom: 1px solid #ccc;
+            font-size: 18px;
+            width: 100%;
+            margin-right: 14px;
+            padding: 6px 0;
+
+            &:active, &:focus {
+                border-bottom: 1px solid #111;
+            }
+        }
+
+        .send-btn {
+            font-weight: 800;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    }
+
+    .new-announcement-tip {
+        visibility: hidden;
+        position: fixed;
+        bottom: 80px;
+        background-color: white;
+        height: 36px;
+        border-radius: 18px;
+        line-height: 36px;
+        width: 120px;
+        transform: translateX(-60px);
+        color: #1983FF;
+        z-index: 101;
+        font-weight: 600;
+        font-size: 14px;
+        left: 50%;
+        cursor: pointer;
+        text-align: center;
+        border: 1px solid #1983FF;
     }
 }
