@@ -42,7 +42,7 @@ AnnouncementSchema.statics.announcementHistory = async function (smallestAnnounc
     try {
         res = await this.find({
             announcement_id: { $lt: + smallestAnnouncementId }
-        }).sort({ announcement_id: -1 }).limit(pageSize);
+        }).sort({ announcement_id: 1 }).limit(pageSize);
         res = res.reverse();
     } catch (e) {
         res = e._message;
