@@ -51,5 +51,7 @@ describe("User DB Test", async () => {
         for(let i = 0; i < userList.length; i++) {
             expect(userSearchedResult[i].username).toEqual(`searchtest${i}`);
         }
+        const userSearchedFail = (await User.searchUser(search)).success;
+        expect(userSearchedFail).toEqual(false);
     });
 });
