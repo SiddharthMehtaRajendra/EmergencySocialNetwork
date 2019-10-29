@@ -17,8 +17,20 @@ mongoose.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
-mongoose.connection.on("connected", () => {
+
+mongoose.connection.on("connected", async () => {
     console.log("Mongoose connection open to " + url);
+    console.log("Clean DB First");
+    // If use test DB
+    if(process.env.SERVER_TEST_DB) {
+        await Promise.all(
+            Object.keys(mongoose.connection.collections).map(async (key) => {
+                if(key !== "counters") {
+                    return mongoose.connection.collections[key].remove({});
+                }
+            })
+        );
+    }
 });
 
 mongoose.connection.on("error", (err) => {

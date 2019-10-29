@@ -16,6 +16,7 @@ const randomColor = require("randomcolor");
 const cookieParser = require("cookie-parser");
 const parseCookies = require("./lib/parseCookies");
 const { checkToken } = require("./auth/checkToken");
+const stopwords = require("./lib/stopwords");
 require("./lib/connectdb");
 
 io.set("origins", "*:*");
@@ -44,7 +45,18 @@ io.use((socket, next) => {
     next();
 });
 
-function processMsg(msg) {
+const deleteStopWords = function(str){
+    let words = str.split(" ");
+    let newWords = [];
+    for(let i = 0; i < words.length; i++) {
+        if( !stopwords.has(words[i].toLowerCase())) {
+            newWords.push(words[i]);
+        }
+    }
+    return newWords.join(" ");
+};
+
+const processMsg = function(msg) {
     return {
         time: new Date(),
         from: msg.from,
@@ -54,7 +66,7 @@ function processMsg(msg) {
         status: msg.status,
         chatId: msg.chatId
     };
-}
+};
 
 io.on("connection", async (socket) => {
     await User.updateOnline(socket.handshake.username, true);
@@ -81,8 +93,6 @@ io.on("connection", async (socket) => {
                 result.otherUser = msg.to;
                 io.to(fromSocketId).emit("UPDATE_CHATS", result);
                 result.otherUser = msg.from;
-                console.log(msg.to);
-                console.log(msg.from);
                 if(msg.from !== msg.to) {
                     io.to(toSocketId).emit("UPDATE_CHATS", result);
                 };
@@ -127,11 +137,8 @@ app.post("/api/joinCheck", async (req, res, next) => {
         username: req.body.username,
         password: req.body.password
     };
-    console.log(userObj);
     if(validate(userObj.username, userObj.password)) {
-        console.log("Before DB");
         const exist = await User.exists(userObj.username);
-        console.log(exist);
         if(!exist) {
             res.status(200).json({
                 success: false,
@@ -252,43 +259,55 @@ app.get("/api/user/:username?", async (req, res) => {
 });
 
 const searchPublicMessage = async function (req) {
-    const searchContent = req.body.searchMessage;
+    const searchContent = deleteStopWords(req.body.searchMessage);
+    let dbResult = { success: false };
+    if(!searchContent || searchContent === "") {
+        return dbResult;
+    }
     const smallestMessageId = req.body.smallestMessageId;
     const pageSize = +(req.query && req.body.pageSize);
-    const dbResult = await Message.searchPublicMessage(searchContent, smallestMessageId, pageSize);
+    dbResult = await Message.searchPublicMessage(searchContent, smallestMessageId, pageSize);
     return dbResult;
 };
 
 const searchPrivateMessage = async function(req) {
-    const searchContent = req.body.searchMessage;
+    const searchContent = deleteStopWords(req.body.searchMessage);
+    let dbResult = { success: false };
+    if(searchContent === "") {
+        return dbResult;
+    }
     const smallestMessageId = req.body.smallestMessageId;
     const pageSize = +(req.query && req.body.pageSize);
     const username = req.body.username;
-    const dbResult = await Message.searchPrivateMessage(username, searchContent, smallestMessageId, pageSize);
+    dbResult = await Message.searchPrivateMessage(username, searchContent, smallestMessageId, pageSize);
     return dbResult;
 };
 
 app.post("/api/search/:contextual?", async (req, res) => {
-    let dbResult = null;
+    let dbResult = { success: false };
     const contextual = req.params.contextual;
     let endSign = true;
     let messages = null;
     if(contextual === "publicMessage") {
         dbResult = await searchPublicMessage(req);
-        endSign = dbResult.res.length <= req.body.pageSize;
-        messages = dbResult.res;
-        if(!endSign & dbResult.res.length > 0) {
-            messages = JSON.parse(JSON.stringify(dbResult.res));
-            messages.pop();
+        if(dbResult.success){
+            endSign = dbResult.res.length <= req.body.pageSize;
+            messages = dbResult.res;
+            if(!endSign & dbResult.res.length > 0) {
+                messages = JSON.parse(JSON.stringify(dbResult.res));
+                messages.pop();
+            }
         }
     };
     if(contextual === "privateMessage") {
         dbResult = await searchPrivateMessage(req);
-        endSign = dbResult.res.length <= req.body.pageSize;
-        messages = dbResult.res;
-        if(!endSign & dbResult.res.length > 0) {
-            messages = JSON.parse(JSON.stringify(dbResult.res));
-            messages.pop();
+        if(dbResult.success){
+            endSign = dbResult.res.length <= req.body.pageSize;
+            messages = dbResult.res;
+            if(!endSign & dbResult.res.length > 0) {
+                messages = JSON.parse(JSON.stringify(dbResult.res));
+                messages.pop();
+            }
         }
     };
     if(dbResult.success) {
