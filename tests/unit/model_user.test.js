@@ -31,4 +31,25 @@ describe("User DB Test", async () => {
         updated = await User.getOneUserByUsername(TEST_USERNAME);
         expect(updated.res[0].online).toEqual(true);
     });
+
+    const userList = [];
+    for(let i = 1; i < 5; i++) {
+        userList.push = {
+            username: `searchtest${i}`,
+            password: 1234,
+            avatar: "#ffffff",
+            status: "ok",
+            statusUpdateTime: new Date(),
+            online: true
+        };
+    }
+    test("test search user list", async () => {
+        for(let i = 0; i < userList.length; i++) {
+            await User.insertOne(userList[i]);
+        }
+        const userSearchedResult = (await User.searchUser("search")).res;
+        for(let i = 0; i < userList.length; i++) {
+            expect(userSearchedResult[i].username).toEqual(`searchtest${i}`);
+        }
+    });
 });

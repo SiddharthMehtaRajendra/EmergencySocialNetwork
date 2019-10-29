@@ -17,6 +17,12 @@ async function fetchData() {
     }
 }
 
+function addSearchBoxListener() {
+    document.getElementsByClassName("search-icon")[0].addEventListener("click", () => {
+        window.location.hash = "/search/user";
+    });
+}
+
 async function render() {
     const app = document.getElementById("app");
     app.innerHTML = Directory;
@@ -24,6 +30,7 @@ async function render() {
     if(!window.state.users) {
         await fetchData();
     }
+    addSearchBoxListener();
     if(window.state.users && directory) {
         directory.innerHTML = "";
         const users = window.state.users;
