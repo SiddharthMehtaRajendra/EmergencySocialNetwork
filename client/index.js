@@ -14,10 +14,13 @@ import Announcement from "./view/announcement.html";
 import guide from "./js/guide";
 import chats from "./js/chats";
 import chat from "./js/chat";
+import announcements from "./js/announcement";
 import me from "./js/me";
 import directory from "./js/directory";
 import search from "./js/lib/searchMessage";
 import searchUser from "./js/lib/searchUser";
+import searchAnnouncement from "./js/lib/searchAnnouncement";
+import postAnnouncement from "./js/lib/postAnnouncement";
 
 import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";
@@ -88,8 +91,9 @@ router.on("/directory", async () => {
     await directory.render();
 }).resolve();
 
-router.on("/announcement", () => {
+router.on("/announcement", async () => {
     app.innerHTML = Announcement;
+    await announcements.render();
 });
 
 router.on("/guide", () => {
@@ -140,8 +144,13 @@ router.on("/search/:contextual", async () => {
     await search.render();
 }).resolve();
 
+router.on("/searchAnnouncement", async () => {
+    await searchAnnouncement.render();
+}).resolve();
 
-
+router.on("/postAnnouncement", async () => {
+    await postAnnouncement.render();
+}).resolve();
 
 router.notFound(() => {
     app.innerHTML = Error;

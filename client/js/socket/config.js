@@ -3,6 +3,7 @@ import chat from "../chat";
 import processMessage from "../lib/processMessage";
 import directory from "../directory";
 import chats from "../chats";
+import announcements from "../announcement";
 import { SERVER_ADDRESS } from "../constant/serverInfo";
 import Toast from "../lib/toast";
 
@@ -18,6 +19,13 @@ socket.on("UPDATE_MESSAGE", (msg) => {
         }
         const newMessage = msg.from + ":\r\n" + msg.content;
         Toast(newMessage, null, null, 5000);
+    }
+});
+
+socket.on("UPDATE_ANNOUNCEMENT", (announcement) => {
+    window.state.announcements.push(announcement);
+    if(window.location.hash === "#/announcement") {
+        announcements.renderOneAnnouncement(announcement);
     }
 });
 
