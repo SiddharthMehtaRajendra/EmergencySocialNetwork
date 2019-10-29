@@ -3,6 +3,7 @@ import "./style/welcome.less";
 import "./style/home.less";
 import "./style/announcement.less";
 import "./style/searchMessage.less";
+import "./style/searchUser.less";
 
 import Navigo from "navigo";
 import Welcome from "./view/welcome.html";
@@ -13,9 +14,13 @@ import Announcement from "./view/announcement.html";
 import guide from "./js/guide";
 import chats from "./js/chats";
 import chat from "./js/chat";
+import announcements from "./js/announcement";
 import me from "./js/me";
 import directory from "./js/directory";
 import search from "./js/lib/searchMessage";
+import searchUser from "./js/lib/searchUser";
+import searchAnnouncement from "./js/lib/searchAnnouncement";
+import postAnnouncement from "./js/lib/postAnnouncement";
 
 import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";
@@ -86,8 +91,9 @@ router.on("/directory", async () => {
     await directory.render();
 }).resolve();
 
-router.on("/announcement", () => {
+router.on("/announcement", async () => {
     app.innerHTML = Announcement;
+    await announcements.render();
 });
 
 router.on("/guide", () => {
@@ -109,9 +115,41 @@ router.on("/chat/:id", async () => {
     await chat.render();
 }).resolve();
 
+// router.on("/search/:contextual", async (req) => {
+//     const searchParamter = req.params.contextual;
+//     switch (searchParamter) {
+//     case "message":
+//         console.log(window.location.hash);
+//         await search.render();
+//         break;
+//     case "user":
+//         console.log(window.location.hash);
+//         await searchUser.render();
+//         break;
+//     default:
+//         console.log(window.location.hash);
+//         await search.render();
+//         break;
+//     }
+// }).resolve();
+
+router.on("/search/user", async () => {
+    console.log(window.location.hash);
+    await searchUser.render();
+}).resolve();
+
+
 router.on("/search/:contextual", async () => {
     console.log(window.location.hash);
     await search.render();
+}).resolve();
+
+router.on("/searchAnnouncement", async () => {
+    await searchAnnouncement.render();
+}).resolve();
+
+router.on("/postAnnouncement", async () => {
+    await postAnnouncement.render();
 }).resolve();
 
 router.notFound(() => {

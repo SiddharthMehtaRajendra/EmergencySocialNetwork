@@ -97,6 +97,23 @@ UserSchema.statics.validateCredentials = async function (username, password) {
     }
 };
 
+UserSchema.statics.searchUser = async function (searchContent) {
+    let res = [];
+    let success = true;
+    try {
+        res = await this.find({
+            username: { $regex: searchContent },
+        });
+    } catch (e) {
+        res = e._message;
+        success = false;
+    }
+    return {
+        success,
+        res
+    };
+};
+
 UserSchema.pre("save", async function (next) {
     if(this.isModified("password")) {
         this.password = await bcrypt.hash(this.password, 8);

@@ -9,6 +9,7 @@ const validate = require("./lib/server-validation");
 const User = require("../model/User");
 const Message = require("../model/Message");
 const Chat = require("../model/Chat");
+const Announcement = require("../model/Announcement")
 const io = require("socket.io")(http);
 const jwt = require("jsonwebtoken");
 const config = require("./auth/config");
@@ -36,7 +37,7 @@ app.use("/app", express.static(path.resolve(__dirname, "../dist")));
 io.use((socket, next) => {
     const token = parseCookies(socket.request.headers.cookie).token;
     jwt.verify(token, config.secret, (err, decoded) => {
-        if(err) {
+        if (err) {
             socket.emit("AUTH_FAILED", {});
         } else {
             socket.handshake.username = decoded.username;
@@ -68,17 +69,27 @@ const processMsg = function(msg) {
     };
 };
 
+function processAnnouncements(announcement){
+    return {
+        time: new Date(),
+        from: announcement.from,
+        title: announcement.title,
+        content: announcement.content,
+        status: announcement.status
+    };
+}
+
 io.on("connection", async (socket) => {
     await User.updateOnline(socket.handshake.username, true);
     await User.updateSocketId(socket.handshake.username, socket.id);
     io.emit("UPDATE_DIRECTORY", { data: "A User Online" });
     socket.on("MESSAGE", async (msg) => {
         msg = processMsg(msg);
-        if(msg.to !== "public") {
+        if (msg.to !== "public") {
             const fromSocketId = socket.id;
             const toSocketId = (await User.getOneUserByUsername(msg.to)).res[0].socketID;
             let ChatInsert;
-            if(!msg.chatId) {
+            if (!msg.chatId) {
                 ChatInsert = await Chat.insertOne({
                     type: "private",
                     from: msg.from,
@@ -88,7 +99,7 @@ io.on("connection", async (socket) => {
             } else {
                 ChatInsert = await Chat.updateLatestMessage(msg.chatId, msg);
             }
-            if(ChatInsert.success) {
+            if (ChatInsert.success) {
                 const result = JSON.parse(JSON.stringify(ChatInsert.res));
                 result.otherUser = msg.to;
                 io.to(fromSocketId).emit("UPDATE_CHATS", result);
@@ -99,9 +110,9 @@ io.on("connection", async (socket) => {
             }
 
             const MessageInsert = await Message.insertOne(msg);
-            if(MessageInsert.success) {
+            if (MessageInsert.success) {
                 io.to(fromSocketId).emit("UPDATE_MESSAGE", MessageInsert.res);
-                if(fromSocketId !== toSocketId) {
+                if (fromSocketId !== toSocketId) {
                     io.to(toSocketId).emit("UPDATE_MESSAGE", MessageInsert.res);
                 };
             }
@@ -117,6 +128,12 @@ io.on("connection", async (socket) => {
             const MessageInsert = await Message.insertOne(msg);
             io.emit("UPDATE_MESSAGE", MessageInsert.res);
         }
+    });
+    socket.on("ANNOUNCEMENT", async (announcement) => {
+        announcement = processAnnouncements(announcement);
+        const AnnouncementInsert = await Announcement.insertOne(announcement);
+        io.emit("UPDATE_ANNOUNCEMENT", AnnouncementInsert.res);
+        
     });
     socket.on("disconnect", async () => {
         await User.updateOnline(socket.handshake.username, false);
@@ -148,7 +165,7 @@ app.post("/api/joinCheck", async (req, res, next) => {
             });
         } else {
             // login failed
-            if(!await User.validateCredentials(userObj.username, userObj.password)) {
+            if (!await User.validateCredentials(userObj.username, userObj.password)) {
                 res.status(200).json({
                     success: false,
                     message: "Enter the correct username and password",
@@ -192,9 +209,9 @@ app.post("/api/join", async (req, res, next) => {
         statusUpdateTime: new Date(),
         online: true
     };
-    if(validate(userObj.username, userObj.password)) {
+    if (validate(userObj.username, userObj.password)) {
         const result = await User.addOneUser(userObj);
-        if(result.success) {
+        if (result.success) {
             // await User.updateOnline(userObj.username, true);
             // io.emit('UPDATE_DIRECTORY', { data: 'A New User Created' });
             const token = jwt.sign({ username: req.body.username }, config.secret, { expiresIn: "24h" });
@@ -268,6 +285,15 @@ const searchPublicMessage = async function (req) {
     const pageSize = +(req.query && req.body.pageSize);
     dbResult = await Message.searchPublicMessage(searchContent, smallestMessageId, pageSize);
     return dbResult;
+}
+
+async function searchAnnouncements(req) {
+    const searchTitle = req.body.searchTitle;
+    const searchContent = req.body.searchAnnouncement;
+    const smallestAnnouncementId = req.body.smallestAnnouncementId;
+    const pageSize = +(req.query && req.body.pageSize);
+    const dbResult = await Announcement.searchAnnouncements(searchTitle, searchContent, smallestAnnouncementId, pageSize);
+    return dbResult;
 };
 
 const searchPrivateMessage = async function(req) {
@@ -281,7 +307,14 @@ const searchPrivateMessage = async function(req) {
     const username = req.body.username;
     dbResult = await Message.searchPrivateMessage(username, searchContent, smallestMessageId, pageSize);
     return dbResult;
-};
+}
+
+async function searchUser(req) {
+    const searchContent = req.body.searchUser;
+    console.log("searchContent: " + searchContent);
+    const dbResult = await User.searchUser(searchContent);
+    return dbResult;
+}
 
 app.post("/api/search/:contextual?", async (req, res) => {
     let dbResult = { success: false };
@@ -298,6 +331,50 @@ app.post("/api/search/:contextual?", async (req, res) => {
                 messages.pop();
             }
         }
+        if(contextual === "privateMessage") {
+            dbResult = await searchPrivateMessage(req);
+            console.log(dbResult);
+            endSign = dbResult.res.length <= req.body.pageSize;
+            messages = dbResult.res;
+            if(!endSign & dbResult.res.length > 0) {
+                messages = JSON.parse(JSON.stringify(dbResult.res));
+                messages.pop();
+            }
+        }
+        if(dbResult.success) {
+            res.status(200).json({
+                success: true,
+                message: "Get Messages",
+                messages: messages,
+                end: endSign
+            });
+        } else {
+            res.status(200).json({
+                success: false,
+                message: "Load Messages Failed"
+            });
+        }
+    }
+    if(contextual === "user") {
+        let users = null;
+        dbResult = await searchUser(req);
+        console.log("searchUserResults" + dbResult);
+        users = dbResult.res;
+        if(dbResult.res.length > 0) {
+            users = JSON.parse(JSON.stringify(dbResult.res));
+        }
+        if(dbResult.success) {
+            res.status(200).json({
+                success: true,
+                message: "Get Users",
+                users: users,
+            });
+        } else {
+            res.status(200).json({
+                success: false,
+                message: "Load Users Failed"
+            });
+        }
     };
     if(contextual === "privateMessage") {
         dbResult = await searchPrivateMessage(req);
@@ -308,21 +385,56 @@ app.post("/api/search/:contextual?", async (req, res) => {
                 messages = JSON.parse(JSON.stringify(dbResult.res));
                 messages.pop();
             }
+    if (contextual === "announcement") {
+        dbResult = await searchAnnouncements(req);
+        endSign = dbResult.res.length <= req.body.pageSize;
+        let announcements = dbResult.res;
+        if(!endSign & dbResult.res.length > 0) {
+            announcements = JSON.parse(JSON.stringify(dbResult.res));
+            announcements.pop();
         }
-    };
-    if(dbResult.success) {
-        res.status(200).json({
-            success: true,
-            message: "Get Messages",
-            messages: messages,
-            end: endSign
-        });
+        if (dbResult.success) {
+            res.status(200).json({
+                success: true,
+                message: "Get Announcements",
+                announcements: announcements,
+                end: endSign
+            });
+        } else {
+            res.status(200).json({
+                success: false,
+                message: "Load Announcements Failed"
+            });
+        }
     } else {
-        res.status(200).json({
-            success: false,
-            message: "Load Messages Failed"
-        });
+        if (dbResult.success) {
+            res.status(200).json({
+                success: true,
+                message: "Get Messages",
+                messages: messages,
+                end: endSign
+            });
+        } else {
+            res.status(200).json({
+                success: false,
+                message: "Load Messages Failed"
+            });
+        }
     }
+});
+
+app.post("/api/searchPrivateMessage", async (req, res) => {
+    const searchMessage = req.body.searchMessage;
+    const username = req.username;
+    console.log(searchMessage);
+    console.log(username);
+});
+
+app.post("/api/searchUser", async (req, res) => {
+    const searchUser = req.body.searchUser;
+    const username = req.username;
+    console.log(searchUser);
+    console.log(username);
 });
 
 app.get("/api/historyMessage", async (req, res) => {
@@ -331,7 +443,7 @@ app.get("/api/historyMessage", async (req, res) => {
     const from = (req.query && req.query.from);
     const to = (req.query && req.query.to);
     const dbResult = await Message.history(from, to, +smallestMessageId, pageSize);
-    if(dbResult.success) {
+    if (dbResult.success) {
         res.status(200).json({
             success: true,
             message: "Get Messages",
@@ -359,8 +471,8 @@ app.get("/api/chats", async (req, res) => {
     const dbResult = await Chat.related(username);
     const chats = JSON.parse(JSON.stringify(dbResult.res)); // Mongoose Result can't be modified
     const chatsWithOtherUser = [];
-    for(let i = 0; i < chats.length; i++) {
-        if(chats[i].from !== username || chats[i].to !== username) {
+    for (let i = 0; i < chats.length; i++) {
+        if (chats[i].from !== username || chats[i].to !== username) {
             chats[i].otherUser = chats[i].from === username ? chats[i].to : chats[i].from;
             chatsWithOtherUser.push(chats[i]);
         }
@@ -371,6 +483,24 @@ app.get("/api/chats", async (req, res) => {
         chats: chatsWithOtherUser,
         public: publicResult
     });
+});
+
+app.get("/api/announcement", async (req, res) => {
+    const smallestAnnouncementId = +(req.query && req.query.smallestAnnouncementId);
+    const pageSize = +(req.query && req.query.pageSize);
+    const dbResult = await Announcement.announcementHistory(+smallestAnnouncementId, pageSize);
+    if (dbResult.success) {
+        res.status(200).json({
+            success: true,
+            message: "Get Announcements",
+            announcements: dbResult.res
+        });
+    } else {
+        res.status(200).json({
+            success: false,
+            message: "Load Announcements Failed"
+        });
+    }
 });
 
 app.post("/api/mystatus", async (req, res, next) => {
