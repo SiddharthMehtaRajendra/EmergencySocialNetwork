@@ -5,6 +5,12 @@ const ChatSchema = new mongoose.Schema({
     type: {
         type: String
     },
+    name: {
+        type: String
+    },
+    members: {
+        type: Array
+    },
     from: {
         type: String
     },

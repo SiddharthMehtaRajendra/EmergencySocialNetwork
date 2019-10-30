@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const config = require("./config.js");
 
-function exclude(url) {
+const exclude = function(url) {
     console.log(url);
     const urlTable = {
         "/heartbeat": true,
@@ -13,13 +13,10 @@ function exclude(url) {
     if(urlTable[url]) {
         return true;
     }
-    if(url.indexOf("app") >= 0) {
-        return true;
-    }
-    return false;
-}
+    return url.indexOf("app") >= 0;
+};
 
-function tokenParsing(token) {
+const tokenParsing = function(token) {
     const parsedToken = {};
     jwt.verify(token, config.secret, (err, decoded) => {
         if(err) {
@@ -27,10 +24,10 @@ function tokenParsing(token) {
         } else {
             parsedToken.error = false;
             parsedToken.decodedInfo = decoded;
-        };
+        }
     });
     return parsedToken;
-}
+};
 
 const checkToken = (req, res, next) => {
     if(exclude(req.originalUrl)) {

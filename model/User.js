@@ -38,10 +38,35 @@ UserSchema.statics.exists = async function (username) {
 
 UserSchema.statics.getOneUserByUsername = async function (username) {
     let res = {};
-    const success = true;
+    let success = true;
     try {
         res = await this.find({ username: username });
     } catch (e) {
+        success = false;
+        res = e._message;
+    }
+    return {
+        success,
+        res
+    };
+};
+
+UserSchema.statics.getAllUsers = async function(){
+    let res = [];
+    let success = true;
+    try {
+        const rawResult = await this.find().sort({
+            online: -1,
+            username: 1
+        });
+        res = rawResult.map((item) => ({
+            username: item.username,
+            avatar: item.avatar || "#ccc",
+            status: item.status || "ok",
+            online: item.online || false
+        }));
+    } catch (e) {
+        success = false;
         res = e._message;
     }
     return {

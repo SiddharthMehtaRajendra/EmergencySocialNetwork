@@ -36,7 +36,8 @@ socket.on("AUTH_FAILED", () => {
     }
 });
 
-socket.on("UPDATE_DIRECTORY", async () => {
+socket.on("UPDATE_DIRECTORY", async (payload) => {
+    console.log(payload);
     await directory.fetchData();
     if(window.location.hash === "#/directory") {
         await directory.render();
@@ -45,7 +46,7 @@ socket.on("UPDATE_DIRECTORY", async () => {
     }
 });
 
-socket.on("UPDATE_CHATS", async (chat) => {
+socket.on("UPDATE_CHAT", async (chat) => {
     if(chat.to !== "public") {
         if(!window.state.chatsMap[chat.otherUser]) {
             window.state.chats.push(chat);

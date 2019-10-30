@@ -20,9 +20,9 @@ mongoose.connect(url, {
 
 mongoose.connection.on("connected", async () => {
     console.log("Mongoose connection open to " + url);
-    console.log("Clean DB First");
     // If use test DB
     if(process.env.SERVER_TEST_DB) {
+        console.log("Clean DB First");
         await Promise.all(
             Object.keys(mongoose.connection.collections).map(async (key) => {
                 if(key !== "counters") {

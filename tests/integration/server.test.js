@@ -92,7 +92,7 @@ describe("Server Test", async () => {
         expect(res.status).toEqual(200);
         expect(res.data.message).toEqual("Get Messages");
         expect(res.data.messages.length).toEqual(3);
-   
+
         const overPageSizeRes = await axios({
             method: "post",
             url: url,
@@ -164,7 +164,7 @@ describe("Server Test", async () => {
         expect(res.status).toEqual(200);
         expect(res.data.message).toEqual("Get Messages");
         expect(res.data.messages.length).toEqual(3);
-        
+
         const overPageRangeRes = await axios({
             method: "post",
             url: url,

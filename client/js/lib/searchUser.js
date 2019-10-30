@@ -64,7 +64,7 @@ async function getSearchResult() {
     console.log(contextual);
     const content = window.state.content;
     if(content && content.length > 0 && contextual) {
-        const res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/search/` + contextual, {
+        const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/search/` + contextual, {
             searchUser: content,
             username: window.state.user.username
         });

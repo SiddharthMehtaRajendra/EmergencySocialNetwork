@@ -115,31 +115,12 @@ router.on("/chat/:id", async () => {
     await chat.render();
 }).resolve();
 
-// router.on("/search/:contextual", async (req) => {
-//     const searchParamter = req.params.contextual;
-//     switch (searchParamter) {
-//     case "message":
-//         console.log(window.location.hash);
-//         await search.render();
-//         break;
-//     case "user":
-//         console.log(window.location.hash);
-//         await searchUser.render();
-//         break;
-//     default:
-//         console.log(window.location.hash);
-//         await search.render();
-//         break;
-//     }
-// }).resolve();
-
 router.on("/search/user", async () => {
     console.log(window.location.hash);
     await searchUser.render();
 }).resolve();
 
-
-router.on("/search/:contextual", async () => {
+router.on("/search/:context", async () => {
     console.log(window.location.hash);
     await search.render();
 }).resolve();

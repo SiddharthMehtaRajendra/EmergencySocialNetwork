@@ -97,7 +97,7 @@ const getSearchResult = async function() {
     const content = window.state.content;
     const pageSize = 10;
     if(content && content.length > 0 && contextual) {
-        const res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/search/` + contextual, {
+        const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/search/` + contextual, {
             searchMessage: content,
             smallestMessageId: window.state.smallestMessageId,
             pageSize: pageSize,

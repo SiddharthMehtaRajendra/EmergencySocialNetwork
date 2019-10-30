@@ -5,22 +5,15 @@ const cors = require("cors");
 const http = require("http").createServer(app);
 const port = process.env.PORT || 80;
 const bodyParser = require("body-parser");
-const validate = require("./lib/server-validation");
 const User = require("../model/User");
 const Message = require("../model/Message");
-const Chat = require("../model/Chat");
-const Announcement = require("../model/Announcement")
+const Announcement = require("../model/Announcement");
 const io = require("socket.io")(http);
-const jwt = require("jsonwebtoken");
-const config = require("./auth/config");
-const randomColor = require("randomcolor");
 const cookieParser = require("cookie-parser");
-const parseCookies = require("./lib/parseCookies");
 const { checkToken } = require("./auth/checkToken");
-const stopwords = require("./lib/stopwords");
+const { verifyToken, onConnect, onDisconnect, onMessage } = require("./ioHandle");
+const controller = require("./controller/index");
 require("./lib/connectdb");
-
-io.set("origins", "*:*");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -30,249 +23,41 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use(checkToken);
-
-// Serve static front-end files, for future use
 app.use("/app", express.static(path.resolve(__dirname, "../dist")));
 
-io.use((socket, next) => {
-    const token = parseCookies(socket.request.headers.cookie).token;
-    jwt.verify(token, config.secret, (err, decoded) => {
-        if (err) {
-            socket.emit("AUTH_FAILED", {});
-        } else {
-            socket.handshake.username = decoded.username;
-        }
-    });
-    next();
-});
-
-const deleteStopWords = function(str){
-    let words = str.split(" ");
-    let newWords = [];
-    for(let i = 0; i < words.length; i++) {
-        if( !stopwords.has(words[i].toLowerCase())) {
-            newWords.push(words[i]);
-        }
-    }
-    return newWords.join(" ");
-};
-
-const processMsg = function(msg) {
-    return {
-        time: new Date(),
-        from: msg.from,
-        to: msg.to,
-        type: msg.type,
-        content: msg.content,
-        status: msg.status,
-        chatId: msg.chatId
-    };
-};
-
-function processAnnouncements(announcement){
-    return {
-        time: new Date(),
-        from: announcement.from,
-        title: announcement.title,
-        content: announcement.content,
-        status: announcement.status
-    };
-}
-
+// Socket IO config
+io.set("origins", "*:*");
+io.use(verifyToken);
 io.on("connection", async (socket) => {
-    await User.updateOnline(socket.handshake.username, true);
-    await User.updateSocketId(socket.handshake.username, socket.id);
-    io.emit("UPDATE_DIRECTORY", { data: "A User Online" });
-    socket.on("MESSAGE", async (msg) => {
-        msg = processMsg(msg);
-        if (msg.to !== "public") {
-            const fromSocketId = socket.id;
-            const toSocketId = (await User.getOneUserByUsername(msg.to)).res[0].socketID;
-            let ChatInsert;
-            if (!msg.chatId) {
-                ChatInsert = await Chat.insertOne({
-                    type: "private",
-                    from: msg.from,
-                    to: msg.to,
-                    latestMessage: msg
-                });
-            } else {
-                ChatInsert = await Chat.updateLatestMessage(msg.chatId, msg);
-            }
-            if (ChatInsert.success) {
-                const result = JSON.parse(JSON.stringify(ChatInsert.res));
-                result.otherUser = msg.to;
-                io.to(fromSocketId).emit("UPDATE_CHATS", result);
-                result.otherUser = msg.from;
-                if(msg.from !== msg.to) {
-                    io.to(toSocketId).emit("UPDATE_CHATS", result);
-                };
-            }
-
-            const MessageInsert = await Message.insertOne(msg);
-            if (MessageInsert.success) {
-                io.to(fromSocketId).emit("UPDATE_MESSAGE", MessageInsert.res);
-                if (fromSocketId !== toSocketId) {
-                    io.to(toSocketId).emit("UPDATE_MESSAGE", MessageInsert.res);
-                };
-            }
-        } else {
-            io.emit("UPDATE_CHATS", {
-                chatId: -1,
-                from: msg.from,
-                latestMessage: msg,
-                otherUser: "public",
-                to: "public",
-                type: "public"
-            });
-            const MessageInsert = await Message.insertOne(msg);
-            io.emit("UPDATE_MESSAGE", MessageInsert.res);
-        }
-    });
-    socket.on("ANNOUNCEMENT", async (announcement) => {
-        announcement = processAnnouncements(announcement);
-        const AnnouncementInsert = await Announcement.insertOne(announcement);
-        io.emit("UPDATE_ANNOUNCEMENT", AnnouncementInsert.res);
-        
-    });
-    socket.on("disconnect", async () => {
-        await User.updateOnline(socket.handshake.username, false);
-        io.emit("UPDATE_DIRECTORY", { data: "A User Offline" });
-    });
+    await onConnect(socket, io);
+    socket.on("MESSAGE", async (msg) => onMessage(socket, io, msg));
+    socket.on("disconnect", () => onDisconnect(socket, io));
 });
 
 app.get("/heartbeat", async (req, res, next) => {
-    console.log("Hello ESN!");
     res.status(200).json({
         success: true,
         message: "Hello ESN!"
     });
 });
 
-app.post("/api/joinCheck", async (req, res, next) => {
-    const userObj = {
-        username: req.body.username,
-        password: req.body.password
-    };
-    if(validate(userObj.username, userObj.password)) {
-        const exist = await User.exists(userObj.username);
-        if(!exist) {
-            res.status(200).json({
-                success: false,
-                message: "User Not Exists",
-                exists: false,
-                validationPass: null
-            });
-        } else {
-            // login failed
-            if (!await User.validateCredentials(userObj.username, userObj.password)) {
-                res.status(200).json({
-                    success: false,
-                    message: "Enter the correct username and password",
-                    exists: null,
-                    validationPass: false
-                });
-            } else {
-                // login successfully
-                const token = jwt.sign({ username: userObj.username }, config.secret, { expiresIn: "24h" });
-                // await User.updateOnline(userObj.username, true);
-                // io.emit('UPDATE_DIRECTORY', { data: 'A User Online' });
-                res.status(200).json({
-                    success: true,
-                    message: "Validation Passed",
-                    exists: true,
-                    validationPass: true,
-                    token: token
-                });
-            }
-        }
-    } else {
-        res.status(200).json({
-            success: false,
-            message: "Validation Failed",
-            exists: null,
-            validationPass: false
-        });
-    }
-});
+app.post("/api/joinCheck", controller.joinCheck);
 
-// register
-app.post("/api/join", async (req, res, next) => {
-    const avatar = randomColor({
-        luminosity: "light"
-    });
-    const userObj = {
-        username: req.body.username,
-        password: req.body.password,
-        avatar: avatar,
-        status: "ok",
-        statusUpdateTime: new Date(),
-        online: true
-    };
-    if (validate(userObj.username, userObj.password)) {
-        const result = await User.addOneUser(userObj);
-        if (result.success) {
-            // await User.updateOnline(userObj.username, true);
-            // io.emit('UPDATE_DIRECTORY', { data: 'A New User Created' });
-            const token = jwt.sign({ username: req.body.username }, config.secret, { expiresIn: "24h" });
-            res.status(200).json({
-                success: true,
-                message: "Register Success",
-                token: token
-            });
-        } else {
-            res.status(200).json({
-                success: false,
-                message: result.res
-            });
-        }
-    } else {
-        res.status(200).json({
-            success: false,
-            message: "Validate Failed"
-        });
-    }
-});
+app.post("/api/join", controller.join);
 
-app.get("/api/users", async (req, res) => {
-    try {
-        const result = await User.find().sort({
-            online: -1,
-            username: 1
-        });
-        const all = result.map((item) => ({
-            username: item.username,
-            avatar: item.avatar || "#ccc",
-            status: item.status || "ok",
-            online: item.online || false
-        }));
-        res.status(200).json({
-            success: true,
-            message: "All Directory",
-            users: all
-        });
-    } catch (e) {
-        res.status(200).json({
-            success: false,
-            message: e._message
-        });
-    }
-});
+app.get("/api/users", controller.users);
 
-app.get("/api/user/:username?", async (req, res) => {
-    const username = (req.params && req.params.username) || req.username;
-    const result = await User.getOneUserByUsername(username);
-    const user = result.res[0];
-    res.status(200).json({
-        success: result.success,
-        message: result.success ? "Get User info OK" : result.res,
-        user: {
-            username: user.username || null,
-            avatar: user.avatar || "#ccc",
-            online: user.online || false,
-            status: user.status || "ok"
-        }
-    });
+app.get("/api/user/:username?", controller.user);
+
+app.get("/api/historyMessage", controller.historyMessage);
+
+app.get("/api/chats", controller.chats);
+
+app.get("/api/announcement", controller.announcement);
+
+app.post("/api/updateStatus", async (req, res) => {
+    const result = await controller.updateStatus(req, io);
+    res.status(200).json(result);
 });
 
 const searchPublicMessage = async function (req) {
@@ -285,7 +70,7 @@ const searchPublicMessage = async function (req) {
     const pageSize = +(req.query && req.body.pageSize);
     dbResult = await Message.searchPublicMessage(searchContent, smallestMessageId, pageSize);
     return dbResult;
-}
+};
 
 async function searchAnnouncements(req) {
     const searchTitle = req.body.searchTitle;
@@ -296,7 +81,7 @@ async function searchAnnouncements(req) {
     return dbResult;
 };
 
-const searchPrivateMessage = async function(req) {
+const searchPrivateMessage = async function (req) {
     const searchContent = deleteStopWords(req.body.searchMessage);
     let dbResult = { success: false };
     if(searchContent === "") {
@@ -307,7 +92,7 @@ const searchPrivateMessage = async function(req) {
     const username = req.body.username;
     dbResult = await Message.searchPrivateMessage(username, searchContent, smallestMessageId, pageSize);
     return dbResult;
-}
+};
 
 async function searchUser(req) {
     const searchContent = req.body.searchUser;
@@ -316,14 +101,14 @@ async function searchUser(req) {
     return dbResult;
 }
 
-app.post("/api/search/:contextual?", async (req, res) => {
+app.get("/api/search/:context", async (req, res) => {
     let dbResult = { success: false };
-    const contextual = req.params.contextual;
+    const context = req.params.context;
     let endSign = true;
     let messages = null;
     if(contextual === "publicMessage") {
         dbResult = await searchPublicMessage(req);
-        if(dbResult.success){
+        if(dbResult.success) {
             endSign = dbResult.res.length <= req.body.pageSize;
             messages = dbResult.res;
             if(!endSign & dbResult.res.length > 0) {
@@ -331,15 +116,15 @@ app.post("/api/search/:contextual?", async (req, res) => {
                 messages.pop();
             }
         }
-        if(contextual === "privateMessage") {
-            dbResult = await searchPrivateMessage(req);
-            console.log(dbResult);
-            endSign = dbResult.res.length <= req.body.pageSize;
-            messages = dbResult.res;
-            if(!endSign & dbResult.res.length > 0) {
-                messages = JSON.parse(JSON.stringify(dbResult.res));
-                messages.pop();
-            }
+    }
+    if(contextual === "privateMessage") {
+        dbResult = await searchPrivateMessage(req);
+        console.log(dbResult);
+        endSign = dbResult.res.length <= req.body.pageSize;
+        messages = dbResult.res;
+        if(!endSign && dbResult.res.length > 0) {
+            messages = JSON.parse(JSON.stringify(dbResult.res));
+            messages.pop();
         }
         if(dbResult.success) {
             res.status(200).json({
@@ -375,17 +160,19 @@ app.post("/api/search/:contextual?", async (req, res) => {
                 message: "Load Users Failed"
             });
         }
-    };
+    }
     if(contextual === "privateMessage") {
         dbResult = await searchPrivateMessage(req);
-        if(dbResult.success){
+        if(dbResult.success) {
             endSign = dbResult.res.length <= req.body.pageSize;
             messages = dbResult.res;
             if(!endSign & dbResult.res.length > 0) {
                 messages = JSON.parse(JSON.stringify(dbResult.res));
                 messages.pop();
             }
-    if (contextual === "announcement") {
+        }
+    }
+    if(contextual === "announcement") {
         dbResult = await searchAnnouncements(req);
         endSign = dbResult.res.length <= req.body.pageSize;
         let announcements = dbResult.res;
@@ -393,7 +180,7 @@ app.post("/api/search/:contextual?", async (req, res) => {
             announcements = JSON.parse(JSON.stringify(dbResult.res));
             announcements.pop();
         }
-        if (dbResult.success) {
+        if(dbResult.success) {
             res.status(200).json({
                 success: true,
                 message: "Get Announcements",
@@ -406,117 +193,9 @@ app.post("/api/search/:contextual?", async (req, res) => {
                 message: "Load Announcements Failed"
             });
         }
-    } else {
-        if (dbResult.success) {
-            res.status(200).json({
-                success: true,
-                message: "Get Messages",
-                messages: messages,
-                end: endSign
-            });
-        } else {
-            res.status(200).json({
-                success: false,
-                message: "Load Messages Failed"
-            });
-        }
-    }
-});
-
-app.post("/api/searchPrivateMessage", async (req, res) => {
-    const searchMessage = req.body.searchMessage;
-    const username = req.username;
-    console.log(searchMessage);
-    console.log(username);
-});
-
-app.post("/api/searchUser", async (req, res) => {
-    const searchUser = req.body.searchUser;
-    const username = req.username;
-    console.log(searchUser);
-    console.log(username);
-});
-
-app.get("/api/historyMessage", async (req, res) => {
-    const smallestMessageId = +(req.query && req.query.smallestMessageId);
-    const pageSize = +(req.query && req.query.pageSize);
-    const from = (req.query && req.query.from);
-    const to = (req.query && req.query.to);
-    const dbResult = await Message.history(from, to, +smallestMessageId, pageSize);
-    if (dbResult.success) {
-        res.status(200).json({
-            success: true,
-            message: "Get Messages",
-            messages: dbResult.res
-        });
-    } else {
-        res.status(200).json({
-            success: false,
-            message: "Load Messages Failed"
-        });
-    }
-});
-
-app.get("/api/chats", async (req, res) => {
-    const latestPublicMessage = (await Message.latestPublic()).res;
-    const publicResult = {
-        chatId: -1,
-        from: latestPublicMessage.from,
-        latestMessage: latestPublicMessage[0],
-        otherUser: "public",
-        to: "public",
-        type: "public"
-    };
-    const username = (req.params && req.params.username) || req.username;
-    const dbResult = await Chat.related(username);
-    const chats = JSON.parse(JSON.stringify(dbResult.res)); // Mongoose Result can't be modified
-    const chatsWithOtherUser = [];
-    for (let i = 0; i < chats.length; i++) {
-        if (chats[i].from !== username || chats[i].to !== username) {
-            chats[i].otherUser = chats[i].from === username ? chats[i].to : chats[i].from;
-            chatsWithOtherUser.push(chats[i]);
-        }
-    }
-    res.status(200).json({
-        success: true,
-        message: "Get Chats",
-        chats: chatsWithOtherUser,
-        public: publicResult
-    });
-});
-
-app.get("/api/announcement", async (req, res) => {
-    const smallestAnnouncementId = +(req.query && req.query.smallestAnnouncementId);
-    const pageSize = +(req.query && req.query.pageSize);
-    const dbResult = await Announcement.announcementHistory(+smallestAnnouncementId, pageSize);
-    if (dbResult.success) {
-        res.status(200).json({
-            success: true,
-            message: "Get Announcements",
-            announcements: dbResult.res
-        });
-    } else {
-        res.status(200).json({
-            success: false,
-            message: "Load Announcements Failed"
-        });
-    }
-});
-
-app.post("/api/mystatus", async (req, res, next) => {
-    try {
-        await User.updateStatus(req.body.username, req.body.status);
-        io.emit("UPDATE_DIRECTORY", { data: "User Status Change" });
-        res.status(200).json({
-            success: true
-        });
-    } catch (e) {
-        console.log(e);
     }
 });
 
 http.listen(port, () => {
     console.log(`Express server start, listening on port:${port} ...`);
 });
-
-module.exports = processMsg;
