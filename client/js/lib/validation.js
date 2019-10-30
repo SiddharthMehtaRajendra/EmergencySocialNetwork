@@ -5,7 +5,7 @@ const validateUserName = (username) => {
     if(reservedNameDict[username]) {
         return { result: false, text: errorTextConfig.registrationErrors.userNameReserved };
     }
-    const reg = /^[a-zA-Z0-9]{3,20}$/;
+    const reg = /^[a-zA-Z0-9]{3,60}$/;
     if(!reg.test(username)) {
         return { result: false, text: errorTextConfig.registrationErrors.userNameError };
     }

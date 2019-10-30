@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 const jwt = require("jsonwebtoken");
 const parseCookies = require("./lib/parseCookies");
 const config = require("./auth/config");

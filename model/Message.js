@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
 
+/* istanbul ignore next */
 const MessageSchema = new mongoose.Schema({
     time: {
         type: Date,
@@ -126,49 +127,6 @@ MessageSchema.statics.searchMessage = async function (params) {
     }
     try {
         res = await this.find(searchConfig).sort({ id: -1 }).limit(params.pageSize + 1);
-    } catch (e) {
-        res = e._message;
-        success = false;
-    }
-    return {
-        success,
-        res
-    };
-};
-
-MessageSchema.statics.searchPublicMessage = async function (searchContent, smallestMessageId, pageSize) {
-    let res = [];
-    let success = true;
-    try {
-        res = await this.find({
-            to: "public",
-            content: { $regex: searchContent },
-            id: { $lt: +smallestMessageId }
-        }).sort({ id: -1 }).limit(pageSize + 1);
-    } catch (e) {
-        res = e._message;
-        success = false;
-    }
-    return {
-        success,
-        res
-    };
-};
-
-MessageSchema.statics.searchPrivateMessage = async function (username, searchContent, smallestMessageId, pageSize) {
-    let res = [];
-    let success = true;
-    try {
-        res = await this.find({
-            $or: [{
-                from: username,
-                to: { $nin: ["public"] }
-            }, {
-                to: username
-            }],
-            content: { $regex: searchContent },
-            id: { $lt: +smallestMessageId }
-        }).sort({ id: -1 }).limit(pageSize + 1);
     } catch (e) {
         res = e._message;
         success = false;

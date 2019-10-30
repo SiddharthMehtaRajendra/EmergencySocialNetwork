@@ -22,4 +22,13 @@ describe("Announcement DB Test", async () => {
         const historyAnnouncements = (await Announcement.announcementHistory(Infinity, 5)).res;
         expect(historyAnnouncements.length).toEqual(5);
     });
+
+    test("Test Search Announcements", async () => {
+        const searchResult = (await Announcement.searchAnnouncement({
+            keywords: "announcement",
+            smallestAnnouncementId: Infinity,
+            pageSize: 10
+        })).res;
+        expect(searchResult.length).toBeGreaterThan(4);
+    });
 });

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 const bcrypt = require("bcryptjs");
 
+/* istanbul ignore next */
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -51,7 +52,7 @@ UserSchema.statics.getOneUserByUsername = async function (username) {
     };
 };
 
-UserSchema.statics.getAllUsers = async function(){
+UserSchema.statics.getAllUsers = async function () {
     let res = [];
     let success = true;
     try {
@@ -59,6 +60,7 @@ UserSchema.statics.getAllUsers = async function(){
             online: -1,
             username: 1
         });
+        /* istanbul ignore next */
         res = rawResult.map((item) => ({
             username: item.username,
             avatar: item.avatar || "#ccc",
@@ -99,6 +101,7 @@ UserSchema.statics.addOneUser = async function (userObject) {
     try {
         res = await this.create(userObject);
     } catch (e) {
+        /* istanbul ignore else */
         if(e.errors && e.errors.username && e.errors.username.kind && e.errors.username.kind === "unique") {
             res = "Username already exist";
         } else {
@@ -114,7 +117,7 @@ UserSchema.statics.addOneUser = async function (userObject) {
 
 UserSchema.statics.validateCredentials = async function (username, password) {
     const user = await this.findOne({ username: username });
-    if(!user) {
+    if(!user || user.length === 0) {
         return false;
     } else {
         const isMatch = await bcrypt.compare(password, user.password);

@@ -26,6 +26,7 @@ const getPrivateChats = async function(username){
     return chatsWithOtherUser;
 };
 
+/* istanbul ignore next */
 const chats = async function (req, res, next) {
     const publicChat = await getPublicChat();
     const username = (req.params && req.params.username) || req.username;

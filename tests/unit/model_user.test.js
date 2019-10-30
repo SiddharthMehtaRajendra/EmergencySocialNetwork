@@ -17,6 +17,12 @@ describe("User DB Test", async () => {
         const addResult = await User.addOneUser(userObject);
         expect(addResult.success).toEqual(true);
         expect(addResult.res.username).toEqual(TEST_USERNAME);
+        let validResult = await User.validateCredentials(TEST_USERNAME,TEST_PASSWORD);
+        expect(validResult).toEqual(true);
+        validResult = await User.validateCredentials(TEST_USERNAME,"FALSE PASS");
+        expect(validResult).toEqual(false);
+        validResult = await User.validateCredentials("NOT EXIST NAME","FALSE PASS");
+        expect(validResult).toEqual(false);
         expect(await User.exists(TEST_USERNAME)).toEqual(true);
         expect(await User.exists("not-exist-user")).toEqual(false);
         const addResult2 = await User.addOneUser(userObject);
@@ -30,26 +36,29 @@ describe("User DB Test", async () => {
         await User.updateOnline(TEST_USERNAME, true);
         updated = await User.getOneUserByUsername(TEST_USERNAME);
         expect(updated.res[0].online).toEqual(true);
+        await User.updateSocketId(TEST_USERNAME, "TEST SOCKET ID");
+        updated = await User.getOneUserByUsername(TEST_USERNAME);
+        expect(updated.res[0].socketID).toEqual("TEST SOCKET ID");
     });
 
-    const userList = [];
-    for(let i = 1; i < 5; i++) {
-        userList.push = {
-            username: `searchtest${i}`,
-            password: 1234,
-            avatar: "#ffffff",
-            status: "ok",
-            statusUpdateTime: new Date(),
-            online: true
-        };
-    }
-    test("test search user list", async () => {
+    test("test get user list", async () => {
+        const userList = [];
+        for(let i = 0; i < 5; i++) {
+            userList.push({
+                username: `searchtest${i}`,
+                password: 1234,
+                avatar: "#ffffff",
+                status: "ok",
+                statusUpdateTime: new Date(),
+                online: true
+            });
+        }
         for(let i = 0; i < userList.length; i++) {
-            await User.insertOne(userList[i]);
+            await User.addOneUser(userList[i]);
         }
         const userSearchedResult = (await User.searchUser("search")).res;
-        for(let i = 0; i < userList.length; i++) {
-            expect(userSearchedResult[i].username).toEqual(`searchtest${i}`);
-        }
+        expect(userSearchedResult.length).toEqual(5);
+        const allUsers = await User.getAllUsers();
+        expect(allUsers.res.length).toBeGreaterThan(5);
     });
 });

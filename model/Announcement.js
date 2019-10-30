@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
 
+/* istanbul ignore next */
 const AnnouncementSchema = new mongoose.Schema({
     time: {
         type: Date,

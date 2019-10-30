@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const config = require("./config.js");
 
 const exclude = function(url) {
-    console.log(url);
     const urlTable = {
         "/heartbeat": true,
         "/api/joinCheck": true,
@@ -29,6 +28,7 @@ const tokenParsing = function(token) {
     return parsedToken;
 };
 
+/* istanbul ignore next */
 const checkToken = (req, res, next) => {
     if(exclude(req.originalUrl)) {
         next();

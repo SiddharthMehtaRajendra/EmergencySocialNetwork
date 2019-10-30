@@ -12,7 +12,6 @@ if(process.env.MONGODB_URI) {
     url = process.env.MONGODB_URI;
 }
 
-console.log(url);
 mongoose.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -37,7 +36,7 @@ mongoose.connection.on("error", (err) => {
     console.log("Mongoose connection error: " + err);
 });
 
-mongoose.connection.on("disconnected", () => {
+mongoose.connection.on("disconnected", async () => {
     console.log("Mongoose connection disconnected");
 });
 
