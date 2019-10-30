@@ -9,18 +9,16 @@ import Navigo from "navigo";
 import Welcome from "./view/welcome.html";
 import Home from "./view/home.html";
 import Error from "./view/error.html";
-import Announcement from "./view/announcement.html";
-
 import guide from "./js/guide";
 import chats from "./js/chats";
 import chat from "./js/chat";
-import announcements from "./js/announcement";
+import announcements from "./js/announcements";
 import me from "./js/me";
 import directory from "./js/directory";
 import search from "./js/lib/searchMessage";
 import searchUser from "./js/lib/searchUser";
 import searchAnnouncement from "./js/lib/searchAnnouncement";
-import postAnnouncement from "./js/lib/postAnnouncement";
+import postAnnouncement from "./js/postAnnouncement";
 
 import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";
@@ -91,8 +89,7 @@ router.on("/directory", async () => {
     await directory.render();
 }).resolve();
 
-router.on("/announcement", async () => {
-    app.innerHTML = Announcement;
+router.on("/announcements", async () => {
     await announcements.render();
 });
 

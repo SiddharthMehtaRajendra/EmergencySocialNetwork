@@ -5,14 +5,14 @@ const hashToTabItem = {
     "#/chats": "tab-item-chats",
     "#/directory": "tab-item-directory",
     "#/me": "tab-item-me",
-    "#/announcement": "tab-item-announcement"
+    "#/announcements": "tab-item-announcement"
 };
 
 const tabItemToHash = {
     "tab-item-chats": "#/chats",
     "tab-item-directory": "#/directory",
     "tab-item-me": "#/me",
-    "tab-item-announcement": "#/announcement"
+    "tab-item-announcement": "#/announcements"
 };
 
 function mountNode() {

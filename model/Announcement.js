@@ -23,7 +23,6 @@ const AnnouncementSchema = new mongoose.Schema({
 AnnouncementSchema.statics.insertOne = async function (announcement) {
     let res = {};
     let success = true;
-    announcement.time = new Date();
     try {
         res = await this.create(announcement);
     } catch (e) {
@@ -41,9 +40,8 @@ AnnouncementSchema.statics.announcementHistory = async function (smallestAnnounc
     let success = true;
     try {
         res = await this.find({
-            announcement_id: { $lt: + smallestAnnouncementId }
-        }).sort({ announcement_id: 1 }).limit(pageSize);
-        res = res.reverse();
+            announcementId: { $lt: + smallestAnnouncementId }
+        }).sort({ announcementId: -1 }).limit(pageSize);
     } catch (e) {
         res = e._message;
         success = false;
@@ -54,18 +52,18 @@ AnnouncementSchema.statics.announcementHistory = async function (smallestAnnounc
     };
 };
 
-AnnouncementSchema.statics.searchAnnouncements = async function (searchTitle, searchContent, smallestAnnouncementId, pageSize) {
+AnnouncementSchema.statics.searchAnnouncement = async function (params) {
     let res = [];
     let success = true;
     try {
         res = await this.find({
             $or: [{
-                title: {$regex: searchTitle }
+                title: {$regex: params.keywords }
             }, {
-                content: { $regex: searchContent }
+                content: { $regex: params.keywords }
             }],
-            announcement_id: { $lt: + smallestAnnouncementId }
-        }).sort({ announcement_id: -1 }).limit(pageSize + 1);
+            announcementId: { $lt: +params.smallestAnnouncementId }
+        }).sort({ announcementId: -1 }).limit(params.pageSize + 1);
     } catch (e) {
         res = e._message;
         success = false;
@@ -76,7 +74,7 @@ AnnouncementSchema.statics.searchAnnouncements = async function (searchTitle, se
     };
 };
 
-AnnouncementSchema.plugin(AutoIncrement, { inc_field: "announcement_id" });
+AnnouncementSchema.plugin(AutoIncrement, { inc_field: "announcementId" });
 
 const Announcement = mongoose.model("Announcement", AnnouncementSchema);
 

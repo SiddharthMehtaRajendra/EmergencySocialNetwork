@@ -4,7 +4,7 @@
 
         .title {
             font-size: 16px;
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 4px;
         }
 
@@ -12,6 +12,9 @@
             font-size: 14px;
             color: #999;
             margin-bottom: 18px;
+            max-width: 280px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .announcement-info {
@@ -24,44 +27,17 @@
             }
         }
     }
-    
-    .input-container {
-        padding: 16px 20px 10px 20px;
-        box-sizing: border-box;
+    .post-btn{
+        background-color: black;
+        border-radius: 50%;
+        width: 54px;
+        height: 54px;
         position: fixed;
-        width: 100%;
-        bottom: 0;
-        left: 0;
+        right: 20px;
+        bottom: 120px;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
-        background-color: white;
-        margin-bottom: 80px;
-
-        .post-btn {
-            font-weight: 800;
-            font-size: 18px;
-            cursor: pointer;
-        }
-    }
-
-    .new-announcement-tip {
-        visibility: hidden;
-        position: fixed;
-        bottom: 80px;
-        background-color: white;
-        height: 36px;
-        border-radius: 18px;
-        line-height: 36px;
-        width: 120px;
-        transform: translateX(-60px);
-        color: #1983FF;
-        z-index: 101;
-        font-weight: 600;
-        font-size: 14px;
-        left: 50%;
         cursor: pointer;
-        text-align: center;
-        border: 1px solid #1983FF;
     }
 }

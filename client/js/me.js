@@ -57,7 +57,7 @@ const updateStatus = async function(event) {
         const userStatus = document.getElementById(statusElement[0].id).innerHTML;
         if(userStatus) {
             window.state.user.status = userStatus;
-            axios.get(`${SERVER_ADDRESS}${API_PREFIX}/updateStatus/`, {
+            axios.post(`${SERVER_ADDRESS}${API_PREFIX}/updateStatus/`, {
                 username: window.state.user.username,
                 status: userStatus
             }).then(async (res) => {

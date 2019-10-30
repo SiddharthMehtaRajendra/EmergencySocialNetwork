@@ -6,8 +6,10 @@ const historyMessage = require("./historyMessage");
 const chats = require("./chats");
 const announcement = require("./announcement");
 const updateStatus = require("./updateStatus");
+const search = require("./search");
+const postAnnouncement = require("./postAnnouncement");
 
-const api = {
+const controller = {
     join,
     joinCheck,
     users,
@@ -15,7 +17,9 @@ const api = {
     historyMessage,
     chats,
     announcement,
-    updateStatus
+    updateStatus,
+    search,
+    postAnnouncement
 };
 
-module.exports = api;
+module.exports = controller;

@@ -128,6 +128,9 @@ UserSchema.statics.searchUser = async function (searchContent) {
     try {
         res = await this.find({
             username: { $regex: searchContent },
+        }).sort({
+            online: -1,
+            username: 1
         });
     } catch (e) {
         res = e._message;

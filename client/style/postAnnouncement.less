@@ -1,71 +1,53 @@
-.post-announcement{
-    
-.input-container {
-    padding: 16px 20px 10px 20px;
-    box-sizing: border-box;
-    position: fixed;
-    width: 100%;
-    left: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: white;
+.page-post-announcement {
+    .content {
+        padding-top: 64px;
+        .section-title{
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .post-title-input {
+            border: none;
+            outline: none;
+            border-radius: 0;
+            border-bottom: 1px solid #ccc;
+            font-size: 24px;
+            font-weight: 700;
+            width: 100%;
+            height: 48px;
+            margin-bottom: 40px;
+            &:active, &:focus {
+                border-bottom: 1px solid #111;
+            }
+        }
 
-    .navbar-back-arrow {
-        background: url("../resource/back-arrow.svg");
-        width: 24px;
-        height: 24px;
-        margin-right: 4px;
+        #post-announcement-content {
+            margin-top: 10px;
+            //background-color: #ccc;
+            border: none;
+            outline: none;
+            border-radius: 0;
+            font-size: 14px;
+            width: 100%;
+            height: calc(100vh - 320px);
+        }
+    }
+
+    .send-announcement {
+        width: 96px;
+        height: 48px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 800;
+        color: white;
+        background-color: black;
+        border-radius: 44px;
         cursor: pointer;
+        position: fixed;
+        right: 20px;
+        bottom: 60px;
     }
-
-}
-
-input {
-    border: none;
-    outline: none;
-    border-radius: 0;
-    border-bottom: 1px solid #ccc;
-    font-size: 18px;
-    width: 100%;
-    margin-right: 14px;
-    padding: 6px 0;
-    margin-top: 110px;
-
-    &:active, &:focus {
-        border-bottom: 1px solid #111;
-    }
-}
-
-textarea {
-    border: none;
-    border-radius: 0;
-    font-size: 14px;
-    width: 100%;
-    outline: none;
-    margin-top: 80px;
-}
-
-.post-announcement-title {
-    position: absolute;
-    margin-top: 85px;
-}
-
-.post-announcement-content {
-    position: absolute;
-    margin-top: 35px;
-}
-
-.send-announcement {
-    width: 40px;
-    font-size:14px;
-    color:white;
-    border:1px #333 solid;   
-    padding:10px;
-    background-color:black;
-    -webkit-border-radius:40px;
-    -moz-border-radius:40px;
-    border-radius:40px;
-    cursor: pointer;
-  }  
 }

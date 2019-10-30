@@ -3,7 +3,7 @@ import chat from "../chat";
 import processMessage from "../lib/processMessage";
 import directory from "../directory";
 import chats from "../chats";
-import announcements from "../announcement";
+import announcement from "../announcements";
 import { SERVER_ADDRESS } from "../constant/serverInfo";
 import Toast from "../lib/toast";
 
@@ -22,10 +22,10 @@ socket.on("UPDATE_MESSAGE", (msg) => {
     }
 });
 
-socket.on("UPDATE_ANNOUNCEMENT", (announcement) => {
-    window.state.announcements.push(announcement);
-    if(window.location.hash === "#/announcement") {
-        announcements.renderOneAnnouncement(announcement);
+socket.on("UPDATE_ANNOUNCEMENT", async (payload) => {
+    window.state.announcements.unshift(payload);
+    if(window.location.hash === "#/announcements") {
+        await announcement.render();
     }
 });
 

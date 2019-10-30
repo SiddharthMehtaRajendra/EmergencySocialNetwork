@@ -97,6 +97,45 @@ MessageSchema.statics.history = async function (from, to, smallestMessageId, pag
     };
 };
 
+MessageSchema.statics.searchMessage = async function (params) {
+    let res = [];
+    let success = true;
+    let searchConfig = {};
+    switch (params.type) {
+    case "public":
+        searchConfig = {
+            to: "public",
+            content: { $regex: params.keywords },
+            id: { $lt: +params.smallestMessageId }
+        };
+        break;
+    case "private":
+        searchConfig = {
+            $or: [{ from: params.username, to: { $nin: ["public"] } }, { to: params.username}],
+            content: { $regex: params.keywords },
+            id: { $lt: +params.smallestMessageId }
+        };
+        break;
+    default:
+        searchConfig = {
+            $or: [{ from: params.username, }, { to: params.username },{ to: "public" }],
+            content: { $regex: params.keywords },
+            id: { $lt: +params.smallestMessageId }
+        };
+        break;
+    }
+    try {
+        res = await this.find(searchConfig).sort({ id: -1 }).limit(params.pageSize + 1);
+    } catch (e) {
+        res = e._message;
+        success = false;
+    }
+    return {
+        success,
+        res
+    };
+};
+
 MessageSchema.statics.searchPublicMessage = async function (searchContent, smallestMessageId, pageSize) {
     let res = [];
     let success = true;

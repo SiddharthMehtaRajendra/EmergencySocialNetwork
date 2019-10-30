@@ -5,21 +5,20 @@ import { API_PREFIX, SERVER_ADDRESS } from "./constant/serverInfo";
 import dateFormat from "./lib/dateFormat";
 import Utils from "./lib/appUtils";
 
-function sortChats() {
-    function compare(chatA, chatB) {
+const sortChats = function () {
+    const compare = function (chatA, chatB) {
         return (new Date(chatB.latestMessage.time)) - (new Date(chatA.latestMessage.time));
-    }
-
+    };
     window.state.chats.sort(compare);
-}
+};
 
-function addSearchBoxListener() {
+const addSearchListener = function () {
     document.getElementsByClassName("search-icon")[0].addEventListener("click", () => {
         window.location.hash = "/search/message";
     });
-}
+};
 
-async function fetchData() {
+const fetchData = async function () {
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/chats`);
     if(res.status === 200 && res.data.success && res.data.chats) {
         window.state.chats = res.data.chats;
@@ -34,16 +33,16 @@ async function fetchData() {
     if(res.status === 200 && res.data.success && res.data.public) {
         window.state.latestPublic = res.data.public;
     }
-}
+};
 
-async function render() {
+const render = async function () {
     const app = document.getElementById("app");
     app.innerHTML = Chats;
     const allChats = document.getElementById("all-chats");
     if(!window.state.chats) {
         await fetchData();
     }
-    addSearchBoxListener();
+    addSearchListener();
     if(window.state.chats && allChats) {
         document.getElementById("public-chat-entrance").addEventListener("click", () => {
             window.location.hash = "/chat/public";
@@ -103,7 +102,7 @@ async function render() {
             }
         });
     }
-}
+};
 
 const chats = {
     render,
