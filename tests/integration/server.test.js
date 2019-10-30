@@ -60,73 +60,58 @@ describe("Server Test", async () => {
         });
     });
 
-    // describe("Search Test",async () => {
-    //     test("public message search with token", async () => {
-    //         const registerUrl = `${SERVER_ADDRESS}${API_PREFIX}/join`;
-    //         const userObj = {
-    //             username: "1111",
-    //             password: "1111",
-    //             avatar: "#ffffff",
-    //             status: "ok",
-    //             statusUpdateTime: new Date(),
-    //             online: true
-    //         };
-    //         const registerRes = await axios({
-    //             method: "post",
-    //             url: registerUrl,
-    //             data: userObj,
-    //             withCredentials: true
-    //         });
-    //         const token = registerRes.data.token;
-    //         const publicMessage = {
-    //             time: new Date(),
-    //             from: "1111",
-    //             to: "public",
-    //             type: "public",
-    //             content: "Public Content",
-    //             status: "ok",
-    //             chatId: -1
-    //         };
-    //         for(let i = 0; i < 3; i++) {
-    //             await Message.insertOne(publicMessage);
-    //         }
-    //
-    //         const url = `${SERVER_ADDRESS}${API_PREFIX}/search`;
-    //         const res = await axios({
-    //             method: "get",
-    //             url: url,
-    //             params: {
-    //                 searchMessage: "about Public a",
-    //                 smallestMessageId: 9999,
-    //                 pageSize: 10,
-    //                 username: "1111"
-    //             },
-    //             headers: {
-    //                 Cookie: "token=" + token
-    //             },
-    //             withCredentials: true
-    //         });
-    //         expect(res.status).toEqual(200);
-    //         expect(res.data.message).toEqual("Get Messages");
-    //         expect(res.data.messages.length).toEqual(3);
-    //
-    //         const overPageSizeRes = await axios({
-    //             method: "get",
-    //             url: url,
-    //             params: {
-    //                 searchMessage: "Public",
-    //                 smallestMessageId: Infinity,
-    //                 pageSize: 2,
-    //                 username: "1111"
-    //             },
-    //             headers: {
-    //                 Cookie: "token=" + token
-    //             },
-    //             withCredentials: true
-    //         });
-    //         expect(overPageSizeRes.data.messages.length).toEqual(2);
-    //     });
-    // });
+    describe("Search Test",async () => {
+        test("public message search with token", async () => {
+            const registerUrl = `${SERVER_ADDRESS}${API_PREFIX}/join`;
+            const userObj = {
+                username: "1111",
+                password: "1111",
+                avatar: "#ffffff",
+                status: "ok",
+                statusUpdateTime: new Date(),
+                online: true
+            };
+            const registerRes = await axios({
+                method: "post",
+                url: registerUrl,
+                data: userObj,
+                withCredentials: true
+            });
+            const token = registerRes.data.token;
+            const publicMessage = {
+                time: new Date(),
+                from: "1111",
+                to: "public",
+                type: "public",
+                content: "Public Content",
+                status: "ok",
+                chatId: -1
+            };
+            for(let i = 0; i < 3; i++) {
+                await Message.insertOne(publicMessage);
+            }
+
+            const url = `${SERVER_ADDRESS}${API_PREFIX}/search`;
+            const res = await axios({
+                method: "get",
+                url: url,
+                params: {
+                    keywords: "about Public a",
+                    smallestSearchId: Infinity,
+                    pageSize: 10,
+                    username: "1111",
+                    context: "message",
+                    type: "public"
+                },
+                headers: {
+                    Cookie: "token=" + token
+                },
+                withCredentials: true
+            });
+            expect(res.status).toEqual(200);
+            expect(res.data.messages.length).toEqual(3);
+        });
+    });
 
     // test("private search with token", async () => {
     //     // insert public
