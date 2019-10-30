@@ -1,4 +1,4 @@
-const stopWords = require("../../client/js/constant/stopwords");
+const stopWords = require("../lib/stopwords");
 const Message = require("../../model/Message");
 const User = require("../../model/User");
 const Announcement = require("../../model/Announcement");
