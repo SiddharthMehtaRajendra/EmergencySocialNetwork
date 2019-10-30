@@ -12,6 +12,7 @@ if(!process.env.PORT) {
 
 require("../../server/index");
 const axios = require("axios");
+const Chat = require("../../model/Chat");
 
 const genUserName = function(){
     return uuid.v1().toString().replace(/-/g,"");
@@ -21,6 +22,32 @@ describe("API Chats Test", async () => {
     test("Chats Test", async () => {
         const registerUrl = `${SERVER_ADDRESS}${API_PREFIX}/join`;
         const USER_NAME = genUserName();
+        const oneMessage = {
+            time: new Date(),
+            from: USER_NAME,
+            to: "user2",
+            type: "0",
+            content: "For Chat Test",
+            status: "ok",
+            read: false,
+            chatId: -1
+        };
+        const oneChat = {
+            type: "private",
+            from: USER_NAME,
+            to: "user2",
+            latestMessage: oneMessage
+        };
+        const anotherChat = {
+            type: "private",
+            from: "user3",
+            to: USER_NAME,
+            latestMessage: oneMessage
+        };
+
+        await Chat.insertOne(oneChat);
+        await Chat.insertOne(anotherChat);
+
         const userForTest = {
             username: USER_NAME,
             password: "1234",
@@ -45,6 +72,6 @@ describe("API Chats Test", async () => {
             withCredentials: true
         });
         expect(res.data.public.chatId).toEqual(-1);
-        expect(res.data.chats.length).toEqual(0);
+        expect(res.data.chats.length).toEqual(2);
     });
 });
