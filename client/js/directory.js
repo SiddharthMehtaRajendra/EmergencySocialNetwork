@@ -23,6 +23,40 @@ const addSearchListener = function() {
     });
 };
 
+const renderUsers = function(users, container){
+    users.forEach((user, index) => {
+        const userCard = document.createElement("div");
+        const userName = document.createElement("div");
+        const userAvatar = document.createElement("div");
+        const userStatus = document.createElement("div");
+        const bottomThinLine = document.createElement("div");
+        userCard.className = "single-user common-list-item";
+        userCard.addEventListener("click", () => {
+            window.location.hash = "/chat/" + user.username;
+        });
+        userName.className = "username";
+        userAvatar.className = "avatar";
+        userStatus.className = "status-circle";
+        bottomThinLine.className = "right-thin-line";
+        userName.innerText = user.username;
+        userAvatar.innerText = user.username.charAt(0);
+        userAvatar.setAttribute("style", `background-color: ${user.avatar || "#CCC"};`);
+        Utils.renderStatusColor(user.status, userStatus);
+        userCard.appendChild(userAvatar);
+        userCard.appendChild(userStatus);
+        userCard.appendChild(userName);
+        if(!user.online) {
+            userCard.classList.add("offline");
+        }
+        if(index !== users.length - 1) {
+            container.appendChild(userCard);
+            container.appendChild(bottomThinLine);
+        } else {
+            container.appendChild(userCard);
+        }
+    });
+};
+
 async function render() {
     const app = document.getElementById("app");
     app.innerHTML = Directory;
@@ -34,43 +68,14 @@ async function render() {
     if(window.state.users && directory) {
         directory.innerHTML = "";
         const users = window.state.users;
-        users.forEach((user, index) => {
-            const userCard = document.createElement("div");
-            const userName = document.createElement("div");
-            const userAvatar = document.createElement("div");
-            const userStatus = document.createElement("div");
-            const bottomThinLine = document.createElement("div");
-            userCard.className = "single-user common-list-item";
-            userCard.addEventListener("click", () => {
-                window.location.hash = "/chat/" + user.username;
-            });
-            userName.className = "username";
-            userAvatar.className = "avatar";
-            userStatus.className = "status-circle";
-            bottomThinLine.className = "right-thin-line";
-            userName.innerText = user.username;
-            userAvatar.innerText = user.username.charAt(0);
-            userAvatar.setAttribute("style", `background-color: ${user.avatar || "#CCC"};`);
-            Utils.renderStatusColor(user.status, userStatus);
-            userCard.appendChild(userAvatar);
-            userCard.appendChild(userStatus);
-            userCard.appendChild(userName);
-            if(!user.online) {
-                userCard.classList.add("offline");
-            }
-            if(index !== users.length - 1) {
-                directory.appendChild(userCard);
-                directory.appendChild(bottomThinLine);
-            } else {
-                directory.appendChild(userCard);
-            }
-        });
+        renderUsers(users, directory);
     }
 }
 
 const directory = {
     fetchData,
-    render
+    render,
+    renderUsers
 };
 
 export default directory;

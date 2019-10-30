@@ -1,9 +1,6 @@
 import "./style/index.less";
 import "./style/welcome.less";
 import "./style/home.less";
-import "./style/announcement.less";
-import "./style/searchMessage.less";
-import "./style/searchUser.less";
 
 import Navigo from "navigo";
 import Welcome from "./view/welcome.html";
@@ -15,9 +12,7 @@ import chat from "./js/chat";
 import announcements from "./js/announcements";
 import me from "./js/me";
 import directory from "./js/directory";
-import search from "./js/lib/searchMessage";
-import searchUser from "./js/lib/searchUser";
-import searchAnnouncement from "./js/lib/searchAnnouncement";
+import search from "./js/search";
 import postAnnouncement from "./js/postAnnouncement";
 
 import initRouter from "./js/initRouter";
@@ -30,7 +25,6 @@ import Cookie from "js-cookie";
 axios.defaults.withCredentials = true;
 axios.interceptors.request.use((config) => {
     if(!Cookie.get("token") && window.location.hash !== "#/") {
-        console.log("Request Auth Failed, Redirect");
         window.location.hash = "/join";
     }
     config.headers.token = Cookie.get("token");
@@ -39,7 +33,6 @@ axios.interceptors.request.use((config) => {
 
 axios.interceptors.response.use((response) => {
     if(response.data && !response.data.success && response.data.redirect && window.location.hash !== "#/") {
-        console.log("Response Auth Failed, Redirect");
         window.location.hash = "/join";
         return response;
     } else {
@@ -57,16 +50,16 @@ router.hooks({
     before: async function (done, params) {
         if(!(window.location.hash === "#/" || window.location.hash === "#/join")) {
             if(!(window.state && window.state.user) && Cookie.get("token")) {
-                console.log("Load My info");
                 await me.fetchData();
             }
             if(!(window.state && window.state.users)) {
-                console.log("Load Directory");
                 await directory.fetchData();
             }
             if(!(window.state && window.state.chats)) {
-                console.log("Load Chats");
                 await chats.fetchData();
+            }
+            if(!(window.state && window.state.announcements)) {
+                await announcements.fetchData();
             }
         }
         done();
@@ -91,15 +84,14 @@ router.on("/directory", async () => {
 
 router.on("/announcements", async () => {
     await announcements.render();
-});
+}).resolve();
 
 router.on("/guide", () => {
     app.innerHTML = Welcome;
     guide.render();
-});
+}).resolve();
 
 router.on("/chats", async () => {
-    console.log("Re render");
     await chats.render();
 }).resolve();
 
@@ -108,22 +100,11 @@ router.on("/me", async () => {
 }).resolve();
 
 router.on("/chat/:id", async () => {
-    console.log(window.location.hash);
     await chat.render();
 }).resolve();
 
-router.on("/search/user", async () => {
-    console.log(window.location.hash);
-    await searchUser.render();
-}).resolve();
-
 router.on("/search/:context", async () => {
-    console.log(window.location.hash);
     await search.render();
-}).resolve();
-
-router.on("/searchAnnouncement", async () => {
-    await searchAnnouncement.render();
 }).resolve();
 
 router.on("/postAnnouncement", async () => {

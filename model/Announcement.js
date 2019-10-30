@@ -40,7 +40,7 @@ AnnouncementSchema.statics.announcementHistory = async function (smallestAnnounc
     let success = true;
     try {
         res = await this.find({
-            announcementId: { $lt: + smallestAnnouncementId }
+            announcementId: { $lt: +smallestAnnouncementId }
         }).sort({ announcementId: -1 }).limit(pageSize);
     } catch (e) {
         res = e._message;

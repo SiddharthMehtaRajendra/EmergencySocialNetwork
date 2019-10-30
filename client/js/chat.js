@@ -14,7 +14,7 @@ async function getHistoryMessage() {
     console.log(window.location.href.split("/").pop());
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/historyMessage`, {
         params: {
-            smallestMessageId: window.state.smallestMessageId,
+            smallestMessageId: window.state.smallestMessageId || Infinity,
             pageSize: pageSize,
             from: window.state.user.username,
             to: window.location.href.split("/").pop()
@@ -24,12 +24,12 @@ async function getHistoryMessage() {
     return processMessage(res.data.messages);
 }
 
-function scrollToBottom() {
+const scrollToBottom = function () {
     const container = document.getElementById("bubble-wrap");
     container.scrollTop = container.scrollHeight;
-}
+};
 
-function createAvatar(msg) {
+const createAvatar = function (msg) {
     const avatar = document.createElement("div");
     avatar.className = "bubble-avatar";
     avatar.innerText = msg.from[0];
@@ -41,7 +41,7 @@ function createAvatar(msg) {
     avatarContainer.appendChild(avatar);
     avatarContainer.appendChild(statusDot);
     return avatarContainer;
-}
+};
 
 function createMessageContainer(msg) {
     const message = document.createElement("div");
@@ -95,11 +95,11 @@ function sendMessage() {
     }
 }
 
-function setMessageTipVisible(visible) {
+const setMessageTipVisible = function (visible) {
     document.getElementById("new-message-tip").style.visibility = (visible ? "visible" : "hidden");
-}
+};
 
-function renderOneMessage(msg) {
+const renderOneMessage = function (msg) {
     const bubbleWrap = document.getElementById("bubble-wrap");
     const blankBubble = document.getElementById("blank-bubble");
     bubbleWrap.insertBefore(createSingleBubble(msg), blankBubble);
@@ -119,26 +119,27 @@ function renderOneMessage(msg) {
     } else {
         setMessageTipVisible(false);
     }
-}
+};
 
-function renderMessages(msgList) {
-    console.log(12345);
-    const bubbleWrap = document.getElementById("bubble-wrap");
-    console.log(document);
+const renderMessages = function (msgList, container, beforeNode) {
     const smallestMessageId = window.state.smallestMessageId || Infinity;
-    let beforeNode;
-    if(window.state.smallestMessageId === Infinity) {
-        beforeNode = document.getElementById("blank-bubble");
-    } else {
-        beforeNode = document.getElementById(`message-${smallestMessageId}`);
+    if(!container) {
+        container = document.getElementById("bubble-wrap");
+    }
+    if(!beforeNode) {
+        if(window.state.smallestMessageId === Infinity) {
+            beforeNode = document.getElementById("blank-bubble");
+        } else {
+            beforeNode = document.getElementById(`message-${smallestMessageId}`);
+        }
     }
     for(let i = 0; i < msgList.length; i++) {
-        bubbleWrap.insertBefore(createSingleBubble(msgList[i]), beforeNode);
+        container.insertBefore(createSingleBubble(msgList[i]), beforeNode);
     }
     window.state.smallestMessageId = (msgList[0] && msgList[0].id) || 0;
-}
+};
 
-function handleScroll() {
+const handleScroll = function () {
     return lodash.debounce(async () => {
         const container = document.getElementById("bubble-wrap");
         const scrollTop = container.scrollTop;
@@ -154,9 +155,9 @@ function handleScroll() {
             renderMessages(await getHistoryMessage());
         }
     }, 100);
-}
+};
 
-async function render() {
+const render = async function () {
     const app = document.getElementById("app");
     app.innerHTML = Chat;
     window.state.smallestMessageId = Infinity;
@@ -177,7 +178,7 @@ async function render() {
     document.getElementById("bubble-wrap").addEventListener("scroll", handleScroll());
     document.getElementById("new-message-tip").addEventListener("click", scrollToBottom);
     scrollToBottom();
-}
+};
 
 const chat = {
     render,

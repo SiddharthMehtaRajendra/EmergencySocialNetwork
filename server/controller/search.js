@@ -15,7 +15,7 @@ const deleteStopWords = function (str) {
 };
 
 const searchMessage = async function (query) {
-    const keywords = deleteStopWords(query.keywords);
+    const keywords = (deleteStopWords(query.keywords)).trim();
     let result = {
         success: false,
         messages: []
@@ -27,7 +27,7 @@ const searchMessage = async function (query) {
         type: query.type || null,
         keywords: keywords,
         username: query.username,
-        smallestMessageId: +query.smallestMessageId,
+        smallestMessageId: +query.smallestSearchId,
         pageSize: +query.pageSize || 10
     });
     const messages = JSON.parse(JSON.stringify(result.res));
@@ -57,7 +57,8 @@ const searchUser = async function (query) {
 };
 
 const searchAnnouncement = async function (query) {
-    const keywords = deleteStopWords(query.keywords);
+    const keywords = (deleteStopWords(query.keywords)).trim();
+    console.log(keywords);
     let result = {
         success: false,
         messages: []
@@ -67,7 +68,7 @@ const searchAnnouncement = async function (query) {
     }
     result = await Announcement.searchAnnouncement({
         keywords: keywords,
-        smallestMessageId: +query.smallestMessageId,
+        smallestAnnouncementId: +query.smallestSearchId,
         pageSize: +query.pageSize || 10
     });
     const announcements = JSON.parse(JSON.stringify(result.res));
@@ -108,7 +109,7 @@ const search = async function (req, res) {
         res.status(200).json({
             success: result.success,
             message: "Search Announcement",
-            messages: result.announcements,
+            announcements: result.announcements,
             end: result.isEnd
         });
         break;

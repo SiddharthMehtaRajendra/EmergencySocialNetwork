@@ -1,0 +1,88 @@
+.page-search {
+    .search-component {
+        position: fixed;
+        z-index: 99;
+        top: 65px;
+        width: 100%;
+        left: 0;
+        padding: 0 20px 16px 20px;
+        background-color: white;
+        box-sizing: border-box;
+
+        .main-component {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            margin-bottom: 18px;
+
+            .search-input-container {
+                width: 100%;
+                padding-right: 12px;
+
+                input {
+                    border: none;
+                    outline: none;
+                    border-radius: 0;
+                    border-bottom: 1px solid #ccc;
+                    font-size: 18px;
+                    width: 100%;
+                    margin-right: 14px;
+                    padding: 6px 0;
+
+                    &:active, &:focus {
+                        border-bottom: 1px solid #111;
+                    }
+                }
+            }
+
+            .search-icon {
+                cursor: pointer;
+            }
+        }
+
+        .search-options {
+            align-items: center;
+            display: none;
+
+            .checkbox {
+                width: 12px;
+                height: 12px;
+                border: 2px solid #000;
+                box-sizing: border-box;
+                margin-right: 8px;
+            }
+
+            .text {
+                margin-right: 20px;
+                font-weight: 800;
+                font-size: 16px;
+            }
+        }
+    }
+
+    #result-content {
+        height: auto;
+        position: absolute;
+        top: 160px;
+        right: 0;
+        left: 0;
+        overflow-y: scroll;
+        padding: 0 20px;
+        z-index: 0;
+        overflow-wrap: break-word;
+        overflow-x: hidden;
+        .single-user{
+            padding: 20px 0;
+        }
+        .single-announcement{
+            padding: 20px 0;
+        }
+    }
+
+    .load-more-or-end {
+        text-align: center;
+        font-weight: 800;
+        cursor: pointer;
+        visibility: hidden;
+    }
+}

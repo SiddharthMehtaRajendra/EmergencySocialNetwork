@@ -2,23 +2,30 @@ import Announcement from "../view/announcements.html";
 import axios from "axios";
 import { API_PREFIX, SERVER_ADDRESS } from "./constant/serverInfo";
 import dateFormat from "./lib/dateFormat";
+import "../style/announcements.less";
 
 const pageSize = 100;
 
+const addSearchListener = function () {
+    document.getElementsByClassName("search-icon")[0].addEventListener("click", () => {
+        window.location.hash = "/search/announcement";
+    });
+};
+
 const addPostEventListener = function () {
     const postDom = document.getElementById("post-btn");
-    if(postDom){
+    if(postDom) {
         postDom.addEventListener("click", () => {
             window.location.hash = "/postAnnouncement";
         });
     }
 };
 
-const fetchData = async function() {
+const fetchData = async function () {
     window.state.announcements = [];
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/announcement`, {
         params: {
-            smallestAnnouncementId: window.state.smallestAnnouncementId,
+            smallestAnnouncementId: window.state.smallestAnnouncementId || Infinity,
             pageSize: pageSize
         }
     });
@@ -28,9 +35,14 @@ const fetchData = async function() {
     }
 };
 
-const renderAnnouncements = function(allAnnouncementsDom){
-    if(allAnnouncementsDom){
-        const announcements = window.state.announcements;
+const renderAnnouncements = function (announcements, container, beforeNode) {
+    if(!announcements) {
+        announcements = window.state.announcements;
+    }
+    if(!beforeNode) {
+        beforeNode = document.getElementById("blank-announcement");
+    }
+    if(container) {
         announcements.forEach((announcement, index) => {
             const announcementItem = document.createElement("div");
             const citizenName = document.createElement("div");
@@ -55,12 +67,8 @@ const renderAnnouncements = function(allAnnouncementsDom){
             announcementItem.appendChild(announcementTitle);
             announcementItem.appendChild(announcementContent);
             announcementItem.appendChild(announcementInfo);
-            if(index !== announcements.length - 1) {
-                allAnnouncementsDom.appendChild(announcementItem);
-                allAnnouncementsDom.appendChild(bottomThinLine);
-            } else {
-                allAnnouncementsDom.appendChild(announcementItem);
-            }
+            container.insertBefore(announcementItem, beforeNode);
+            container.insertBefore(bottomThinLine, beforeNode);
         });
     }
 };
@@ -75,8 +83,9 @@ const render = async function () {
     }
     if(window.state.announcements && allAnnouncementsDom) {
         allAnnouncementsDom.innerHTML = "";
-        await renderAnnouncements(allAnnouncementsDom);
+        await renderAnnouncements(null, allAnnouncementsDom);
     }
+    addSearchListener();
     addPostEventListener();
 };
 
