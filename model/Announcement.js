@@ -27,7 +27,9 @@ AnnouncementSchema.statics.insertOne = async function (announcement) {
     try {
         res = await this.create(announcement);
     } catch (e) {
+        /* istanbul ignore next */
         res = e._message;
+        /* istanbul ignore next */
         success = false;
     }
     return {
@@ -44,7 +46,9 @@ AnnouncementSchema.statics.announcementHistory = async function (smallestAnnounc
             announcementId: { $lt: +smallestAnnouncementId }
         }).sort({ announcementId: -1 }).limit(pageSize);
     } catch (e) {
+        /* istanbul ignore next */
         res = e._message;
+        /* istanbul ignore next */
         success = false;
     }
     return {
@@ -66,7 +70,9 @@ AnnouncementSchema.statics.searchAnnouncement = async function (params) {
             announcementId: { $lt: +params.smallestAnnouncementId }
         }).sort({ announcementId: -1 }).limit(params.pageSize + 1);
     } catch (e) {
+        /* istanbul ignore next */
         res = e._message;
+        /* istanbul ignore next */
         success = false;
     }
     return {

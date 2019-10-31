@@ -8,6 +8,8 @@ require("../model/User");
 require("../model/Message");
 require("../model/Chat");
 
+jest.setTimeout(15000);
+
 beforeAll(async () => {
     if(process.env.TEST_DB) {
         console.log(`Connect to ${process.env.TEST_DB}`);

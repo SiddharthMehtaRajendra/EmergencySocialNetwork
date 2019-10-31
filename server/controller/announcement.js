@@ -11,6 +11,7 @@ const announcement = async function (req, res, next) {
             announcements: dbResult.res
         });
     } else {
+        /* istanbul ignore next */
         res.status(200).json({
             success: false,
             message: "Get Announcements Failed"

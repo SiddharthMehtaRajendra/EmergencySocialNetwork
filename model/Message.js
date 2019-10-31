@@ -37,7 +37,9 @@ MessageSchema.statics.insertOne = async function (message) {
     try {
         res = await this.create(message);
     } catch (e) {
+        /* istanbul ignore next */
         res = e._message;
+        /* istanbul ignore next */
         success = false;
     }
     return {
@@ -57,7 +59,9 @@ MessageSchema.statics.latestPublic = async function () {
             res = res[0];
         }
     } catch (e) {
+        /* istanbul ignore next */
         res = e._message;
+        /* istanbul ignore next */
         success = false;
     }
     return {
@@ -89,7 +93,9 @@ MessageSchema.statics.history = async function (from, to, smallestMessageId, pag
         }
         res = res.reverse();
     } catch (e) {
+        /* istanbul ignore next */
         res = e._message;
+        /* istanbul ignore next */
         success = false;
     }
     return {

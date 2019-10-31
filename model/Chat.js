@@ -43,6 +43,7 @@ ChatSchema.statics.getByChatId = async function (chatId) {
     try {
         res = await this.find({ chatId: chatId });
     } catch (e) {
+        /* istanbul ignore next */
         res = e._message;
     }
     return {
@@ -58,7 +59,9 @@ ChatSchema.statics.updateLatestMessage = async function (chatId, msg) {
         await this.updateOne({ chatId: chatId }, { latestMessage: msg });
         res = (await this.getByChatId(chatId)).res[0];
     } catch (e) {
+        /* istanbul ignore next */
         res = e._message;
+        /* istanbul ignore next */
         success = false;
     }
     return {
@@ -79,7 +82,9 @@ ChatSchema.statics.related = async function (username) {
             }]
         });
     } catch (e) {
+        /* istanbul ignore next */
         res = e._message;
+        /* istanbul ignore next */
         success = false;
     }
     return {

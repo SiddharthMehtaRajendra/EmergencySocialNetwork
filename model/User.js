@@ -105,6 +105,7 @@ UserSchema.statics.addOneUser = async function (userObject) {
         if(e.errors && e.errors.username && e.errors.username.kind && e.errors.username.kind === "unique") {
             res = "Username already exist";
         } else {
+            /* istanbul ignore next */
             res = e._message;
         }
         success = false;
@@ -136,7 +137,9 @@ UserSchema.statics.searchUser = async function (searchContent) {
             username: 1
         });
     } catch (e) {
+        /* istanbul ignore next */
         res = e._message;
+        /* istanbul ignore next */
         success = false;
     }
     return {
