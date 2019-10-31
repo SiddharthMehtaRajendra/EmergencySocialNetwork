@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 const mongoose = require("mongoose");
 mongoose.set("useNewUrlParser", true);
 mongoose.set("useFindAndModify", false);

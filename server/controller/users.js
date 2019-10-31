@@ -2,6 +2,7 @@ const User = require("../../model/User");
 
 const users = async function (req, res) {
     const dbResult = await User.getAllUsers();
+    /* istanbul ignore else */
     if(dbResult.success) {
         res.status(200).json({
             success: true,

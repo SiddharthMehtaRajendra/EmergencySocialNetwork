@@ -58,10 +58,9 @@ const searchUser = async function (query) {
 
 const searchAnnouncement = async function (query) {
     const keywords = (deleteStopWords(query.keywords)).trim();
-    console.log(keywords);
     let result = {
         success: false,
-        messages: []
+        announcements: []
     };
     if(!keywords || keywords === "") {
         return result;
@@ -114,6 +113,10 @@ const search = async function (req, res) {
         });
         break;
     default:
+        res.status(200).json({
+            success: false,
+            message: "Context not support",
+        });
         break;
     }
 };

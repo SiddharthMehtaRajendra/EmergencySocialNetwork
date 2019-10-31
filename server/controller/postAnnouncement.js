@@ -21,6 +21,7 @@ const postAnnouncement = async function (req, io) {
             announcement: dbResult.res
         };
     } catch (e) {
+        /* istanbul ignore next */
         return {
             success: false,
             message: "Post announcement failed"

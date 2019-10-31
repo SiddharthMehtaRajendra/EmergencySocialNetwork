@@ -1,24 +1,20 @@
 /* eslint-disable no-undef */
-const uuid = require("uuid");
+const axios = require("axios");
+const Chat = require("../../model/Chat");
+const { genUserName } = require("../lib/mockUser");
+const API_PREFIX = "/api";
 
 process.env.SERVER_TEST_DB = "server_chats_test";
 
-const API_PREFIX = "/api";
 let SERVER_ADDRESS = "";
 if(!process.env.PORT) {
     process.env.PORT = 9002;
-    SERVER_ADDRESS = "http://localhost:9002";
+    SERVER_ADDRESS = `http://localhost:${process.env.PORT}`;
 }
 
 require("../../server/index");
-const axios = require("axios");
-const Chat = require("../../model/Chat");
 
-const genUserName = function(){
-    return uuid.v1().toString().replace(/-/g,"");
-};
-
-describe("API Chats Test", async () => {
+describe("Server Chats Test", async () => {
     test("Chats Test", async () => {
         const registerUrl = `${SERVER_ADDRESS}${API_PREFIX}/join`;
         const USER_NAME = genUserName();

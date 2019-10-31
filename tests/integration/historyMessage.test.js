@@ -1,64 +1,50 @@
 /* eslint-disable no-undef */
-const uuid = require("uuid");
-
-process.env.SERVER_TEST_DB = "server_chats_test";
-
+const axios = require("axios");
 const Message = require("../../model/Message");
-
+const { createUser } = require("../lib/mockUser");
 const API_PREFIX = "/api";
+
+process.env.SERVER_TEST_DB = "server_history_test";
+
 let SERVER_ADDRESS = "";
 if(!process.env.PORT) {
     process.env.PORT = 9003;
-    SERVER_ADDRESS = "http://localhost:9003";
+    SERVER_ADDRESS = `http://localhost:${process.env.PORT}`;
 }
 
 require("../../server/index");
-const axios = require("axios");
 
-const genUserName = function(){
-    return uuid.v1().toString().replace(/-/g,"");
-};
-
-describe("API History Message Test", async () => {
+describe("Server History Message Test", async () => {
     test("History Message Test", async () => {
-        const registerUrl = `${SERVER_ADDRESS}${API_PREFIX}/join`;
-        const USER_NAME = genUserName();
-        const userForTest = {
-            username: USER_NAME,
-            password: "1234",
-            avatar: "#ffffff",
-            status: "ok",
-            statusUpdateTime: new Date(),
-            online: true
-        };
-        const registerRes = await axios({
-            method: "post",
-            url: registerUrl,
-            data: userForTest,
-            withCredentials: true
-        });
-        const token = registerRes.data.token;
-        const publicMessage = {
-            time: new Date(),
-            from: USER_NAME,
-            to: "public",
-            type: "public",
-            content: "Public Content",
-            status: "ok",
-            chatId: -1
-        };
-        for(let i = 0; i < 3; i++) {
-            await Message.insertOne(publicMessage);
+        const testUser = createUser();
+        const messageList = [];
+        const latestDate = new Date();
+        for(let i = 0; i < 5; i++) {
+            messageList.push({
+                time: latestDate - i * 1000,
+                from: testUser.username,
+                to: "public",
+                type: "0",
+                content: `${i} th message`,
+                status: "ok",
+                chatId: -1
+            });
         }
-        const res = await axios({
-            method: "get",
-            url: `${SERVER_ADDRESS}${API_PREFIX}/chats/`,
+        for(let i = 0; i < messageList.length; i++) {
+            await Message.insertOne(messageList[i]);
+        }
+        const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/historyMessage`, {
+            params: {
+                smallestMessageId: Infinity,
+                pageSize: 10,
+                from: testUser.username,
+                to: "public"
+            },
             headers: {
-                Cookie: "token=" + token
+                Cookie: "token=" + testUser.token
             },
             withCredentials: true
         });
-        expect(res.data.public.chatId).toEqual(-1);
-        expect(res.data.chats.length).toEqual(0);
+        expect(res.data.messages.length).toEqual(5);
     });
 });
