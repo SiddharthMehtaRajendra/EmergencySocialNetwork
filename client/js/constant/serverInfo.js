@@ -5,7 +5,7 @@ const localKeyWords = [
     "127.0.0.1"
 ];
 
-function getServerAddress() {
+const getServerAddress = () => {
     const url = window.location.href;
     for(let i = 0; i < localKeyWords.length; i++) {
         if(url.includes(localKeyWords[i])) {
@@ -13,7 +13,7 @@ function getServerAddress() {
         }
     }
     return "";
-}
+};
 
 export const SERVER_ADDRESS = getServerAddress();
 // Replace the ip with your own pc ip, and then run it on your mobile phone!

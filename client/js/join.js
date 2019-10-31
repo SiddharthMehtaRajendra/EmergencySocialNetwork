@@ -11,25 +11,25 @@ import JoinPage from "../view/join.html";
 
 const Cookie = require("js-cookie");
 
-function buildBottomPopCardContent(username) {
+const buildBottomPopCardContent = (username) => {
     const usernameDom = document.createElement("div");
     usernameDom.id = "join-page-username";
     usernameDom.innerText = username;
     return usernameDom;
-}
+};
 
-function reset() {
+const reset = () => {
     Cookie.remove("token");
     window.state = {};
     socket.close();
-}
+};
 
-function setToken(token) {
+const setToken = (token) => {
     Cookie.set("token", token, { expires: 1 });
     window.state.token = token;
-}
+};
 
-function register() {
+const register = () => {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
     axios.post(`${SERVER_ADDRESS}${API_PREFIX}/join`, {
@@ -51,15 +51,15 @@ function register() {
             Toast(res.data.message);
         }
     });
-}
+};
 
-function join() {
+const join = () => {
     const usernameHint = document.getElementById("username-hint");
     const passwordHint = document.getElementById("password-hint");
-    function resetHint() {
+    const resetHint = () => {
         usernameHint.innerText = "";
         passwordHint.innerText = "";
-    }
+    };
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
     const usernameValidation = validateUserName(username);
@@ -87,13 +87,11 @@ function join() {
                     BottomPopCard.setContent(buildBottomPopCardContent(username));
                     BottomPopCard.show();
                 } else if(!res.data.success && res.data.validationPass === false) {
-                    // username and password are not matched
                     Toast(res.data.message, "#F41C3B");
                 }
             }
         }).catch((err) => {
             Toast(err.toString(), "#F41C3B");
-            console.log(err);
         });
     } else {
         resetHint();
@@ -104,14 +102,14 @@ function join() {
             passwordHint.innerText = passwordValidation.text;
         }
     }
-}
+};
 
-function initJoinPage() {
+const initJoinPage = () => {
     const app = document.getElementById("app");
     app.innerHTML = JoinPage;
     const registerBtn = document.getElementById("register-btn");
     registerBtn.addEventListener("click", join);
     BottomPopCard.init("Are you sure to create a new user with this username?", register);
-}
+};
 
 export default initJoinPage;

@@ -31,13 +31,12 @@ socket.on("UPDATE_ANNOUNCEMENT", async (payload) => {
 
 socket.on("AUTH_FAILED", () => {
     if(window.location.hash !== "#/") {
-        console.log("Socket Auth Failed, Redirect");
+        // console.log("Socket Auth Failed, Redirect");
         window.location.hash = "/join";
     }
 });
 
 socket.on("UPDATE_DIRECTORY", async (payload) => {
-    console.log(payload);
     await directory.fetchData();
     if(window.location.hash === "#/directory") {
         await directory.render();

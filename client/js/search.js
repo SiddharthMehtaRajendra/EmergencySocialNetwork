@@ -15,21 +15,20 @@ const getContext = function () {
     return context;
 };
 
+const genSearchNodeEventListener = function (node, otherNode) {
+    return () => {
+        node.style.backgroundColor = "#000";
+        otherNode.style.backgroundColor = "#fff";
+        node.value = "selected";
+        otherNode.value = "unselected";
+    };
+};
+
 const addSearchOptionListener = function () {
     const privateSearchNode = document.getElementById("private-checkbox");
     const publicSearchNode = document.getElementById("public-checkbox");
-    privateSearchNode.addEventListener("click", () => {
-        privateSearchNode.style.backgroundColor = "#000";
-        publicSearchNode.style.backgroundColor = "#fff";
-        privateSearchNode.value = "selected";
-        publicSearchNode.value = "unselected";
-    });
-    publicSearchNode.addEventListener("click", () => {
-        publicSearchNode.style.backgroundColor = "#000";
-        privateSearchNode.style.backgroundColor = "#fff";
-        privateSearchNode.value = "unselected";
-        publicSearchNode.value = "selected";
-    });
+    privateSearchNode.addEventListener("click", genSearchNodeEventListener(privateSearchNode, publicSearchNode));
+    publicSearchNode.addEventListener("click", genSearchNodeEventListener(publicSearchNode, privateSearchNode));
 };
 
 const setupNavBar = function () {
@@ -116,7 +115,7 @@ const searchData = async function () {
     renderSearchResult(context, res.data);
 };
 
-const newSearch = async function(){
+const newSearch = async function () {
     resetContainer();
     window.state.smallestSearchId = Infinity;
     await searchData();

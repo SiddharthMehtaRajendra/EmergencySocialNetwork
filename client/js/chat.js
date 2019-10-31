@@ -8,10 +8,10 @@ import Chat from "../view/chat.html";
 
 const pageSize = 20;
 
-async function getHistoryMessage() {
+const getHistoryMessage = async function () {
     window.state.isLoading = true;
-    console.log(window.state.user.username);
-    console.log(window.location.href.split("/").pop());
+    // console.log(window.state.user.username);
+    // console.log(window.location.href.split("/").pop());
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/historyMessage`, {
         params: {
             smallestMessageId: window.state.smallestMessageId || Infinity,
@@ -22,7 +22,7 @@ async function getHistoryMessage() {
     });
     window.state.isLoading = false;
     return processMessage(res.data.messages);
-}
+};
 
 const scrollToBottom = function () {
     const container = document.getElementById("bubble-wrap");
@@ -43,7 +43,7 @@ const createAvatar = function (msg) {
     return avatarContainer;
 };
 
-function createMessageContainer(msg) {
+const createMessageContainer = (msg) => {
     const message = document.createElement("div");
     message.className = `bubble-message ${msg.status}`;
     const nameTimeContainer = document.createElement("div");
@@ -62,9 +62,9 @@ function createMessageContainer(msg) {
     message.appendChild(nameTimeContainer);
     message.appendChild(content);
     return message;
-}
+};
 
-function createSingleBubble(msg) {
+const createSingleBubble = (msg) => {
     const singleBubble = document.createElement("div");
     singleBubble.className = "single-bubble";
     singleBubble.id = `message-${msg.id}`;
@@ -76,9 +76,9 @@ function createSingleBubble(msg) {
     singleBubble.appendChild(avatarContainer);
     singleBubble.appendChild(messageContainer);
     return singleBubble;
-}
+};
 
-function sendMessage() {
+const sendMessage = () => {
     const content = document.getElementById("message-input").value;
     if(content && content.length > 0) {
         const toUser = window.location.href.split("/").pop();
@@ -93,7 +93,7 @@ function sendMessage() {
         });
         document.getElementById("message-input").value = "";
     }
-}
+};
 
 const setMessageTipVisible = function (visible) {
     document.getElementById("new-message-tip").style.visibility = (visible ? "visible" : "hidden");

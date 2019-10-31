@@ -15,16 +15,16 @@ const tabItemToHash = {
     "tab-item-announcement": "#/announcements"
 };
 
-function mountNode() {
+const mountNode = () => {
     const body = document.body;
     const mountDom = document.createElement("div");
     mountDom.id = "bottom-tab-node";
     mountDom.style.visibility = "hidden";
     mountDom.innerHTML = View;
     body.appendChild(mountDom);
-}
+};
 
-function updateBottomTab() {
+const updateBottomTab = () => {
     const mountDom = document.getElementById("bottom-tab-node");
     if(hashToTabItem[window.location.hash]) {
         mountDom.style.visibility = "visible";
@@ -35,32 +35,32 @@ function updateBottomTab() {
     } else {
         mountDom.style.visibility = "hidden";
     }
-}
+};
 
-function hideBottomTab() {
+const hideBottomTab = () => {
     const bottomTabDom = document.getElementById("bottom-tab");
     bottomTabDom.style.visibility = "hidden";
-}
+};
 
-function showBottomTab() {
+const showBottomTab = () => {
     const bottomTabDom = document.getElementById("bottom-tab");
     bottomTabDom.style.visibility = "visible";
-}
+};
 
-function addNavigationListener() {
+const addNavigationListener = () => {
     for(const item of Object.entries(tabItemToHash)) {
         document.getElementById(item[0]).addEventListener("click", () => {
             window.location.hash = item[1];
         });
     }
-}
+};
 
-function initBottomTab() {
+const initBottomTab = () => {
     mountNode();
     updateBottomTab();
     window.addEventListener("hashchange", updateBottomTab);
     addNavigationListener();
-}
+};
 
 const BottomTab = {
     hideBottomTab,

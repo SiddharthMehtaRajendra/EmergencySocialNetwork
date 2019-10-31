@@ -1,29 +1,29 @@
 import statusPopCard from "./view.html";
 import "./style.less";
 
-function mount() {
+const mount = () => {
     const app = document.getElementById("app");
     const statusPopCardNode = document.createElement("div");
     statusPopCardNode.id = "status-pop-card-node";
     statusPopCardNode.style.visibility = "hidden";
     statusPopCardNode.innerHTML = statusPopCard;
     app.appendChild(statusPopCardNode);
-}
+};
 
-function show() {
+const show = () => {
     document.getElementById("status-pop-card-node").style.visibility = "visible";
-}
+};
 
-function close() {
+const close = () => {
     document.getElementById("status-pop-card-node").style.visibility = "hidden";
-}
+};
 
-function setBlackCoverClose() {
+const setBlackCoverClose = () => {
     const blackCover = document.getElementById("black-cover");
     blackCover.addEventListener("click", close);
-}
+};
 
-function init(statusCallBack) {
+const init = (statusCallBack) => {
     mount();
     setBlackCoverClose();
     if(statusCallBack) {
@@ -32,7 +32,7 @@ function init(statusCallBack) {
             object[1].addEventListener("click", statusCallBack);
         });
     }
-}
+};
 
 const StatusPopCard = {
     init,

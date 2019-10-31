@@ -1,6 +1,6 @@
 import dateFormat from "./dateFormat";
 
-function processMessage(messages) {
+const processMessage = (messages) => {
     if(Object.prototype.toString.call(messages) === "[object Array]") {
         for(let i = 0; i < messages.length; i++) {
             messages[i].fromMe = messages[i].from === window.state.user.username;
@@ -16,6 +16,6 @@ function processMessage(messages) {
         messages.avatar = window.state.userMap[messages.from].avatar;
         return messages;
     }
-}
+};
 
 export default processMessage;

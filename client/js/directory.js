@@ -4,7 +4,7 @@ import "../style/directory.less";
 import Directory from "../view/directory.html";
 import Utils from "./lib/appUtils";
 
-async function fetchData() {
+const fetchData = async function () {
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`);
     if(res.status === 200 && res.data.success && res.data.users) {
         const users = res.data.users;
@@ -15,15 +15,15 @@ async function fetchData() {
         }
         window.state.userMap = userMap;
     }
-}
+};
 
-const addSearchListener = function() {
+const addSearchListener = function () {
     document.getElementsByClassName("search-icon")[0].addEventListener("click", () => {
         window.location.hash = "/search/user";
     });
 };
 
-const renderUsers = function(users, container){
+const renderUsers = function (users, container) {
     users.forEach((user, index) => {
         const userCard = document.createElement("div");
         const userName = document.createElement("div");
@@ -57,7 +57,7 @@ const renderUsers = function(users, container){
     });
 };
 
-async function render() {
+const render = async function () {
     const app = document.getElementById("app");
     app.innerHTML = Directory;
     const directory = document.getElementById("user-directory");
@@ -70,7 +70,7 @@ async function render() {
         const users = window.state.users;
         renderUsers(users, directory);
     }
-}
+};
 
 const directory = {
     fetchData,

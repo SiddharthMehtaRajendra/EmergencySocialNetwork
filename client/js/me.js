@@ -8,27 +8,27 @@ import StatusPopCard from "../components/statusPopCard";
 import Utils from "./lib/appUtils";
 import directory from "./directory";
 
-function logout() {
+const logout = function () {
     Cookie.remove("token");
     window.state = {};
     socket.close();
     window.location.hash = "/";
-}
+};
 
-async function fetchData() {
+const fetchData = async function () {
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user/`);
     if(res.status === 200 && res.data.success && res.data.user) {
         window.state.user = res.data.user;
     }
-}
+};
 
-const renderStatusPopCard = async function() {
+const renderStatusPopCard = async function () {
     // eslint-disable-next-line no-use-before-define
     StatusPopCard.init(updateStatus);
     StatusPopCard.show();
 };
 
-async function render() {
+const render = async function () {
     const app = document.getElementById("app");
     app.innerHTML = Me;
     if(!window.state.user) {
@@ -49,9 +49,9 @@ async function render() {
             window.location.hash = "/guide";
         });
     }
-}
+};
 
-const updateStatus = async function(event) {
+const updateStatus = async function (event) {
     const statusElement = event.currentTarget.children;
     if(statusElement && statusElement[0].id) {
         const userStatus = document.getElementById(statusElement[0].id).innerHTML;
@@ -64,17 +64,12 @@ const updateStatus = async function(event) {
                 if(res && res.status === 200) {
                     await directory.fetchData();
                     await render();
-                } else {
-                    console.log("Response Invalid!");
                 }
-            }).catch((err) => {
-                console.log(err);
             });
         }
     }
     StatusPopCard.close();
 };
-
 
 const me = {
     fetchData,

@@ -1,4 +1,4 @@
-function renderStatusColor(userStatus, statusElement) {
+const renderStatusColor = (userStatus, statusElement) => {
     if(userStatus) {
         switch (userStatus.toLowerCase()) {
         case "ok":
@@ -18,7 +18,7 @@ function renderStatusColor(userStatus, statusElement) {
             statusElement.setAttribute("style", "background-color: #7ED321");
         }
     }
-}
+};
 
 const Utils = {
     renderStatusColor

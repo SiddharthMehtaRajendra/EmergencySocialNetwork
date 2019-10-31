@@ -1,4 +1,4 @@
-function createNavHeader(title) {
+const createNavHeader = (title) => {
     const header = document.createElement("div");
     header.className = "navbar-header";
     const backArrow = document.createElement("div");
@@ -9,9 +9,9 @@ function createNavHeader(title) {
     header.appendChild(backArrow);
     header.appendChild(navTitle);
     return header;
-}
+};
 
-function render() {
+const render = () => {
     const understandBtn = document.getElementById("understand-btn");
     understandBtn.parentElement.removeChild(understandBtn);
     const welcomeTitle = document.getElementById("welcome-title");
@@ -21,7 +21,7 @@ function render() {
     navHeader.addEventListener("click", () => {
         window.history.go(-1);
     });
-}
+};
 
 const guide = {
     render
