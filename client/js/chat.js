@@ -142,6 +142,7 @@ const renderMessages = function (msgList, container, beforeNode) {
 
 const handleScroll = function () {
     return _debounce(async () => {
+    // return lodash.debounce(async () => {
         const container = document.getElementById("bubble-wrap");
         const scrollTop = container.scrollTop;
         // console.log(container.scrollTop, container.clientHeight, container.scrollHeight);
