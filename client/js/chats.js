@@ -52,7 +52,7 @@ const render = async function () {
             document.getElementById("latest-public-message-content").innerText = latestPublicMessage.content;
             document.getElementById("latest-public-message-time").innerText = dateFormat(latestPublicMessage.time, "mm/dd HH:MM");
         }
-        allChats.innerHTML = "";
+        allChats.innerHTML = null;
         const chats = window.state.chats;
         chats.forEach((chat, index) => {
             const otherUser = window.state.userMap[chat.otherUser];

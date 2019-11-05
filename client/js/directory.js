@@ -66,7 +66,7 @@ const render = async function () {
     }
     addSearchListener();
     if(window.state.users && directory) {
-        directory.innerHTML = "";
+        directory.innerHTML = null;
         const users = window.state.users;
         renderUsers(users, directory);
     }
