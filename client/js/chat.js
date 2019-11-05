@@ -2,9 +2,10 @@ import socket from "./socket/config";
 import axios from "axios";
 import { SERVER_ADDRESS, API_PREFIX } from "./constant/serverInfo";
 import processMessage from "./lib/processMessage";
-import lodash from "lodash";
 import "../style/chat.less";
 import Chat from "../view/chat.html";
+const _debounce = require("lodash/debounce");
+// const lodash = require("lodash");
 
 const pageSize = 20;
 
@@ -140,7 +141,7 @@ const renderMessages = function (msgList, container, beforeNode) {
 };
 
 const handleScroll = function () {
-    return lodash.debounce(async () => {
+    return _debounce(async () => {
         const container = document.getElementById("bubble-wrap");
         const scrollTop = container.scrollTop;
         // console.log(container.scrollTop, container.clientHeight, container.scrollHeight);

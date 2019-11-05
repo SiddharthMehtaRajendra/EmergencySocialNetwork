@@ -1,6 +1,8 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HappyPack = require("happypack");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
     mode: "production",
@@ -23,7 +25,11 @@ module.exports = {
             loaders: [{
                 loader: "babel-loader"
             }]
-        })
+        }),
+        new BundleAnalyzerPlugin({
+            analyzerMode: "static"
+        }),
+        new CompressionPlugin()
     ],
     module: {
         rules: [
