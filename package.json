@@ -58,6 +58,7 @@
     "crypto-js": "^3.1.9-1",
     "expect.js": "^0.3.1",
     "express": "^4.17.1",
+    "express-static-gzip": "^2.0.5",
     "html-loader": "^0.5.5",
     "ip": "^1.1.5",
     "js-cookie": "^2.2.1",

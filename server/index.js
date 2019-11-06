@@ -2,6 +2,7 @@
 
 const express = require("express");
 const app = express();
+const expressStaticGzip = require("express-static-gzip");
 const path = require("path");
 const cors = require("cors");
 const http = require("http").createServer(app);
@@ -22,7 +23,16 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use(checkToken);
-app.use("/app", express.static(path.resolve(__dirname, "../dist")));
+// app.use("/app", express.static(path.resolve(__dirname, "../dist")));
+
+app.use("/app", expressStaticGzip(path.resolve(__dirname, "../dist"),{
+    enableBrotli: true,
+    customCompressions: [{
+        encodingName: "deflate",
+        fileExtension: "zz"
+    }],
+    orderPreference: ["br"]
+}));
 
 // Socket IO config
 io.set("origins", "*:*");
