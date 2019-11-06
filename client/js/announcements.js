@@ -82,7 +82,7 @@ const render = async function () {
         await fetchData();
     }
     if(window.state.announcements && allAnnouncementsDom) {
-        allAnnouncementsDom.innerHTML = "";
+        allAnnouncementsDom.innerHTML = null;
         await renderAnnouncements(null, allAnnouncementsDom);
     }
     addSearchListener();
