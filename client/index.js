@@ -1,11 +1,13 @@
 import "./style/index.less";
 import "./style/welcome.less";
 import "./style/home.less";
+import "./style/information.less";
 
 import Navigo from "navigo";
 import Welcome from "./view/welcome.html";
 import Home from "./view/home.html";
 import Error from "./view/error.html";
+import Information from "./view/information.html";
 import guide from "./js/guide";
 import chats from "./js/chats";
 import chat from "./js/chat";
@@ -14,6 +16,7 @@ import me from "./js/me";
 import directory from "./js/directory";
 import search from "./js/search";
 import postAnnouncement from "./js/postAnnouncement";
+import updateInformation from "./js/information";
 
 import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";
@@ -109,6 +112,11 @@ router.on("/search/:context", async () => {
 
 router.on("/postAnnouncement", async () => {
     await postAnnouncement.render();
+}).resolve();
+
+router.on("/information", () => {
+    app.innerHTML = Information;
+    updateInformation();
 }).resolve();
 
 router.notFound(() => {
