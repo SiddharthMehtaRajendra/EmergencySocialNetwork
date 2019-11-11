@@ -29,15 +29,22 @@ const updateInformation = async function () {
     await storeInformation(infos);
 };
 
+const clearHistory = function () {
+    window.state.infoList = null;
+    window.state.shareList = null;
+};
+
 const addBackListener = function () {
     const backNode = document.getElementsByClassName("cancel-button choice");
     if(backNode.length > 0) {
         backNode[0].addEventListener("click", () => {
             window.history.go(-1);
+            clearHistory(); 
         });
-    }; 
+    };
     document.getElementsByClassName("navbar-back-arrow")[0].addEventListener("click", () => {
         window.history.go(-1);
+        clearHistory();
     });
 };
 
@@ -45,7 +52,7 @@ const addUpdateListener = function () {
     document.getElementsByClassName("update-button choice")[0].addEventListener("click", () => {
         updateInformation();
         window.location.hash = "/me";
-        window.state.infoList = null;
+        clearHistory();
     });
 };
 
@@ -72,12 +79,10 @@ const showInfo = function (info) {
 const getUserInfo = async function () {
     const username = window.location.hash.split("/").pop();
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/info/` + username);
-    if(res.data.success) {
-        showInfo(res.data.info);
-    };
+    return res;
 };
 
-const storeRecord = async function () { 
+const storeRecord = async function () {
     window.state.infoList = getInformation();
 };
 
@@ -103,12 +108,15 @@ const update = async function () {
     addUpdateListener();
     addShareListListener();
     recover();
-    // await storeInformation(infos);   
+    // await storeInformation(infos);
 };
 
 const render = async function () {
-    getUserInfo();
-    // await storeInformation(infos);   
+    const res = await getUserInfo();
+    console.log(window.state.user.username);
+    if(res.data.success && res.data.info.shareList.indexOf(window.state.user.username) >= 0) {
+        showInfo(res.data.info);
+    };
 };
 
 const view = async function () {
