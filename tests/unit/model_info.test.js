@@ -43,38 +43,4 @@ describe("Info DB Test", async () => {
         expect(updateResult.success).toEqual(true);
         expect(updateResult.res.name).toEqual("2222");
     });
-    /*
-    test("test update attribute", async () => {
-        await User.updateStatus(TEST_USERNAME, "help");
-        let updated = await User.getOneUserByUsername(TEST_USERNAME);
-        expect(updated.res[0].status).toEqual("help");
-        await User.updateOnline(TEST_USERNAME, true);
-        updated = await User.getOneUserByUsername(TEST_USERNAME);
-        expect(updated.res[0].online).toEqual(true);
-        await User.updateSocketId(TEST_USERNAME, "TEST SOCKET ID");
-        updated = await User.getOneUserByUsername(TEST_USERNAME);
-        expect(updated.res[0].socketID).toEqual("TEST SOCKET ID");
-    });
-
-    test("test get user list", async () => {
-        const userList = [];
-        for(let i = 0; i < 5; i++) {
-            userList.push({
-                username: `searchtest${i}`,
-                password: 1234,
-                avatar: "#ffffff",
-                status: "ok",
-                statusUpdateTime: new Date(),
-                online: true
-            });
-        }
-        for(let i = 0; i < userList.length; i++) {
-            await User.addOneUser(userList[i]);
-        }
-        const userSearchedResult = (await User.searchUser("search")).res;
-        expect(userSearchedResult.length).toEqual(5);
-        const allUsers = await User.getAllUsers();
-        expect(allUsers.res.length).toBeGreaterThan(5);
-    });
-    */
 });
