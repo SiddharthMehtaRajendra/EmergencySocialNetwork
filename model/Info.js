@@ -24,6 +24,9 @@ const InfoSchema = new mongoose.Schema({
     },
     selfIntro: {
         type: String
+    },
+    shareList: {
+        type: [String]
     }
 });
 

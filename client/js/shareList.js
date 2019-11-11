@@ -17,6 +17,19 @@ const fetchData = async function () {
     }
 };
 
+const addButtonListener = function (node) {
+    node.addEventListener("click", () => {
+        if(node.getAttribute("selected") === "no"){
+            node.style.backgroundColor = "#7ED321";
+            node.setAttribute("selected", "yes");
+        } else {
+            node.style.backgroundColor = "#D8D8D8";
+            node.setAttribute("selected", "no");
+        };
+    });
+
+};
+
 const renderUsers = function (users, container) {
     users.forEach((user, index) => {
         const userContainer = document.createElement("div");
@@ -38,6 +51,7 @@ const renderUsers = function (users, container) {
         userAvatar.className = "avatar";
         userStatus.className = "status-circle";
         selectedButton.className = "selectedButton";
+        selectedButton.setAttribute("selected", "no");
         bottomThinLine.className = "right-thin-line";
         userName.innerText = user.username;
         userAvatar.innerText = user.username.charAt(0);
@@ -52,7 +66,8 @@ const renderUsers = function (users, container) {
         }
         if(index !== users.length - 1) {
             container.appendChild(bottomThinLine);
-        };       
+        };
+        addButtonListener(selectedButton);
     });
 };
 
@@ -64,6 +79,24 @@ const addBackListener = function () {
         });
     };
     document.getElementsByClassName("navbar-back-arrow")[0].addEventListener("click", () => {
+        window.history.go(-1);
+    });
+};
+
+const getshareList = function () {
+    const nodes = document.getElementsByClassName("userContainer");
+    const newList = [];
+    for(let i = 0; i < nodes.length; i++){
+        if(nodes[i].getElementsByClassName("selectedButton")[0].getAttribute("selected") === "yes"){
+            newList.push(nodes[i].getElementsByClassName("username")[0].innerHTML);
+        };
+    };
+    return newList;
+};
+
+const addSubmitListener = function () {
+    document.getElementsByClassName("update-button")[0].addEventListener("click", () => {
+        window.state.shareList = getshareList();
         window.history.go(-1);
     });
 };
@@ -81,6 +114,8 @@ const render = async function () {
         const users = window.state.users;
         renderUsers(users, directory);
     }
+    addSubmitListener();
+    getshareList();
 };
 
 const shareList = {
