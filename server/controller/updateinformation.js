@@ -8,7 +8,8 @@ const updateInformation = async function (req, res, next) {
             phoneNumber: req.body.params.phoneNumber,
             address: req.body.params.address,
             contactNumber: req.body.params.contactNumber,
-            selfIntro: req.body.params.selfIntro
+            selfIntro: req.body.params.selfIntro,
+            shareList: req.body.params.shareList
         };
         res = await Info.updateInformation(userInfo);
         return {

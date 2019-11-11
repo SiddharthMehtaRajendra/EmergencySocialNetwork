@@ -115,7 +115,6 @@ const render = async function () {
         renderUsers(users, directory);
     }
     addSubmitListener();
-    getshareList();
 };
 
 const shareList = {

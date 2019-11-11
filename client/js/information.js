@@ -19,6 +19,7 @@ const storeInformation = async function (infos) {
             address: infos[2],
             contactNumber: infos[3],
             selfIntro: infos[4],
+            shareList: window.state.shareList
         }
     });
 };
@@ -44,6 +45,7 @@ const addUpdateListener = function () {
     document.getElementsByClassName("update-button choice")[0].addEventListener("click", () => {
         updateInformation();
         window.location.hash = "/me";
+        window.state.infoList = null;
     });
 };
 
@@ -75,16 +77,32 @@ const getUserInfo = async function () {
     };
 };
 
+const storeRecord = async function () { 
+    window.state.infoList = getInformation();
+};
+
 const addShareListListener = function () {
     document.getElementsByClassName("select-button")[0].addEventListener("click", () => {
+        storeRecord();
         window.location.hash = "/shareList";
     });
+};
+
+const recover = async function () {
+    if(!window.state.infoList){
+        return;
+    };
+    const inputs = document.getElementsByClassName("info-input");
+    for(let i = 0; i < inputs.length; i++) {
+        inputs[i].value = window.state.infoList[i];
+    };
 };
 
 const update = async function () {
     addBackListener();
     addUpdateListener();
     addShareListListener();
+    recover();
     // await storeInformation(infos);   
 };
 
