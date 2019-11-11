@@ -76,6 +76,8 @@ app.post("/api/postAnnouncement", async (req, res) => {
 
 app.get("/api/search", controller.search);
 
+app.post("/api/updateinformation", controller.updateinformation);
+
 http.listen(port, () => {
     console.log(`Express server start, listening on port:${port} ...`);
 });

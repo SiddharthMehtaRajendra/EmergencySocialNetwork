@@ -16,7 +16,7 @@ import me from "./js/me";
 import directory from "./js/directory";
 import search from "./js/search";
 import postAnnouncement from "./js/postAnnouncement";
-import updateInformation from "./js/information";
+import informationController from "./js/information";
 
 import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";
@@ -114,9 +114,9 @@ router.on("/postAnnouncement", async () => {
     await postAnnouncement.render();
 }).resolve();
 
-router.on("/information", () => {
+router.on("/information", async () => {
     app.innerHTML = Information;
-    updateInformation();
+    await informationController();
 }).resolve();
 
 router.notFound(() => {
