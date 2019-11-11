@@ -1,6 +1,7 @@
 const Info = require("../../model/Info");
 
 const updateInformation = async function (req, res, next) {
+    const updateRes = {success: false};
     try {
         const userInfo = {
             username: req.username,
@@ -11,16 +12,16 @@ const updateInformation = async function (req, res, next) {
             selfIntro: req.body.params.selfIntro,
             shareList: req.body.params.shareList
         };
-        res = await Info.updateInformation(userInfo);
-        return {
+        const updateRes = await Info.updateInformation(userInfo);
+        res.status(200).json({
             success: true,
-            message: "Update infomation success"
-        };
+            info: updateRes.res,
+        });
     } catch (e) {
-        return {
+        res.status(200).json({
             success: false,
-            message: "Update information failed"
-        };
+            info: null,
+        });
     }
 };
 
