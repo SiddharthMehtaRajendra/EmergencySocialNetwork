@@ -78,6 +78,8 @@ app.get("/api/search", controller.search);
 
 app.post("/api/updateinformation", controller.updateinformation);
 
+app.get("/api/info/:username?", controller.info);
+
 http.listen(port, () => {
     console.log(`Express server start, listening on port:${port} ...`);
 });

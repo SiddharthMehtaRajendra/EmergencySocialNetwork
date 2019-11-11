@@ -9,6 +9,7 @@ const updateStatus = require("./updateStatus");
 const search = require("./search");
 const postAnnouncement = require("./postAnnouncement");
 const updateinformation = require("./updateinformation");
+const info = require("./info");
 
 const controller = {
     join,
@@ -21,7 +22,8 @@ const controller = {
     updateStatus,
     search,
     postAnnouncement,
-    updateinformation
+    updateinformation,
+    info
 };
 
 module.exports = controller;

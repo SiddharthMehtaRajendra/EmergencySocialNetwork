@@ -10,9 +10,7 @@ const updateInformation = async function (req, res, next) {
             contactNumber: req.body.params.contactNumber,
             selfIntro: req.body.params.selfIntro
         };
-        console.log(userInfo);
         res = await Info.updateInformation(userInfo);
-        console.log(res);
         return {
             success: true,
             message: "Update infomation success"

@@ -29,12 +29,10 @@ const InfoSchema = new mongoose.Schema({
 
 InfoSchema.statics.getInfoByUsername = async function (username) {
     let res = {};
-    let success = true;
-    try {
-        res = await this.find({ username: username });
-    } catch (e) {
-        success = false;
-        res = e._message;
+    let success = false;
+    res = await this.find({ username: username });
+    if(res.length > 0){
+        success = true;
     }
     return {
         success,

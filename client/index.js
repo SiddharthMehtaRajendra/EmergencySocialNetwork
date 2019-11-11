@@ -2,12 +2,14 @@ import "./style/index.less";
 import "./style/welcome.less";
 import "./style/home.less";
 import "./style/information.less";
+import "./style/infopage.less";
 
 import Navigo from "navigo";
 import Welcome from "./view/welcome.html";
 import Home from "./view/home.html";
 import Error from "./view/error.html";
 import Information from "./view/information.html";
+import InfoPage from "./view/infopage.html";
 import guide from "./js/guide";
 import chats from "./js/chats";
 import chat from "./js/chat";
@@ -15,6 +17,7 @@ import announcements from "./js/announcements";
 import me from "./js/me";
 import directory from "./js/directory";
 import search from "./js/search";
+import shareList from "./js/shareList";
 import postAnnouncement from "./js/postAnnouncement";
 import informationController from "./js/information";
 
@@ -116,7 +119,16 @@ router.on("/postAnnouncement", async () => {
 
 router.on("/information", async () => {
     app.innerHTML = Information;
-    await informationController();
+    await informationController.update();
+}).resolve();
+
+router.on("/infopage/:id", async () => {
+    app.innerHTML = InfoPage;
+    await informationController.view();
+}).resolve();
+
+router.on("/shareList", async () => {
+    await shareList.render();
 }).resolve();
 
 router.notFound(() => {
