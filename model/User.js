@@ -38,6 +38,9 @@ const UserSchema = new mongoose.Schema({
     },
     locationUpdateTime: {
         type: Date
+    },
+    sharingLocationOpen: {
+        type: Boolean
     }
 });
 
@@ -97,11 +100,12 @@ UserSchema.statics.updateSocketId = async function (username, socketID) {
     return res;
 };
 
-UserSchema.statics.updateLocation = async function (username, location) {
+UserSchema.statics.updateLocation = async function (username, location, sharingLocationOpen) {
     const res = await this.updateOne({ username: username }, {
         latitude: location.latitude,
         longitude: location.longitude,
-        locationUpdateTime: new Date()
+        locationUpdateTime: new Date(),
+        sharingLocationOpen: sharingLocationOpen
     });
     return res;
 };

@@ -5,6 +5,7 @@ import { SERVER_ADDRESS, API_PREFIX } from "./constant/serverInfo";
 import axios from "axios";
 
 const { setDot } = require("./lib/mapDraw");
+const INIT_ZOOM = 12;
 import directory from "./directory";
 const turf = require("@turf/turf");
 
@@ -13,17 +14,41 @@ const mapboxgl = require("mapbox-gl");
 const accessToken = "pk.eyJ1IjoibXJ3YXluZTIzMyIsImEiOiJjazIyZGM0aHcwZ2VvM29xbDRtbXM2M2V2In0.vbWqAo2hZr4f42LWJ9gaew";
 mapboxgl.accessToken = accessToken;
 
+const disComp = function (a,b) {
+    if(a.distance === null && b.distance !== null){
+        return 1;
+    } else if(a.distance !== null && b.distance === null){
+        return -1;
+    } else if(a.distance === null && b.distance === null) {
+        return -1;
+    } else {
+        return a.distance - b.distance;
+    }
+};
+
 const setBackArrow = function () {
     document.getElementById("navbar-back-arrow").addEventListener("click", () => {
         window.history.go(-1);
     });
 };
 
-const closeLocationWatch = function () {
-    if(window.state.location.watchId) {
-        navigator.geolocation.clearWatch(window.state.location.watchId);
-        window.map.removeLayer(`${window.state.user.username}`);
-        window.map.removeSource(`${window.state.user.username}`);
+const closeLocationWatch = async function () {
+    if(window.state.locationWatchId) {
+        navigator.geolocation.clearWatch(window.state.locationWatchId);
+        try {
+            window.map.removeLayer(`${window.state.user.username}`);
+            window.map.removeSource(`${window.state.user.username}`);
+            await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/updateLocation`, {
+                location: {
+                    latitude: window.state.user.latitude,
+                    longitude: window.state.user.longitude
+                },
+                sharingLocationOpen: false
+            });
+        } catch (e) {
+            console.log("Failed to remove layer or resource");
+            console.log(e);
+        }
     }
 };
 
@@ -58,7 +83,7 @@ const updateDistance = function(centerUser, users){
             if(user.longitude){
                 const curCoord = [user.longitude,user.latitude];
                 const to = turf.point(curCoord);
-                user.distance =  turf.distance(from, to, options).toFixed(2) + " mile";
+                user.distance =  +turf.distance(from, to, options).toFixed(2);
             } else {
                 user.distance = null;
             }
@@ -71,14 +96,16 @@ const updateDistance = function(centerUser, users){
 };
 
 const renderUserList = function(users){
+    const usersSortByDistance = JSON.parse(JSON.stringify(users));
+    usersSortByDistance.sort(disComp);
     const container = document.getElementById("user-list");
     container.innerHTML = null;
-    users.forEach((user,index) => {
+    usersSortByDistance.forEach((user,index) => {
         const singleUser = directory.buildSingleUser(user);
-        if(user.distance) {
+        if(user.distance || user.distance === 0) {
             const distance = document.createElement("div");
             distance.className = "distance";
-            distance.innerText = user.distance;
+            distance.innerText = user.distance + " mile";
             singleUser.appendChild(distance);
         }
         const bottomThinLine = directory.buildBottomLine();
@@ -91,14 +118,14 @@ const renderUserList = function(users){
     });
 };
 
-const initMap = function (zoom) {
+const initMap = function () {
     const user = window.state.user;
     const center = user.longitude ? [user.longitude, user.latitude] : [37.774929, -122.419416];
     const map = new mapboxgl.Map({
         container: "mapbox",
         style: "mapbox://styles/mapbox/light-v9",
         center: center, // Hint: lng and lat is reverse with Google map
-        zoom: zoom || 12 // starting zoom
+        zoom: INIT_ZOOM || 12 // starting zoom
     });
     map.addControl(new mapboxgl.NavigationControl());
     map.on("move", _debounce(commonMove, 100));
@@ -116,28 +143,24 @@ const initLocationWatch = function () {
     };
     const geoSuccess = async function (position) {
         console.log(position.coords);
-        window.state.location.latitude = position.coords.latitude;
-        window.state.location.longitude = position.coords.longitude;
-        window.state.location.accuracy = position.coords.accuracy;
         window.state.user.latitude = position.coords.latitude;
         window.state.user.longitude =  position.coords.longitude;
         window.state.userMap[window.state.user.username].latitude = position.coords.latitude;
         window.state.userMap[window.state.user.username].longitude = position.coords.longitude;
-        // window.map.setCenter([window.state.location.longitude, window.state.location.latitude]);
         await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/updateLocation`, {
             location: {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude
-            }
+            },
+            sharingLocationOpen: true
         });
         setSwitch(true);
-        window.state.location.open = true;
-        window.state.locationSharingPageLoading = false;
+        window.state.user.sharingLocationOpen = true;
         if(window.map.isStyleLoaded()) {
             window.map.flyTo({
-                center: [window.state.location.longitude, window.state.location.latitude]
+                center: [window.state.user.longitude, window.state.user.latitude]
             });
-            setDot(window.state.user, [window.state.location.longitude, window.state.location.latitude]);
+            setDot(window.state.user, [window.state.user.longitude, window.state.user.latitude]);
         }
         window.state.users = updateDistance(window.state.user,window.state.users);
         renderUserList(window.state.users);
@@ -145,21 +168,21 @@ const initLocationWatch = function () {
     const geoError = function (error) {
         Toast(`Failed to get location, ${error.message}`, "#F41C3B", null, 5000);
     };
-    window.state.location.watchId = navigator.geolocation.watchPosition(geoSuccess, geoError, geoOptions);
+    window.state.locationWatchId = navigator.geolocation.watchPosition(geoSuccess, geoError, geoOptions);
 };
 
-const switchLocationSharing = function () {
-    if(window.state.location.open) {
-        closeLocationWatch();
+const switchLocationSharing = async function () {
+    if(window.state.user.sharingLocationOpen) {
+        await closeLocationWatch();
         setSwitch(false);
     } else {
         initLocationWatch();
         setSwitch(true);
     }
-    window.state.location.open = !window.state.location.open;
+    window.state.user.sharingLocationOpen = !window.state.user.sharingLocationOpen;
 };
 
-const setLocationIcon = function () {
+const setLocationSharingIcon = function () {
     document.getElementById("location-sharing-switch").addEventListener("click", switchLocationSharing);
 };
 
@@ -167,16 +190,9 @@ const render = async function () {
     const app = document.getElementById("app");
     app.innerHTML = View;
     setBackArrow();
-    if(!window.state.location) {
-        window.state.location = {};
-        window.state.location.open = false;
-        window.state.locationSharingPageLoading = true;
-    }
-
+    initMap(INIT_ZOOM); // default location, CMU-SV Campus
     initLocationWatch();
-    initMap(12); // default location, CMU-SV Campus
-    setLocationIcon();
-    window.state.users = updateDistance(window.state.user,window.state.users);
+    setLocationSharingIcon();
     renderUserList(window.state.users);
 };
 

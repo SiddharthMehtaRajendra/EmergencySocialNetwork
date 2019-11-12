@@ -1,10 +1,8 @@
 const User = require("../../model/User");
 
 const updateLocation = async function (req, io) {
-    console.log(req.username);
-    console.log(req.body);
     try {
-        const res = await User.updateLocation(req.username || req.body.username, req.body.location);
+        const res = await User.updateLocation(req.username || req.body.username, req.body.location, req.body.sharingLocationOpen);
         console.log(res);
         return {
             success: true,
