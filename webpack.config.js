@@ -26,15 +26,13 @@ module.exports = {
                 loader: "babel-loader"
             }]
         }),
-        new BundleAnalyzerPlugin({
-            analyzerMode: "static"
-        }),
         new CompressionPlugin()
     ],
     module: {
         rules: [
             {
                 test: /\.(js)$/,
+                exclude: [/node_modules/, /dist/],
                 loaders: ["happypack/loader"]
             },
             {
@@ -74,6 +72,7 @@ module.exports = {
                     "file-loader"
                 ]
             }
-        ]
+        ],
+        noParse: /(mapbox-gl)\.js$/
     }
 };

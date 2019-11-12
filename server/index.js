@@ -69,6 +69,11 @@ app.post("/api/updateStatus", async (req, res) => {
     res.status(200).json(result);
 });
 
+app.post("/api/updateLocation", async (req, res) => {
+    const result = await controller.updateLocation(req, io);
+    res.status(200).json(result);
+});
+
 app.post("/api/postAnnouncement", async (req, res) => {
     const result = await controller.postAnnouncement(req, io);
     res.status(200).json(result);

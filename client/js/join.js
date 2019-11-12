@@ -65,6 +65,7 @@ const join = () => {
     const usernameValidation = validateUserName(username);
     const passwordValidation = validatePassword(password);
     if(usernameValidation.result && passwordValidation.result) {
+        console.log( `${SERVER_ADDRESS}${API_PREFIX}/joinCheck`);
         resetHint();
         axios({
             method: "post",

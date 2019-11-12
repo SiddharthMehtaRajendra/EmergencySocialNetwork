@@ -14,6 +14,7 @@ import me from "./js/me";
 import directory from "./js/directory";
 import search from "./js/search";
 import postAnnouncement from "./js/postAnnouncement";
+import locationSharing from "./js/locationSharing";
 
 import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";
@@ -109,6 +110,10 @@ router.on("/search/:context", async () => {
 
 router.on("/postAnnouncement", async () => {
     await postAnnouncement.render();
+}).resolve();
+
+router.on("/locationSharing", async () => {
+    await locationSharing.render();
 }).resolve();
 
 router.notFound(() => {
