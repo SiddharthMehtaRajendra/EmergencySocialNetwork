@@ -15,7 +15,8 @@ const join = async function(req,res,next){
         avatar: avatar,
         status: "ok",
         statusUpdateTime: new Date(),
-        online: true
+        online: true,
+        isDoctor: req.body.isDoctor
     };
     if(validate(user.username, user.password)) {
         const result = await User.addOneUser(user);

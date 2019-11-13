@@ -1,7 +1,7 @@
 const User = require("../../model/User");
 
-const user = async function (req,res) {
-    const username = (req.params && req.params.username) || req.username;
+const profile = async function (req,res) {
+    const username = req.params && req.params.username;
     const result = await User.getOneUserByUsername(username);
     const user = result.res[0] || {};
     res.status(200).json({
@@ -11,10 +11,9 @@ const user = async function (req,res) {
             username: user.username || null,
             avatar: user.avatar || "#ccc",
             online: user.online || false,
-            status: user.status || "ok",
-            isDoctor: user.isDoctor || false
+            status: user.status || "ok"
         }
     });
 };
 
-module.exports = user;
+module.exports = profile;

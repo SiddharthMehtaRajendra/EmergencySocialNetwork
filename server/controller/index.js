@@ -2,11 +2,13 @@ const join = require("./join");
 const joinCheck = require("./joinCheck");
 const users = require("./users");
 const user = require("./user");
+const profile = require("./profile");
 const historyMessage = require("./historyMessage");
 const chats = require("./chats");
 const announcement = require("./announcement");
 const updateStatus = require("./updateStatus");
 const search = require("./search");
+
 const postAnnouncement = require("./postAnnouncement");
 
 const controller = {
@@ -14,6 +16,7 @@ const controller = {
     joinCheck,
     users,
     user,
+    profile,
     historyMessage,
     chats,
     announcement,

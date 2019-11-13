@@ -31,8 +31,11 @@ const renderUsers = function (users, container) {
         const userStatus = document.createElement("div");
         const bottomThinLine = document.createElement("div");
         userCard.className = "single-user common-list-item";
+        // userCard.addEventListener("click", () => {
+        //     window.location.hash = "/chat/" + user.username;
+        // });
         userCard.addEventListener("click", () => {
-            window.location.hash = "/chat/" + user.username;
+            window.location.hash = "/profile/" + user.username;
         });
         userName.className = "username";
         userAvatar.className = "avatar";

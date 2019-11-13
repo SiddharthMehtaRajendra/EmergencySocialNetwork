@@ -10,6 +10,10 @@ const UserSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
+    isDoctor: {
+        type: Boolean,
+        required: true
+    },
     password: {
         type: String,
         required: true
@@ -29,12 +33,23 @@ const UserSchema = new mongoose.Schema({
     },
     statusUpdateTime: {
         type: Date
-    }
+    },
+    associatedList: [{type: mongoose.Schema.Types.ObjectID, ref: "User"}]
 });
 
 UserSchema.statics.exists = async function (username) {
     const findResult = await this.findOne({ username: username });
     return !!findResult;
+};
+
+UserSchema.statics.isDoctor = async function (username) {
+    const findResult = await this.findOne({ username: username });
+    if(findResult === null) {
+        return null;
+    } else {
+        console.log("findResult.isDoctor: " + findResult.isDoctor);
+        return !!findResult.isDoctor;
+    }
 };
 
 UserSchema.statics.getOneUserByUsername = async function (username) {
