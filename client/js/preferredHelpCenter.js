@@ -47,6 +47,11 @@ const renderPreferredHelpCenters = async function () {
     if(!preferredHelpCenters || preferredHelpCenters.length === 0){
         document.getElementById("no-help-center").style.display = "block";
     }
+    preferredHelpCenters.sort(function(a, b){
+        if(a.helpCenterName < b.helpCenterName) { return -1; }
+        if(a.helpCenterName > b.helpCenterName) { return 1; }
+        return 0;
+    });
     const allPreferredHelpCenters = document.getElementById("all-help-centers");
     const beforeNode = document.getElementById("blank-help-center");
     if(allPreferredHelpCenters) {
