@@ -37,8 +37,12 @@ const setBackArrow = function () {
 
 const removeDot = function (id) {
     try {
-        window.map.removeLayer(id);
-        window.map.removeSource(id);
+        if(window.map.getLayer(id)) {
+            window.map.removeLayer(id);
+        }
+        if(window.map.getSource(id)) {
+            window.map.removeSource(id);
+        }
     } catch (e) {
         console.log("Failed to remove layer or resource: " + e);
     }
