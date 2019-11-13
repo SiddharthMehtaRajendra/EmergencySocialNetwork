@@ -63,10 +63,11 @@ const closeLocationWatch = async function () {
 };
 
 const setSwitch = function (on) {
-    if(on) {
-        document.getElementById("location-sharing-switch").className = "location-sharing-switch open";
+    const switchButton =  document.getElementById("location-sharing-switch");
+    if(on && switchButton ) {
+        switchButton.className = "location-sharing-switch open";
     } else {
-        document.getElementById("location-sharing-switch").className = "location-sharing-switch close";
+        switchButton.className = "location-sharing-switch close";
     }
 };
 
