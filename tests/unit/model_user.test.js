@@ -39,6 +39,9 @@ describe("User DB Test", async () => {
         await User.updateSocketId(TEST_USERNAME, "TEST SOCKET ID");
         updated = await User.getOneUserByUsername(TEST_USERNAME);
         expect(updated.res[0].socketID).toEqual("TEST SOCKET ID");
+        await User.updateLocation(TEST_USERNAME,{latitude: 0,longitude: 0},true);
+        updated = await User.getOneUserByUsername(TEST_USERNAME);
+        expect(updated.res[0].socketID).toEqual("TEST SOCKET ID");
     });
 
     test("test get user list", async () => {

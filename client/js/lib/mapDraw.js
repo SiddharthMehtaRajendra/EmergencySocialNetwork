@@ -94,7 +94,6 @@ const setDot = function (user, coord) {
             while(Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
             }
-            console.log("Click: " + id);
             ee.emit("CLICK_DOT", id);
         });
         window.map.on("mouseenter", id, () => {
