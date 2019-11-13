@@ -8,6 +8,10 @@ const announcement = require("./announcement");
 const updateStatus = require("./updateStatus");
 const search = require("./search");
 const postAnnouncement = require("./postAnnouncement");
+const helpSearch = require("./helpSearch")
+const saveHelpCenter = require("./saveHelpCenter")
+const uploadMedicalId = require("./uploadMedicalId")
+const preferredHelpCenters = require("./preferredHelpCenters")
 
 const controller = {
     join,
@@ -19,7 +23,11 @@ const controller = {
     announcement,
     updateStatus,
     search,
-    postAnnouncement
+    postAnnouncement,
+    helpSearch,
+    saveHelpCenter,
+    uploadMedicalId,
+    preferredHelpCenters
 };
 
 module.exports = controller;

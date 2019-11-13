@@ -64,6 +64,10 @@ app.get("/api/chats", controller.chats);
 
 app.get("/api/announcement", controller.announcement);
 
+app.get("/api/helpSearch", controller.helpSearch);
+
+app.get("/api/preferredHelpCenters", controller.preferredHelpCenters);
+
 app.post("/api/updateStatus", async (req, res) => {
     const result = await controller.updateStatus(req, io);
     res.status(200).json(result);
@@ -71,6 +75,16 @@ app.post("/api/updateStatus", async (req, res) => {
 
 app.post("/api/postAnnouncement", async (req, res) => {
     const result = await controller.postAnnouncement(req, io);
+    res.status(200).json(result);
+});
+
+app.post("/api/saveHelpCenter", async (req, res) => {
+    const result = await controller.saveHelpCenter(req);
+    res.status(200).json(result);
+});
+
+app.post("/api/uploadMedicalId", async (req, res) => {
+    const result = await controller.uploadMedicalId(req);
     res.status(200).json(result);
 });
 

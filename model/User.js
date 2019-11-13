@@ -2,6 +2,18 @@ const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 const bcrypt = require("bcryptjs");
 
+const preferenceSchema = new mongoose.Schema({
+    helpCenterName: {
+        type: String
+    },
+    helpCenterAddress: {
+        type: String
+    },
+    medicalIdUploaded: {
+        type: Boolean
+    }
+});
+
 /* istanbul ignore next */
 const UserSchema = new mongoose.Schema({
     username: {
@@ -29,12 +41,59 @@ const UserSchema = new mongoose.Schema({
     },
     statusUpdateTime: {
         type: Date
-    }
+    },
+    savedHelpCenters: [preferenceSchema]
 });
 
 UserSchema.statics.exists = async function (username) {
     const findResult = await this.findOne({ username: username });
     return !!findResult;
+};
+
+UserSchema.statics.saveHelpCenter = async function (username, preferenceName, preferenceAddress) {
+    let res = {};
+    let success = true;
+    const user = await this.findOne({username: username});
+    try {
+        user.savedHelpCenters.push({helpCenterName: preferenceName, helpCenterAddress: preferenceAddress, medicalIdUploaded: false});
+        await user.save();
+    } catch(e){
+        success = false;
+    }
+    return success;
+};
+
+UserSchema.statics.uploadMedicalID = async function (username, preferenceName, medicalIdUploaded) {
+    let res = {};
+    let success = true;
+    try {
+        await this.findOne({'username': username}).then((user) => {
+            for(let i=0; i < user.savedHelpCenters.length; i++){
+                const savedHelpCenter = user.savedHelpCenters[i];
+                if(savedHelpCenter.helpCenterName === preferenceName){
+                    savedHelpCenter.medicalIdUploaded = medicalIdUploaded;
+                }
+            }
+            user.save()
+        });
+    } catch(e){
+        success = false;
+    }
+    return success;
+};
+
+UserSchema.statics.fetchPreferredHelpCenters = async function (username) {
+    let res = [];
+    let success = true;
+    try {
+        const result = await this.findOne({username});
+        /* istanbul ignore next */
+        res = result.savedHelpCenters;
+    } catch (e) {
+        success = false;
+        res = e._message;
+    }
+    return res;
 };
 
 UserSchema.statics.getOneUserByUsername = async function (username) {
