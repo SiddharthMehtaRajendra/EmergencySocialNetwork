@@ -30,15 +30,13 @@ const addLocationSharingListener = function () {
     });
 };
 
-const buildSingleUser = function(user){
+const buildSingleUser = function (user, clickCallBack) {
     const userCard = document.createElement("div");
     const userName = document.createElement("div");
     const userAvatar = document.createElement("div");
     const userStatus = document.createElement("div");
     userCard.className = "single-user common-list-item";
-    userCard.addEventListener("click", () => {
-        window.location.hash = "/chat/" + user.username;
-    });
+    userCard.addEventListener("click", clickCallBack);
     userName.className = "username";
     userAvatar.className = "avatar";
     userStatus.className = "status-circle";
@@ -55,7 +53,7 @@ const buildSingleUser = function(user){
     return userCard;
 };
 
-const buildBottomLine = function(){
+const buildBottomLine = function () {
     const bottomThinLine = document.createElement("div");
     bottomThinLine.className = "right-thin-line";
     return bottomThinLine;
@@ -63,7 +61,9 @@ const buildBottomLine = function(){
 
 const renderUsers = function (users, container) {
     users.forEach((user, index) => {
-        const userCard = buildSingleUser(user);
+        const userCard = buildSingleUser(user, () => {
+            window.location.hash = "/chat/" + user.username;
+        });
         const bottomThinLine = buildBottomLine();
         if(index !== users.length - 1) {
             container.appendChild(userCard);
