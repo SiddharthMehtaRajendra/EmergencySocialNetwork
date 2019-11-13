@@ -58,8 +58,6 @@ app.get("/api/users", controller.users);
 
 app.get("/api/user/:username?", controller.user);
 
-app.get("/api/profile/:username", controller.profile);
-
 app.get("/api/historyMessage", controller.historyMessage);
 
 app.get("/api/chats", controller.chats);

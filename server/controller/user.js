@@ -18,3 +18,4 @@ const user = async function (req,res) {
 };
 
 module.exports = user;
+
