@@ -12,7 +12,8 @@ const user = async function (req,res) {
             avatar: user.avatar || "#ccc",
             online: user.online || false,
             status: user.status || "ok",
-            isDoctor: user.isDoctor || false
+            isDoctor: user.isDoctor || false,
+            associatedList: user.associatedList || []
         }
     });
 };

@@ -76,6 +76,11 @@ app.post("/api/postAnnouncement", async (req, res) => {
 
 app.get("/api/search", controller.search);
 
+app.post("/api/addPrivateDoctor", controller.addPrivateDoctor);
+
+app.post("/api/removePrivateDoctor", controller.removePrivateDoctor);
+
+
 http.listen(port, () => {
     console.log(`Express server start, listening on port:${port} ...`);
 });

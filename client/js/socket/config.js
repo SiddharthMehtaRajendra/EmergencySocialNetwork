@@ -45,6 +45,15 @@ socket.on("UPDATE_DIRECTORY", async (payload) => {
     }
 });
 
+socket.on("UPDATE_STATUS", async () => {
+    await directory.fetchData();
+    if(window.location.hash === "#/directory") {
+        await directory.render();
+    } else if(window.location.hash === "#/chats") {
+        await chats.render();
+    }
+});
+
 socket.on("UPDATE_CHAT", async (chat) => {
     if(chat.to !== "public") {
         if(!window.state.chatsMap[chat.otherUser]) {
