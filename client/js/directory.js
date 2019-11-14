@@ -35,6 +35,7 @@ const fetchData = async function () {
             }
         }
         window.state.doctors = userDoctorArray;
+        window.state.userMap = userMap;
         window.state.userDoctorMap = userDoctorMap;
     }
 };

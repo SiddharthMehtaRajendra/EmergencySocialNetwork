@@ -28,6 +28,25 @@ const renderStatusPopCard = async function () {
     StatusPopCard.show();
 };
 
+const sendMessage = (Info) => {
+    const currentUser = window.state.user;
+    currentUser.associatedList.forEach((friend) => {
+        const content = " I am in " + Info;
+        if(content && content.length > 0) {
+            const toUser = friend;
+            const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === "public" ? -1 : null);
+            socket.emit("MESSAGE", {
+                content: content,
+                type: 0,
+                from: currentUser.username,
+                to: toUser,
+                status: (window.state && window.state.user && window.state.user.status) || "ok",
+                chatId: chatId
+            });
+        }
+    });
+};
+
 const render = async function () {
     const app = document.getElementById("app");
     app.innerHTML = Me;
@@ -53,8 +72,9 @@ const render = async function () {
 
 const updateStatus = async function (event) {
     const statusElement = event.currentTarget.children;
+    let userStatus;
     if(statusElement && statusElement[0].id) {
-        const userStatus = document.getElementById(statusElement[0].id).innerHTML;
+        userStatus = document.getElementById(statusElement[0].id).innerHTML;
         if(userStatus) {
             window.state.user.status = userStatus;
             axios.post(`${SERVER_ADDRESS}${API_PREFIX}/updateStatus/`, {
@@ -67,6 +87,11 @@ const updateStatus = async function (event) {
                 }
             });
         }
+    }
+    if(userStatus === "Emergency"){
+        sendMessage("Emergency");
+    } else if(userStatus === "Need Help"){
+        sendMessage("Need Help");
     }
     StatusPopCard.close();
 };
