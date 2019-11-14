@@ -13,9 +13,6 @@ const geocode = async function (req, res) {
                 message: "Get Nearby Places",
                 results: response.json.results
             });
-        })
-        .catch((err) => {
-            console.log(err);
         });
 };
 

@@ -7,7 +7,7 @@ process.env.SERVER_TEST_DB = "server_join_test";
 
 let SERVER_ADDRESS = "";
 if(!process.env.PORT) {
-    process.env.PORT = 9004;
+    process.env.PORT = 9005;
     SERVER_ADDRESS = `http://localhost:${process.env.PORT}`;
 }
 
