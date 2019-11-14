@@ -80,7 +80,34 @@ UserSchema.statics.getAllUsers = async function () {
             username: item.username,
             avatar: item.avatar || "#ccc",
             status: item.status || "ok",
-            online: item.online || false
+            online: item.online || false,
+            isDoctor: item.isDoctor || false
+        }));
+    } catch (e) {
+        success = false;
+        res = e._message;
+    }
+    return {
+        success,
+        res
+    };
+};
+
+UserSchema.statics.getAllDoctors = async function () {
+    let res = [];
+    let success = true;
+    try {
+        const rawResult = await this.find({isDoctor: true}).sort({
+            online: -1,
+            username: 1
+        });
+        /* istanbul ignore next */
+        res = rawResult.map((item) => ({
+            username: item.username,
+            avatar: item.avatar || "#ccc",
+            status: item.status || "ok",
+            online: item.online || false,
+            isDoctor: item.isDoctor || true
         }));
     } catch (e) {
         success = false;

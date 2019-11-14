@@ -105,8 +105,8 @@ const join = () => {
                     setToken(res.data.token);
                     socket.open();
                     me.fetchData();
-                    directory.fetchData();
                     window.location.hash = "/directory";
+                    directory.fetchData();
                 }
                 // // user exists and isDoctor is not set
                 // else if(res.data.success && res.data.exists && res.data.validationPass && res.data.isDoctor === null) {
