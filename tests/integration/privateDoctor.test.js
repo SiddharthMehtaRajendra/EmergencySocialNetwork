@@ -25,7 +25,7 @@ describe("Server Add/Remove Private Doctor Test", async () => {
         statusUpdateTime: new Date(),
         online: false,
         isDoctor: false,
-        associatedList: [testUser2.username]
+        // associatedList: [testUser2.username]
     };
     const userObject2 = {
         username: testUser1.username,
@@ -35,11 +35,29 @@ describe("Server Add/Remove Private Doctor Test", async () => {
         statusUpdateTime: new Date(),
         online: false,
         isDoctor: true,
-        associatedList: [testUser1.username]
+        // associatedList: [testUser1.username]
     };
-    test("add private doctor test", async () => {
+    test("remove private doctor test without value", async () => {
         await User.addOneUser(userObject1);
         await User.addOneUser(userObject2);
+        const url = `${SERVER_ADDRESS}${API_PREFIX}/removePrivateDoctor`;
+        const res = await axios({
+            method: "post",
+            url: url,
+            data: {
+                username1: testUser1.username,
+                username2: testUser2.username,
+            },
+            headers: {
+                Cookie: "token=" + testUser1.token
+            },
+            withCredentials: true
+        });
+        expect(res.data.success).toEqual(false);
+    });
+    test("add private doctor test", async () => {
+        // await User.addOneUser(userObject1);
+        // await User.addOneUser(userObject2);
         const url = `${SERVER_ADDRESS}${API_PREFIX}/addPrivateDoctor`;
         const res = await axios({
             method: "post",
@@ -78,7 +96,7 @@ describe("Server Add/Remove Private Doctor Test", async () => {
         isDoctor: true,
         associatedList: [testUser3.username]
     };
-    test("remove private doctor test", async () => {
+    test("remove private doctor test with value", async () => {
         await User.addOneUser(userObject3);
         await User.addOneUser(userObject4);
         const url = `${SERVER_ADDRESS}${API_PREFIX}/removePrivateDoctor`;
@@ -91,6 +109,24 @@ describe("Server Add/Remove Private Doctor Test", async () => {
             },
             headers: {
                 Cookie: "token=" + testUser3.token
+            },
+            withCredentials: true
+        });
+        expect(res.data.success).toEqual(true);
+    });
+    test("add private doctor test 2", async () => {
+        // await User.addOneUser(userObject1);
+        // await User.addOneUser(userObject2);
+        const url = `${SERVER_ADDRESS}${API_PREFIX}/addPrivateDoctor`;
+        const res = await axios({
+            method: "post",
+            url: url,
+            data: {
+                username1: testUser3.username,
+                username2: testUser4.username,
+            },
+            headers: {
+                Cookie: "token=" + testUser1.token
             },
             withCredentials: true
         });
