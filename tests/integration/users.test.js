@@ -22,7 +22,8 @@ describe("Server Users Test", async () => {
         avatar: "#ffffff",
         status: "ok",
         statusUpdateTime: new Date(),
-        online: false
+        online: false,
+        isDoctor: false
     };
     test("update status test", async () => {
         await User.addOneUser(userObject);

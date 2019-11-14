@@ -36,7 +36,8 @@ describe("Server Join Test", async () => {
                 avatar: "#ffffff",
                 status: "ok",
                 statusUpdateTime: new Date(),
-                online: true
+                online: true,
+                isDoctor: false
             };
             let res = await axios({
                 method: "post",

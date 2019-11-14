@@ -12,7 +12,8 @@ describe("User DB Test", async () => {
             avatar: "#ffffff",
             status: "ok",
             statusUpdateTime: new Date(),
-            online: true
+            online: true,
+            isDoctor: false
         };
         const addResult = await User.addOneUser(userObject);
         expect(addResult.success).toEqual(true);
@@ -51,7 +52,8 @@ describe("User DB Test", async () => {
                 avatar: "#ffffff",
                 status: "ok",
                 statusUpdateTime: new Date(),
-                online: true
+                online: true,
+                isDoctor: false
             });
         }
         for(let i = 0; i < userList.length; i++) {
@@ -100,25 +102,23 @@ describe("User DB Test", async () => {
                 status: "ok",
                 statusUpdateTime: new Date(),
                 online: true,
-                isDoctor: false,
-                associatedList: [{}]
+                isDoctor: false
             });
         }
         for(let i = 0; i < userList.length; i++) {
             await User.addOneUser(userList[i]);
         }
         for(let i = 0; i < userList.length - 1; i++) {
-            await User.addIntoAssociatedLists(userList[i], userList[i + 1]);
+            await User.addIntoAssociatedLists(userList[i].username, userList[i + 1].username);
         }
-        const user2AddedResult = [];
-        user2AddedResult.push(userList[0].username);
-        user2AddedResult.push(userList[2].username);
-        expect(user2AddedResult[0]).toEqual(userList[1].associatedList[0]);
-        expect(user2AddedResult[1]).toEqual(userList[1].associatedList[1]);
+        const result1 = await User.getOneUserByUsername(userList[1].username);
+        const user2 = result1.res[0];
+        expect(user2.associatedList.includes(userList[0].username)).toEqual(true);
         for(let i = 0; i < userList.length - 1; i++) {
-            await User.removeFromAssociatedLists(userList[i], userList[i + 1]);
+            await User.removeFromAssociatedLists(userList[i].username, userList[i + 1].username);
         }
-        const user3RemovedResult = [];
-        expect(user3RemovedResult).toEqual(userList[2].associatedList);
+        const result2 = await User.getOneUserByUsername(userList[2].username);
+        const user3 = result2.res[0];
+        expect(user3.associatedList.includes(userList[0].username)).toEqual(false);
     });
 });

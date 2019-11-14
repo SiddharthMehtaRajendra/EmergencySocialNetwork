@@ -90,9 +90,6 @@ UserSchema.statics.addIntoAssociatedLists = async function (username1, username2
 UserSchema.statics.removeFromAssociatedLists = async function (username1, username2) {
     let res = [];
     let success = true;
-    console.log("remove");
-    console.log("username1: " + username1);
-    console.log("username2: " + username2);
     try {
         const user1 = await this.findOne({ username: username1 });
         const user2 = await this.findOne({ username: username2 });
@@ -101,10 +98,7 @@ UserSchema.statics.removeFromAssociatedLists = async function (username1, userna
         user2.associatedList.remove(user1.username);
         await user2.save();
         res = [user1, user2];
-        console.log("user1.associatedList: " + user1.associatedList);
-        console.log("user2.associatedList: " + user2.associatedList);
     } catch (e) {
-        console.log("error: associatedList");
         success = false;
         res = e._message;
     }
