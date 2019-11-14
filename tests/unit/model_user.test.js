@@ -29,6 +29,7 @@ describe("User DB Test", async () => {
         expect(addResult2.success).toEqual(false);
         expect(addResult2.res).toEqual("Username already exist");
     });
+
     test("test update attribute", async () => {
         await User.updateStatus(TEST_USERNAME, "help");
         let updated = await User.getOneUserByUsername(TEST_USERNAME);
@@ -60,5 +61,64 @@ describe("User DB Test", async () => {
         expect(userSearchedResult.length).toEqual(5);
         const allUsers = await User.getAllUsers();
         expect(allUsers.res.length).toBeGreaterThan(5);
+    });
+
+    test("test if is a doctor", async () => {
+        const doctor = {
+            username: "doctor1",
+            password: 1234,
+            avatar: "#ffffff",
+            status: "ok",
+            statusUpdateTime: new Date(),
+            online: true,
+            isDoctor: true
+        };
+        const notdoctor = {
+            username: "notdoctor1",
+            password: 1234,
+            avatar: "#ffffff",
+            status: "ok",
+            statusUpdateTime: new Date(),
+            online: true,
+            isDoctor: false
+        };
+        await User.addOneUser(doctor);
+        await User.addOneUser(notdoctor);
+        const shouldBeDoctor = await User.isDoctor("doctor1");
+        expect(shouldBeDoctor).toEqual(true);
+        const shouldNotBeDoctor = await User.isDoctor("notdoctor1");
+        expect(shouldNotBeDoctor).toEqual(false);
+    });
+
+    test("test add friend into and remove friend from list", async () => {
+        const userList = [];
+        for(let i = 0; i < 3; i++) {
+            userList.push({
+                username: `friendtest${i}`,
+                password: 1234,
+                avatar: "#ffffff",
+                status: "ok",
+                statusUpdateTime: new Date(),
+                online: true,
+                isDoctor: false,
+                associatedList: [{}]
+            });
+        }
+        for(let i = 0; i < userList.length; i++) {
+            await User.addOneUser(userList[i]);
+        }
+        for(let i = 0; i < userList.length - 1; i++) {
+            await User.addIntoAssociatedLists(userList[i], userList[i + 1]);
+        }
+        const user2AddedResult = [];
+        user2AddedResult.push(userList[0].username);
+        user2AddedResult.push(userList[2].username);
+        expect(user2AddedResult[0]).toEqual(userList[1].associatedList[0]);
+        expect(user2AddedResult[1]).toEqual(userList[1].associatedList[1]);
+        for(let i = 0; i < userList.length - 1; i++) {
+            await User.removeFromAssociatedLists(userList[i], userList[i + 1]);
+        }
+        const user3RemovedResult = [];
+        expect(user3RemovedResult).toEqual(userList[2].associatedList);
     });
 });

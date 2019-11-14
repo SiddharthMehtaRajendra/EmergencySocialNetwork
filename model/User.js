@@ -69,9 +69,6 @@ UserSchema.statics.getOneUserByUsername = async function (username) {
 UserSchema.statics.addIntoAssociatedLists = async function (username1, username2) {
     let res = [];
     let success = true;
-    console.log("add");
-    console.log("username1: " + username1);
-    console.log("username2: " + username2);
     try {
         const user1 = await this.findOne({ username: username1 });
         const user2 = await this.findOne({ username: username2 });
@@ -80,10 +77,7 @@ UserSchema.statics.addIntoAssociatedLists = async function (username1, username2
         user2.associatedList.push(user1.username);
         await user2.save();
         res = [user1, user2];
-        console.log("user1.associatedList: " + user1.associatedList);
-        console.log("user2.associatedList: " + user2.associatedList);
     } catch (e) {
-        console.log("error: associatedList");
         success = false;
         res = e._message;
     }
@@ -135,32 +129,6 @@ UserSchema.statics.getAllUsers = async function () {
             status: item.status || "ok",
             online: item.online || false,
             isDoctor: item.isDoctor || false
-        }));
-    } catch (e) {
-        success = false;
-        res = e._message;
-    }
-    return {
-        success,
-        res
-    };
-};
-
-UserSchema.statics.getAllDoctors = async function () {
-    let res = [];
-    let success = true;
-    try {
-        const rawResult = await this.find({isDoctor: true}).sort({
-            online: -1,
-            username: 1
-        });
-        /* istanbul ignore next */
-        res = rawResult.map((item) => ({
-            username: item.username,
-            avatar: item.avatar || "#ccc",
-            status: item.status || "ok",
-            online: item.online || false,
-            isDoctor: item.isDoctor || true
         }));
     } catch (e) {
         success = false;
