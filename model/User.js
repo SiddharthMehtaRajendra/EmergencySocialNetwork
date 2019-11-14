@@ -142,7 +142,7 @@ UserSchema.statics.getAllUsers = async function () {
 
 UserSchema.statics.updateStatus = async function (username, status) {
     const res = await this.updateOne({ username: username }, {
-        status: status,
+        status: status.toLowerCase(),
         statusUpdateTime: new Date()
     });
     return res;
@@ -192,13 +192,22 @@ UserSchema.statics.validateCredentials = async function (username, password) {
 UserSchema.statics.searchUser = async function (searchContent) {
     let res = [];
     let success = true;
+    const statusChecker = ["ok", "emergency", "need help", "no status"];
+    const isStatus = searchContent.toLowerCase();
     try {
-        res = await this.find({
-            username: { $regex: searchContent },
-        }).sort({
-            online: -1,
-            username: 1
-        });
+        if(statusChecker.includes(isStatus)) {
+            res = await this.find({ status: isStatus}).sort({
+                online: -1,
+                username: 1
+            });
+        } else {
+            res = await this.find({
+                username: { $regex: searchContent },
+            }).sort({
+                online: -1,
+                username: 1
+            });
+        }
     } catch (e) {
         /* istanbul ignore next */
         res = e._message;
