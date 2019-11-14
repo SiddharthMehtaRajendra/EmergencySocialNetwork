@@ -47,7 +47,6 @@ UserSchema.statics.isDoctor = async function (username) {
     if(findResult === null) {
         return null;
     } else {
-        console.log("findResult.isDoctor: " + findResult.isDoctor);
         return !!findResult.isDoctor;
     }
 };

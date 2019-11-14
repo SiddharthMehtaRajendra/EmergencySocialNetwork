@@ -8,10 +8,8 @@ const getDirectoryDisplayType = function () {
     const allDisplayNode = document.getElementById("all-checkbox");
     const doctorDisplayNode = document.getElementById("doctor-checkbox");
     if(doctorDisplayNode.value === "selected") {
-        console.log("getDirectoryDisplayType: doctor");
         return "doctor";
     } else if(allDisplayNode.value === "selected") {
-        console.log("getDirectoryDisplayType: all");
         return "all";
     }
     return null;
@@ -23,30 +21,21 @@ const fetchData = async function () {
         const users = res.data.users;
         window.state.users = users;
         const userMap = {};
+        const userArray = [];
+        const userDoctorMap = {};
+        const userDoctorArray = [];
         for(let i = 0; i < users.length; i++) {
             userMap[users[i].username] = users[i];
+            userArray.push(users[i]);
         }
-        window.state.userMap = userMap;
-    }
-};
-
-const fetchDoctorData = async function () {
-    const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`, {
-        params: {
-            type: getDirectoryDisplayType()
-        }
-    });
-    console.log("fetchDoctorData: ");
-    console.log(res.data.users);
-    // const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`);
-    if(res.status === 200 && res.data.success && res.data.users) {
-        const users = res.data.users;
-        window.state.users = users;
-        const userMap = {};
         for(let i = 0; i < users.length; i++) {
-            userMap[users[i].username] = users[i];
+            if(users[i].isDoctor) {
+                userDoctorMap[users[i].username] = users[i];
+                userDoctorArray.push(users[i]);
+            }
         }
-        window.state.userMap = userMap;
+        window.state.doctors = userDoctorArray;
+        window.state.userDoctorMap = userDoctorMap;
     }
 };
 
@@ -70,14 +59,12 @@ const resetDirectory = function () {
 };
 
 const renderUsers = function (users, container) {
-    console.log("rendering");
     users.forEach((user, index) => {
         const userCard = document.createElement("div");
         const userName = document.createElement("div");
         const userAvatar = document.createElement("div");
         const userStatus = document.createElement("div");
         const bottomThinLine = document.createElement("div");
-        console.log("rendering user:" + user.username);
         userCard.className = "single-user common-list-item";
         userCard.addEventListener("click", () => {
             window.location.hash = "/profile/" + user.username;
@@ -93,7 +80,6 @@ const renderUsers = function (users, container) {
         userCard.appendChild(userAvatar);
         userCard.appendChild(userStatus);
         userCard.appendChild(userName);
-        console.log("rendering user finished:" + user.username);
         if(!user.online) {
             userCard.classList.add("offline");
         }
@@ -108,14 +94,17 @@ const renderUsers = function (users, container) {
 
 
 const newDisplay = async function () {
-    const directory = document.getElementById("user-directory");
-    console.log("resetDirectory: ");
     resetDirectory();
-    await fetchDoctorData();
-    console.log("fetchDoctorData successfully: ");
-    const users = window.state.users;
-    console.log("users to render: " + users);
-    renderUsers(users, directory);
+    const directory = document.getElementById("user-directory");
+    const displayType = getDirectoryDisplayType();
+    await fetchData();
+    if(displayType === "doctor") {
+        const doctors = window.state.doctors;
+        renderUsers(doctors, directory);
+    } else {
+        const users = window.state.users;
+        renderUsers(users, directory);
+    }
 };
 
 const addDisplayOptionListener = function () {
@@ -145,7 +134,6 @@ const render = async function () {
 
 const directory = {
     fetchData,
-    fetchDoctorData,
     render,
     renderUsers
 };
