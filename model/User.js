@@ -122,7 +122,8 @@ UserSchema.statics.getAllUsers = async function () {
             avatar: item.avatar || "#ccc",
             status: item.status || "ok",
             online: item.online || false,
-            isDoctor: item.isDoctor || false
+            isDoctor: item.isDoctor || false,
+            associatedList: item.associatedList || []
         }));
     } catch (e) {
         success = false;
