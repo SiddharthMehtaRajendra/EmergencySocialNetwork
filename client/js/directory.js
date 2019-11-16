@@ -2,6 +2,7 @@ import axios from "axios";
 import { SERVER_ADDRESS, API_PREFIX } from "./constant/serverInfo";
 import "../style/directory.less";
 import Directory from "../view/directory.html";
+import me from "./me";
 import Utils from "./lib/appUtils";
 
 const getDirectoryDisplayType = function () {
@@ -17,6 +18,7 @@ const getDirectoryDisplayType = function () {
 
 const fetchData = async function () {
     let friendNameList;
+    await me.fetchData();
     if(!!window.state.user.associatedList) {
         friendNameList = window.state.user.associatedList;
     } else {
@@ -111,7 +113,12 @@ const renderUsers = function (users, container) {
 const renderDoctors = function (myPrivateDoctors, doctors, container) {
     const myPrivateDoctorTextBox = document.createElement("div");
     myPrivateDoctorTextBox.className = "text-item";
-    myPrivateDoctorTextBox.innerText = "My Private Doctors";
+    if(!window.state.user.isDoctor) {
+        myPrivateDoctorTextBox.innerText = "My Private Doctors";
+    } else {
+        myPrivateDoctorTextBox.innerText = "My Connected Citizens";
+    }
+
     container.appendChild(myPrivateDoctorTextBox);
     myPrivateDoctors.forEach((user, index) => {
         const userCard = document.createElement("div");

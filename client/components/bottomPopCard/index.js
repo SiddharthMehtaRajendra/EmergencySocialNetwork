@@ -60,6 +60,7 @@ const init = function (title, yesCallback, noCallback, contentHtml) {
 const BottomPopCard = {
     init,
     show,
+    close,
     setTitle,
     setContent,
     setYesCallback

@@ -82,6 +82,14 @@ const updateStatus = async function (event) {
                 status: userStatus
             }).then(async (res) => {
                 if(res && res.status === 200) {
+                    // socket.emit("MESSAGE", {
+                    //     content: content,
+                    //     type: 0,
+                    //     from: window.state.user.username,
+                    //     to: toUser,
+                    //     status: (window.state && window.state.user && window.state.user.status) || "ok",
+                    //     chatId: chatId
+                    // });
                     await directory.fetchData();
                     await render();
                 }

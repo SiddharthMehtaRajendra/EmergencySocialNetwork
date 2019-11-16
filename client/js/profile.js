@@ -3,6 +3,7 @@ import socket from "./socket/config";
 import { API_PREFIX, SERVER_ADDRESS } from "./constant/serverInfo";
 import "../style/profile.less";
 import Profile from "../view/profile.html";
+import BottomPopCard from "../components/bottomPopCard/index";
 import Utils from "./lib/appUtils";
 
 const fetchData = async function () {
@@ -43,17 +44,46 @@ const searchInFriendList = function (user, profileuser) {
     }
 };
 
+const sendConfrimMessage = (Info) => {
+    const currentUser = window.state.user;
+    const toUser = window.state.profileuser;
+    const content = Info;
+    if(content && content.length > 0) {
+        const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === "public" ? -1 : null);
+        socket.emit("CONFIRM_MESSAGE", {
+            content: content,
+            type: 0,
+            from: currentUser.username,
+            to: toUser.username,
+            status: (window.state && window.state.user && window.state.user.status) || "ok",
+            chatId: chatId
+        });
+    }
+};
+
+// let isInUserList;
+
 const addPrivateDoctor = (user, profileuser) => {
-    const username1 = user.username;
-    const username2 = profileuser.username;
-    axios.post(`${SERVER_ADDRESS}${API_PREFIX}/addPrivateDoctor`, {
-        username1: username1,
-        username2: username2
-    }).then((res) => {
-        console.log(res);
-    }).catch((err) => {
-        console.log(err);
-    });
+    const username1 = user;
+    const username2 = profileuser;
+    console.log("username1" + username1);
+    console.log("username2" + username2);
+    return () => {
+        axios.post(`${SERVER_ADDRESS}${API_PREFIX}/addPrivateDoctor`, {
+            username1: username1,
+            username2: username2
+        }).then((res) => {
+            console.log(res);
+        // window.state.myDoctors.push(profileuser);
+        }).catch((err) => {
+            console.log(err);
+        });
+        BottomPopCard.close();
+        // socket.emit("CONFIRM", {
+        //     confirmFrom: username1,
+        //     confrimTo: username2
+        // });
+    };
 };
 
 const removePrivateDoctor = (user, profileuser) => {
@@ -63,6 +93,7 @@ const removePrivateDoctor = (user, profileuser) => {
         username1: username1,
         username2: username2
     }).then((res) => {
+        // window.state.myDoctors.pop(profileuser);
         console.log(res);
     }).catch((err) => {
         console.log(err);
@@ -100,11 +131,18 @@ const renderDoctor = async function () {
             privateDoctorBtn.innerText = "Add Private Doctor";
             isInUserList = 0;
             await fetchData();
+            console.log("successfully removed");
         } else {
             // add Private Doctor
-            addPrivateDoctor(user, profileuser);
-            isInUserList = 1;
-            privateDoctorBtn.innerText = "Remove Private Doctor";
+            await sendConfrimMessage("I would like to add you as my private doctor");
+            // isInUserList = addPrivateDoctorHelper(user, profileuser);
+            // addPrivateDoctor(user, profileuser);
+            // isInUserList = 1;
+            if(searchInFriendList(user, profileuser) === true) {
+                isInUserList = 1;
+                console.log("successfully added");
+                privateDoctorBtn.innerText = "Remove Private Doctor";
+            }
             await fetchData();
         }
     });
@@ -116,7 +154,12 @@ const render = async function () {
     document.getElementById("private-doctor-menu").style.display = "none";
     document.getElementById("single-profile-navbar-title").innerText = "Directory";
     document.getElementById("navbar-back-arrow").addEventListener("click", () => {
+        // // directory.fetchData();
+        // // window.location.hash = "/directory/";
+        // directory.render();
+        // window.location.hash = "/directory/";
         window.history.go(-1);
+        // document.location.reload(true);
     });
     await fetchData();
     const profileuser = window.state.profileuser;
@@ -128,9 +171,11 @@ const render = async function () {
     }
 };
 
+
 const profile = {
     fetchData,
-    render
+    render,
+    addPrivateDoctor
 };
 
 export default profile;

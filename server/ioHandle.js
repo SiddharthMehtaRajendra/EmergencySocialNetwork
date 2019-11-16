@@ -82,6 +82,45 @@ const updateMessage = async function (socket, io, msg, socketIds) {
     }
 };
 
+const updateConfrimMessage = async function (socket, io, msg, socketIds) {
+    const MessageInsert = await Message.insertOne(msg);
+    if(MessageInsert.success) {
+        if(msg.to === "public") {
+            io.emit("UPDATE_CONFIRM_MESSAGE", MessageInsert.res);
+        } else {
+            for(let i = 0; i < socketIds.length; i++) {
+                io.to(socketIds[i].id).emit("UPDATE_CONFIRM_MESSAGE", MessageInsert.res);
+            }
+        }
+    }
+};
+
+const onConfirmMessage = async function (socket, io, msg) {
+    msg = processMsg(msg);
+    console.log("msg" + msg);
+    console.log("msg.to" + msg.to);
+    let toSocketId = null;
+    if(msg.to !== "public") {
+        toSocketId = (await User.getOneUserByUsername(msg.to)).res[0].socketID;
+        console.log("toSocketId" + toSocketId);
+    }
+    const socketIds = [];
+    socketIds.push({
+        username: msg.from,
+        id: socket.id,
+        otherUser: msg.to
+    });
+    if(msg.from !== msg.to) {
+        socketIds.push({
+            username: msg.to,
+            id: toSocketId,
+            otherUser: msg.from
+        });
+    }
+    await updateConfrimMessage(socket, io, msg, socketIds);
+};
+
+
 const onMessage = async function (socket, io, msg) {
     msg = processMsg(msg);
     let toSocketId = null;
@@ -109,7 +148,8 @@ module.exports = {
     verifyToken,
     onConnect,
     onDisconnect,
-    onMessage
+    onMessage,
+    onConfirmMessage
 };
 
 

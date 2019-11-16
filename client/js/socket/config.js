@@ -2,10 +2,12 @@ import io from "socket.io-client";
 import chat from "../chat";
 import processMessage from "../lib/processMessage";
 import directory from "../directory";
+import profile from "../profile";
 import chats from "../chats";
 import announcement from "../announcements";
 import { SERVER_ADDRESS } from "../constant/serverInfo";
 import Toast from "../lib/toast";
+import BottomPopCard from "../../components/bottomPopCard/index";
 
 const socket = io(SERVER_ADDRESS);
 
@@ -19,6 +21,24 @@ socket.on("UPDATE_MESSAGE", (msg) => {
         }
         const newMessage = msg.from + ":\r\n" + msg.content;
         Toast(newMessage, null, null, 5000);
+    }
+});
+
+socket.on("UPDATE_CONFIRM_MESSAGE", (msg) => {
+    const chatTo = window.location.href.split("/").pop();
+    const currentUser = window.state.user;
+    if(currentUser === msg.from || chatTo === msg.to) {
+        // chat.renderOneMessage(processMessage(msg));
+    } else {
+        const newMessage = msg.from + ":\r\n" + msg.content;
+        Toast(newMessage, null, null, 5000);
+        console.log("msg.from" + msg.from);
+        console.log("msg.to" + msg.to);
+        BottomPopCard.init("Do you acknowledge this situation?", profile.addPrivateDoctor(msg.to, msg.from));
+        // BottomPopCard.init("Are you acknowledge this situation?", profile.btnYesCallBack(msg.from));
+        console.log("BottomPopCard.init.success");
+        BottomPopCard.show();
+        console.log("BottomPopCard.show.success");
     }
 });
 

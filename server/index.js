@@ -11,7 +11,7 @@ const bodyParser = require("body-parser");
 const io = require("socket.io")(http);
 const cookieParser = require("cookie-parser");
 const { checkToken } = require("./auth/checkToken");
-const { verifyToken, onConnect, onDisconnect, onMessage } = require("./ioHandle");
+const { verifyToken, onConnect, onDisconnect, onMessage, onConfirmMessage } = require("./ioHandle");
 const controller = require("./controller/index");
 require("./lib/connectdb");
 
@@ -40,6 +40,7 @@ io.use(verifyToken);
 io.on("connection", async (socket) => {
     await onConnect(socket, io);
     socket.on("MESSAGE", async (msg) => onMessage(socket, io, msg));
+    socket.on("CONFIRM_MESSAGE", async (msg) => onConfirmMessage(socket, io, msg));
     socket.on("disconnect", () => onDisconnect(socket, io));
 });
 
