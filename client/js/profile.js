@@ -64,14 +64,14 @@ const sendConfrimMessage = (Info) => {
 // let isInUserList;
 
 const addPrivateDoctor = (user, profileuser) => {
-    const username1 = user;
-    const username2 = profileuser;
-    console.log("username1" + username1);
-    console.log("username2" + username2);
+    const doctor = user;
+    const citizen = profileuser;
+    console.log("username1" + doctor);
+    console.log("username2" + citizen);
     return () => {
         axios.post(`${SERVER_ADDRESS}${API_PREFIX}/addPrivateDoctor`, {
-            username1: username1,
-            username2: username2
+            username1: doctor,
+            username2: citizen
         }).then((res) => {
             console.log(res);
         // window.state.myDoctors.push(profileuser);
@@ -79,20 +79,26 @@ const addPrivateDoctor = (user, profileuser) => {
             console.log(err);
         });
         BottomPopCard.close();
-        // socket.emit("CONFIRM", {
-        //     confirmFrom: username1,
-        //     confrimTo: username2
-        // });
+        socket.emit("CONFIRM_ADD_DOCTOR", {
+            doctor: doctor,
+            citizen: citizen,
+            result: true
+        });
     };
 };
 
 const removePrivateDoctor = (user, profileuser) => {
-    const username1 = user.username;
-    const username2 = profileuser.username;
+    const citizen = user.username;
+    const doctor = profileuser.username;
     axios.post(`${SERVER_ADDRESS}${API_PREFIX}/removePrivateDoctor`, {
-        username1: username1,
-        username2: username2
+        username1: citizen,
+        username2: doctor
     }).then((res) => {
+        socket.emit("REMOVE_DOCTOR", {
+            citizen: citizen,
+            doctor: doctor,
+            result: true
+        });
         // window.state.myDoctors.pop(profileuser);
         console.log(res);
     }).catch((err) => {
@@ -101,15 +107,15 @@ const removePrivateDoctor = (user, profileuser) => {
 };
 
 const renderDoctor = async function () {
+    let toggle;
     const profileuser = window.state.profileuser;
     const user = window.state.user;
     const privateDoctorBtn = document.getElementById("private-doctor-menu-text");
-    let isInUserList;
     if(searchInFriendList(user, profileuser) === true) {
-        isInUserList = 1;
+        toggle = 1;
         privateDoctorBtn.innerText = "Remove Private Doctor";
     } else {
-        isInUserList = 0;
+        toggle = 0;
         privateDoctorBtn.innerText = "Add Private Doctor";
     }
     document.getElementById("private-doctor-menu").style.display = "block";
@@ -125,12 +131,10 @@ const renderDoctor = async function () {
     });
 
     document.getElementById("private-doctor-menu").addEventListener("click", async () => {
-        if(isInUserList === 1) {
+        if(privateDoctorBtn.innerText === "Remove Private Doctor") {
             // remove Private Doctor
             removePrivateDoctor(user, profileuser);
-            privateDoctorBtn.innerText = "Add Private Doctor";
-            isInUserList = 0;
-            await fetchData();
+            // await fetchData();
             console.log("successfully removed");
         } else {
             // add Private Doctor
@@ -138,12 +142,12 @@ const renderDoctor = async function () {
             // isInUserList = addPrivateDoctorHelper(user, profileuser);
             // addPrivateDoctor(user, profileuser);
             // isInUserList = 1;
-            if(searchInFriendList(user, profileuser) === true) {
-                isInUserList = 1;
-                console.log("successfully added");
-                privateDoctorBtn.innerText = "Remove Private Doctor";
-            }
-            await fetchData();
+            // if(searchInFriendList(user, profileuser) === true) {
+            //     isInUserList = 1;
+            //     console.log("successfully added");
+            //     privateDoctorBtn.innerText = "Remove Private Doctor";
+            // }
+            // await fetchData();
         }
     });
 };

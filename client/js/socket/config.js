@@ -42,6 +42,27 @@ socket.on("UPDATE_CONFIRM_MESSAGE", (msg) => {
     }
 });
 
+socket.on("DOCTOR_CONFIRMED", async (pair) => {
+    console.log("doctor confirmed");
+    const privateDoctorBtn = document.getElementById("private-doctor-menu-text");
+    privateDoctorBtn.innerText = "Remove Private Doctor";
+    // if(window.location.hash === `#/profile/${comfirmFrom}`) {
+    //     await profile.render();
+    // }
+    // await profile.render();
+});
+
+socket.on("DOCTOR_REMOVED", async (pair) => {
+    console.log("doctor confirmed");
+    const privateDoctorBtn = document.getElementById("private-doctor-menu-text");
+    privateDoctorBtn.innerText = "Add Private Doctor";
+    // if(window.location.hash === `#/profile/${comfirmFrom}`) {
+    //     await profile.render();
+    // }
+    // await profile.render();
+});
+
+
 socket.on("UPDATE_ANNOUNCEMENT", async (payload) => {
     window.state.announcements.unshift(payload);
     if(window.location.hash === "#/announcements") {

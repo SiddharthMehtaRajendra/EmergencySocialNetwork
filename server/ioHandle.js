@@ -95,6 +95,22 @@ const updateConfrimMessage = async function (socket, io, msg, socketIds) {
     }
 };
 
+const onDoctorConfirm = async function (socket, io, pair) {
+    const toSocketIdToCitizen = (await User.getOneUserByUsername(pair.citizen)).res[0].socketID;
+    const toSocketIdFromDoctor = (await User.getOneUserByUsername(pair.doctor)).res[0].socketID;
+    console.log("successfully added");
+    io.to(toSocketIdToCitizen).emit("DOCTOR_CONFIRMED", pair);
+    io.to(toSocketIdFromDoctor).emit("UPDATE_DIRECTORY", pair);
+};
+
+const onRemoveDoctor = async function (socket, io, pair) {
+    const toSocketIdFromCitizen = (await User.getOneUserByUsername(pair.citizen)).res[0].socketID;
+    const toSocketIdToDoctor = (await User.getOneUserByUsername(pair.doctor)).res[0].socketID;
+    console.log("successfully removed");
+    io.to(toSocketIdFromCitizen).emit("DOCTOR_REMOVED", pair);
+    io.to(toSocketIdToDoctor).emit("UPDATE_DIRECTORY", pair);
+};
+
 const onConfirmMessage = async function (socket, io, msg) {
     msg = processMsg(msg);
     console.log("msg" + msg);
@@ -149,7 +165,9 @@ module.exports = {
     onConnect,
     onDisconnect,
     onMessage,
-    onConfirmMessage
+    onConfirmMessage,
+    onDoctorConfirm,
+    onRemoveDoctor
 };
 
 
