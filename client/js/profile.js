@@ -7,11 +7,6 @@ import BottomPopCard from "../components/bottomPopCard/index";
 import Utils from "./lib/appUtils";
 
 const fetchData = async function () {
-    // const currentusername = window.state.user;
-    // const res2 = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user/${currentusername}`);
-    // if(res2.status === 200 && res2.data.success && res2.data.user) {
-    //     window.state.user = res2.data.user;
-    // }
     const profileusername = window.location.href.split("/").pop();
     const res1 = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user/${profileusername}`);
     if(res1.status === 200 && res1.data.success && res1.data.user) {
@@ -36,10 +31,8 @@ const renderCitizen = function () {
 
 const searchInFriendList = function (user, profileuser) {
     if(user.associatedList.includes(profileuser.username)) {
-        console.log("searchInFriendList: true.");
         return true;
     } else {
-        console.log("searchInFriendList: false.");
         return false;
     }
 };
@@ -61,20 +54,15 @@ const sendConfrimMessage = (Info) => {
     }
 };
 
-// let isInUserList;
-
 const addPrivateDoctor = (user, profileuser) => {
     const doctor = user;
     const citizen = profileuser;
-    console.log("username1" + doctor);
-    console.log("username2" + citizen);
     return () => {
         axios.post(`${SERVER_ADDRESS}${API_PREFIX}/addPrivateDoctor`, {
             username1: doctor,
             username2: citizen
         }).then((res) => {
             console.log(res);
-        // window.state.myDoctors.push(profileuser);
         }).catch((err) => {
             console.log(err);
         });
@@ -99,7 +87,6 @@ const removePrivateDoctor = (user, profileuser) => {
             doctor: doctor,
             result: true
         });
-        // window.state.myDoctors.pop(profileuser);
         console.log(res);
     }).catch((err) => {
         console.log(err);
@@ -107,15 +94,12 @@ const removePrivateDoctor = (user, profileuser) => {
 };
 
 const renderDoctor = async function () {
-    let toggle;
     const profileuser = window.state.profileuser;
     const user = window.state.user;
     const privateDoctorBtn = document.getElementById("private-doctor-menu-text");
     if(searchInFriendList(user, profileuser) === true) {
-        toggle = 1;
         privateDoctorBtn.innerText = "Remove Private Doctor";
     } else {
-        toggle = 0;
         privateDoctorBtn.innerText = "Add Private Doctor";
     }
     document.getElementById("private-doctor-menu").style.display = "block";
@@ -132,22 +116,9 @@ const renderDoctor = async function () {
 
     document.getElementById("private-doctor-menu").addEventListener("click", async () => {
         if(privateDoctorBtn.innerText === "Remove Private Doctor") {
-            // remove Private Doctor
             removePrivateDoctor(user, profileuser);
-            // await fetchData();
-            console.log("successfully removed");
         } else {
-            // add Private Doctor
-            await sendConfrimMessage("I would like to add you as my private doctor");
-            // isInUserList = addPrivateDoctorHelper(user, profileuser);
-            // addPrivateDoctor(user, profileuser);
-            // isInUserList = 1;
-            // if(searchInFriendList(user, profileuser) === true) {
-            //     isInUserList = 1;
-            //     console.log("successfully added");
-            //     privateDoctorBtn.innerText = "Remove Private Doctor";
-            // }
-            // await fetchData();
+            sendConfrimMessage("I would like to add you as my private doctor");
         }
     });
 };
@@ -158,12 +129,7 @@ const render = async function () {
     document.getElementById("private-doctor-menu").style.display = "none";
     document.getElementById("single-profile-navbar-title").innerText = "Directory";
     document.getElementById("navbar-back-arrow").addEventListener("click", () => {
-        // // directory.fetchData();
-        // // window.location.hash = "/directory/";
-        // directory.render();
-        // window.location.hash = "/directory/";
         window.history.go(-1);
-        // document.location.reload(true);
     });
     await fetchData();
     const profileuser = window.state.profileuser;
