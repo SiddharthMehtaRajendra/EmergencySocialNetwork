@@ -28,25 +28,6 @@ const renderStatusPopCard = async function () {
     StatusPopCard.show();
 };
 
-const sendMessage = (Info) => {
-    const currentUser = window.state.user;
-    currentUser.associatedList.forEach((friend) => {
-        const content = " I am in " + Info;
-        if(content && content.length > 0) {
-            const toUser = friend;
-            const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === "public" ? -1 : null);
-            socket.emit("MESSAGE", {
-                content: content,
-                type: 0,
-                from: currentUser.username,
-                to: toUser,
-                status: (window.state && window.state.user && window.state.user.status) || "ok",
-                chatId: chatId
-            });
-        }
-    });
-};
-
 const render = async function () {
     const app = document.getElementById("app");
     app.innerHTML = Me;
@@ -68,6 +49,44 @@ const render = async function () {
             window.location.hash = "/guide";
         });
     }
+};
+
+const sendMessage = (Info) => {
+    const currentUser = window.state.user;
+    currentUser.associatedList.forEach((friend) => {
+        const content = " I am in " + Info;
+        if(content && content.length > 0) {
+            const toUser = friend;
+            const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === "public" ? -1 : null);
+            socket.emit("MESSAGE", {
+                content: content,
+                type: 0,
+                from: currentUser.username,
+                to: toUser,
+                status: (window.state && window.state.user && window.state.user.status) || "ok",
+                chatId: chatId
+            });
+        }
+    });
+};
+
+const sendConfrimMessage = (Info) => {
+    const currentUser = window.state.user;
+    const content = " I am in " + Info;
+    currentUser.associatedList.forEach((friend) => {
+        if(content && content.length > 0) {
+            const toUser = friend;
+            const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === "public" ? -1 : null);
+            socket.emit("CONFIRM_MESSAGE", {
+                content: content,
+                type: 1,
+                from: currentUser.username,
+                to: toUser,
+                status: (window.state && window.state.user && window.state.user.status) || "ok",
+                chatId: chatId
+            });
+        }
+    });
 };
 
 const updateStatus = async function (event) {
