@@ -4,6 +4,7 @@ import processMessage from "../lib/processMessage";
 import directory from "../directory";
 import profile from "../profile";
 import chats from "../chats";
+import me from "../me";
 import announcement from "../announcements";
 import { SERVER_ADDRESS } from "../constant/serverInfo";
 import Toast from "../lib/toast";
@@ -13,6 +14,7 @@ const socket = io(SERVER_ADDRESS);
 
 socket.on("UPDATE_MESSAGE", (msg) => {
     const user = window.location.href.split("/").pop();
+    const currentUser = window.state.user;
     if(user === msg.from || user === msg.to) {
         chat.renderOneMessage(processMessage(msg));
     } else {
@@ -20,24 +22,37 @@ socket.on("UPDATE_MESSAGE", (msg) => {
             msg.from = "(Public Board) " + msg.from;
         }
         const newMessage = msg.from + ":\r\n" + msg.content;
-        Toast(newMessage, null, null, 5000);
+        if( currentUser !== msg.from) {
+            Toast(newMessage, null, null, 5000);
+        }
     }
 });
 
 socket.on("UPDATE_CONFIRM_MESSAGE", (msg) => {
     const chatTo = window.location.href.split("/").pop();
     const currentUser = window.state.user;
-    if(currentUser === msg.from || chatTo === msg.to) {
+    if(currentUser.username === msg.from || chatTo === msg.to) {
+        // chat.renderOneMessage(processMessage(msg));
+    } else {
+        const newMessage = msg.from + ":\r\n" + msg.content;
+        Toast(newMessage, null, null, 5000);
+        BottomPopCard.init("Do you acknowledge this situation?", profile.addPrivateDoctor(msg.to, msg.from));
+        BottomPopCard.show();
+    }
+});
+
+socket.on("UPDATE_STATUS_CHANGE_MESSAGE", (msg) => {
+    const chatTo = window.location.href.split("/").pop();
+    const currentUser = window.state.user;
+    if(msg.from === currentUser.username) {
         // chat.renderOneMessage(processMessage(msg));
     } else {
         const newMessage = msg.from + ":\r\n" + msg.content;
         Toast(newMessage, null, null, 5000);
         console.log("msg.from" + msg.from);
         console.log("msg.to" + msg.to);
-        BottomPopCard.init("Do you acknowledge this situation?", profile.addPrivateDoctor(msg.to, msg.from));
-        console.log("BottomPopCard.init.success");
+        BottomPopCard.init("Do you acknowledge this situation?", me.sendStatusConfirmMessageHelper(msg.from));
         BottomPopCard.show();
-        console.log("BottomPopCard.show.success");
     }
 });
 

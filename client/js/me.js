@@ -51,35 +51,40 @@ const render = async function () {
     }
 };
 
-const sendMessage = (Info) => {
+const sendStatusConfirmMessage = () => {
+    console.log("friend" + window.state.friend);
     const currentUser = window.state.user;
-    currentUser.associatedList.forEach((friend) => {
-        const content = " I am in " + Info;
-        if(content && content.length > 0) {
-            const toUser = friend;
-            const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === "public" ? -1 : null);
-            socket.emit("MESSAGE", {
-                content: content,
-                type: 0,
-                from: currentUser.username,
-                to: toUser,
-                status: (window.state && window.state.user && window.state.user.status) || "ok",
-                chatId: chatId
-            });
-        }
-    });
+    const content = " I acknowledge.";
+    const toUser = window.state.friend;
+    const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === "public" ? -1 : null);
+    return () => {
+        socket.emit("MESSAGE", {
+            content: content,
+            type: 0,
+            from: currentUser.username,
+            to: toUser,
+            status: (window.state && window.state.user && window.state.user.status) || "ok",
+            chatId: chatId
+        });
+    };
 };
 
-const sendConfrimMessage = (Info) => {
+const  sendStatusConfirmMessageHelper = (friend) => {
+    window.state.friend = friend;
+    return sendStatusConfirmMessage();
+};
+
+
+const sendConfrimStatusChangeMessage = (Info) => {
     const currentUser = window.state.user;
     const content = " I am in " + Info;
     currentUser.associatedList.forEach((friend) => {
         if(content && content.length > 0) {
             const toUser = friend;
             const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === "public" ? -1 : null);
-            socket.emit("CONFIRM_MESSAGE", {
+            socket.emit("STATUS_CHANGE_MESSAGE", {
                 content: content,
-                type: 1,
+                type: 0,
                 from: currentUser.username,
                 to: toUser,
                 status: (window.state && window.state.user && window.state.user.status) || "ok",
@@ -101,14 +106,6 @@ const updateStatus = async function (event) {
                 status: userStatus
             }).then(async (res) => {
                 if(res && res.status === 200) {
-                    // socket.emit("MESSAGE", {
-                    //     content: content,
-                    //     type: 0,
-                    //     from: window.state.user.username,
-                    //     to: toUser,
-                    //     status: (window.state && window.state.user && window.state.user.status) || "ok",
-                    //     chatId: chatId
-                    // });
                     await directory.fetchData();
                     await render();
                 }
@@ -116,9 +113,9 @@ const updateStatus = async function (event) {
         }
     }
     if(userStatus === "Emergency"){
-        sendMessage("Emergency");
+        sendConfrimStatusChangeMessage("Emergency");
     } else if(userStatus === "Need Help"){
-        sendMessage("Need Help");
+        sendConfrimStatusChangeMessage("Need Help");
     }
     StatusPopCard.close();
 };
@@ -127,7 +124,9 @@ const updateStatus = async function (event) {
 
 const me = {
     fetchData,
-    render
+    render,
+    // sendStatusConfirmMessage,
+    sendStatusConfirmMessageHelper
 };
 
 export default me;
