@@ -7,6 +7,7 @@ import Me from "../view/me.html";
 import StatusPopCard from "../components/statusPopCard";
 import Utils from "./lib/appUtils";
 import directory from "./directory";
+import searchHelpCenters from "./searchHelpResults";
 
 const logout = function () {
     Cookie.remove("token");
@@ -22,6 +23,30 @@ const fetchData = async function () {
     }
 };
 
+const genSearchNodeEventListener = function (node, otherNodeOne, otherNodeTwo) {
+    return () => {
+        node.style.backgroundColor = "#000";
+        node.value = "selected";
+        otherNodeOne.style.backgroundColor = "#fff";
+        otherNodeTwo.style.backgroundColor = "#fff";
+        otherNodeOne.value = "unselected";
+        otherNodeTwo.value = "unselected";
+    };
+};
+
+const addSearchOptionListener = function () {
+    const hospitalSearchNode = document.getElementById("hospital-checkbox");
+    const policeSearchNode = document.getElementById("police-checkbox");
+    const fireStationSearchNode = document.getElementById("fire-station-checkbox");
+    hospitalSearchNode.addEventListener("click", genSearchNodeEventListener(hospitalSearchNode, policeSearchNode, fireStationSearchNode));
+    policeSearchNode.addEventListener("click", genSearchNodeEventListener(policeSearchNode, hospitalSearchNode, fireStationSearchNode));
+    fireStationSearchNode.addEventListener("click", genSearchNodeEventListener(fireStationSearchNode, hospitalSearchNode, policeSearchNode));
+};
+
+const newHelpCenterSearch = async function () {
+    await searchHelpCenters.searchHelpCenterData();
+};
+
 const renderStatusPopCard = async function () {
     // eslint-disable-next-line no-use-before-define
     StatusPopCard.init(updateStatus);
@@ -35,6 +60,7 @@ const render = async function () {
         await fetchData();
     }
     if(window.state.user) {
+        addSearchOptionListener();
         const user = window.state.user;
         if(user.avatar.indexOf("#") === 0) {
             document.getElementById("page-me-avatar").style.backgroundColor = user.avatar;
@@ -48,6 +74,10 @@ const render = async function () {
         document.getElementById("user-guide-entrance").addEventListener("click", () => {
             window.location.hash = "/guide";
         });
+        document.getElementById("pref-help-center").addEventListener("click", () => {
+            window.location.hash = "/preferredHelpCenters";
+        });
+        document.getElementById("search-icon-help-center").addEventListener("click", newHelpCenterSearch);
     }
 };
 

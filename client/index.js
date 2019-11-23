@@ -18,6 +18,7 @@ import postAnnouncement from "./js/postAnnouncement";
 import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";
 import BottomTab from "./components/bottomTab";
+import preferredHelpCenters from "./js/preferredHelpCenter";
 
 import axios from "axios";
 import Cookie from "js-cookie";
@@ -109,6 +110,10 @@ router.on("/search/:context", async () => {
 
 router.on("/postAnnouncement", async () => {
     await postAnnouncement.render();
+}).resolve();
+
+router.on("/preferredHelpCenters", async () => {
+    await preferredHelpCenters.renderPreferredHelpCenters();
 }).resolve();
 
 router.notFound(() => {

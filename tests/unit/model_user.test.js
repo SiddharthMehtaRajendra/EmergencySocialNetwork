@@ -39,6 +39,12 @@ describe("User DB Test", async () => {
         await User.updateSocketId(TEST_USERNAME, "TEST SOCKET ID");
         updated = await User.getOneUserByUsername(TEST_USERNAME);
         expect(updated.res[0].socketID).toEqual("TEST SOCKET ID");
+        await User.saveHelpCenter(TEST_USERNAME, "ABCD", "1234, CA");
+        updated = await User.getOneUserByUsername(TEST_USERNAME);
+        expect(updated.res[0].savedHelpCenters[0].helpCenterName).toEqual("ABCD");
+        await User.uploadMedicalID(TEST_USERNAME, "ABCD", true);
+        updated = await User.getOneUserByUsername(TEST_USERNAME);
+        expect(updated.res[0].savedHelpCenters[0].medicalIdUploaded).toEqual(false);
     });
 
     test("test get user list", async () => {
@@ -60,5 +66,8 @@ describe("User DB Test", async () => {
         expect(userSearchedResult.length).toEqual(5);
         const allUsers = await User.getAllUsers();
         expect(allUsers.res.length).toBeGreaterThan(5);
+        const allPreferences = await User.fetchPreferredHelpCenters(TEST_USERNAME);
+        expect(allPreferences.length).toEqual(1);
+        
     });
 });
