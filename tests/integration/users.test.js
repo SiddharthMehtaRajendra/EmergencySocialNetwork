@@ -22,7 +22,8 @@ describe("Server Users Test", async () => {
         avatar: "#ffffff",
         status: "ok",
         statusUpdateTime: new Date(),
-        online: false
+        online: false,
+        isDoctor: false
     };
     test("update status test", async () => {
         await User.addOneUser(userObject);
@@ -61,7 +62,6 @@ describe("Server Users Test", async () => {
         });
         expect(res.data.user.username).toEqual(null);
     });
-
     test("get users info test", async () => {
         const res = await axios.get( `${SERVER_ADDRESS}${API_PREFIX}/users`, {
             headers: {

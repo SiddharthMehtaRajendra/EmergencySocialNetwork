@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
+    isDoctor: {
+        type: Boolean,
+        required: true
+    },
     password: {
         type: String,
         required: true
@@ -42,7 +46,8 @@ const UserSchema = new mongoose.Schema({
     statusUpdateTime: {
         type: Date
     },
-    savedHelpCenters: [preferenceSchema]
+    savedHelpCenters: [preferenceSchema],
+    associatedList: [{type: String}]
 });
 
 UserSchema.statics.exists = async function (username) {
@@ -96,11 +101,62 @@ UserSchema.statics.fetchPreferredHelpCenters = async function (username) {
     return res;
 };
 
+UserSchema.statics.isDoctor = async function (username) {
+    const findResult = await this.findOne({ username: username });
+    if(findResult === null) {
+        return null;
+    } else {
+        return !!findResult.isDoctor;
+    }
+};
+
 UserSchema.statics.getOneUserByUsername = async function (username) {
     let res = {};
     let success = true;
     try {
         res = await this.find({ username: username });
+    } catch (e) {
+        success = false;
+        res = e._message;
+    }
+    return {
+        success,
+        res
+    };
+};
+
+UserSchema.statics.addIntoAssociatedLists = async function (username1, username2) {
+    let res = [];
+    let success = true;
+    try {
+        const user1 = await this.findOne({ username: username1 });
+        const user2 = await this.findOne({ username: username2 });
+        user1.associatedList.push(user2.username);
+        await user1.save();
+        user2.associatedList.push(user1.username);
+        await user2.save();
+        res = [user1, user2];
+    } catch (e) {
+        success = false;
+        res = e._message;
+    }
+    return {
+        success,
+        res
+    };
+};
+
+UserSchema.statics.removeFromAssociatedLists = async function (username1, username2) {
+    let res = [];
+    let success = true;
+    try {
+        const user1 = await this.findOne({ username: username1 });
+        const user2 = await this.findOne({ username: username2 });
+        user1.associatedList.remove(user2.username);
+        await user1.save();
+        user2.associatedList.remove(user1.username);
+        await user2.save();
+        res = [user1, user2];
     } catch (e) {
         success = false;
         res = e._message;
@@ -124,7 +180,9 @@ UserSchema.statics.getAllUsers = async function () {
             username: item.username,
             avatar: item.avatar || "#ccc",
             status: item.status || "ok",
-            online: item.online || false
+            online: item.online || false,
+            isDoctor: item.isDoctor || false,
+            associatedList: item.associatedList || []
         }));
     } catch (e) {
         success = false;
@@ -138,7 +196,7 @@ UserSchema.statics.getAllUsers = async function () {
 
 UserSchema.statics.updateStatus = async function (username, status) {
     const res = await this.updateOne({ username: username }, {
-        status: status,
+        status: status.toLowerCase(),
         statusUpdateTime: new Date()
     });
     return res;
@@ -188,13 +246,22 @@ UserSchema.statics.validateCredentials = async function (username, password) {
 UserSchema.statics.searchUser = async function (searchContent) {
     let res = [];
     let success = true;
+    const statusChecker = ["ok", "emergency", "need help", "no status"];
+    const isStatus = searchContent.toLowerCase();
     try {
-        res = await this.find({
-            username: { $regex: searchContent },
-        }).sort({
-            online: -1,
-            username: 1
-        });
+        if(statusChecker.includes(isStatus)) {
+            res = await this.find({ status: isStatus}).sort({
+                online: -1,
+                username: 1
+            });
+        } else {
+            res = await this.find({
+                username: { $regex: searchContent },
+            }).sort({
+                online: -1,
+                username: 1
+            });
+        }
     } catch (e) {
         /* istanbul ignore next */
         res = e._message;

@@ -80,7 +80,8 @@ describe("Server Search Test", async () => {
                     avatar: "#ffffff",
                     status: "ok",
                     statusUpdateTime: new Date(),
-                    online: false
+                    online: false,
+                    isDoctor: false
                 });
             }
             for(let i = 0; i < userList.length; i++) {

@@ -14,6 +14,7 @@ import me from "./js/me";
 import directory from "./js/directory";
 import search from "./js/search";
 import postAnnouncement from "./js/postAnnouncement";
+import profile from "./js/profile";
 
 import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";
@@ -114,6 +115,10 @@ router.on("/postAnnouncement", async () => {
 
 router.on("/preferredHelpCenters", async () => {
     await preferredHelpCenters.renderPreferredHelpCenters();
+}).resolve();
+
+router.on("/profile/:username", async () => {
+    await profile.render();
 }).resolve();
 
 router.notFound(() => {

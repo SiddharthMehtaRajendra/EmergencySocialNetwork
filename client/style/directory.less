@@ -1,3 +1,54 @@
 .page-directory {
+    .search-component {
+        // position: fixed;
+        z-index: 99;
+        width: 100%;
+        left: 0;
+        padding: 0 20px 16px 20px;
+        background-color: white;
+        box-sizing: border-box;
+        position:fixed;
+        top: 100px; 
+        left:5px; 
+    
+        .search-options {
+            align-items: center;
+            display: flex;
+            // padding: 0 5px;
 
+            .checkbox {
+                width: 12px;
+                height: 12px;
+                border: 2px solid #000;
+                box-sizing: border-box;
+                margin-right: 8px;
+            }
+
+            .text {
+                margin-right: 20px;
+                font-weight: 800;
+                font-size: 16px;
+            }
+        }
+    }
+
+    .content {
+        // height: auto;
+        height: 650px;
+        position: absolute;
+        top: 120px;
+        right: 0;
+        left: 0;
+        overflow-y: scroll;
+        padding: 0 0px;
+        z-index: 0;
+        overflow-wrap: break-word;
+        overflow-x: hidden;
+
+        .text-item{
+            justify-content: space-between;
+            padding: 15px 20px 0px 20px;
+            font-weight: 800;
+        }
+    }   
 }

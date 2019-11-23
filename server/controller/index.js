@@ -7,6 +7,9 @@ const chats = require("./chats");
 const announcement = require("./announcement");
 const updateStatus = require("./updateStatus");
 const search = require("./search");
+const addPrivateDoctor = require("./addPrivateDoctor");
+const removePrivateDoctor = require("./removePrivateDoctor");
+
 const postAnnouncement = require("./postAnnouncement");
 const helpSearch = require("./helpSearch")
 const saveHelpCenter = require("./saveHelpCenter")
@@ -27,7 +30,9 @@ const controller = {
     helpSearch,
     saveHelpCenter,
     uploadMedicalId,
-    preferredHelpCenters
+    preferredHelpCenters,
+    addPrivateDoctor,
+    removePrivateDoctor
 };
 
 module.exports = controller;

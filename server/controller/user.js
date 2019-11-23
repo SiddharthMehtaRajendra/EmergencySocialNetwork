@@ -11,9 +11,12 @@ const user = async function (req,res) {
             username: user.username || null,
             avatar: user.avatar || "#ccc",
             online: user.online || false,
-            status: user.status || "ok"
+            status: user.status || "ok",
+            isDoctor: user.isDoctor || false,
+            associatedList: user.associatedList || []
         }
     });
 };
 
 module.exports = user;
+

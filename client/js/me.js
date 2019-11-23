@@ -81,10 +81,54 @@ const render = async function () {
     }
 };
 
+const sendStatusConfirmMessage = () => {
+    console.log("friend" + window.state.friend);
+    const currentUser = window.state.user;
+    const content = " I acknowledge.";
+    const toUser = window.state.friend;
+    const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === "public" ? -1 : null);
+    return () => {
+        socket.emit("MESSAGE", {
+            content: content,
+            type: 0,
+            from: currentUser.username,
+            to: toUser,
+            status: (window.state && window.state.user && window.state.user.status) || "ok",
+            chatId: chatId
+        });
+    };
+};
+
+const  sendStatusConfirmMessageHelper = (friend) => {
+    window.state.friend = friend;
+    return sendStatusConfirmMessage();
+};
+
+
+const sendConfrimStatusChangeMessage = (Info) => {
+    const currentUser = window.state.user;
+    const content = " I am in " + Info;
+    currentUser.associatedList.forEach((friend) => {
+        if(content && content.length > 0) {
+            const toUser = friend;
+            const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === "public" ? -1 : null);
+            socket.emit("STATUS_CHANGE_MESSAGE", {
+                content: content,
+                type: 0,
+                from: currentUser.username,
+                to: toUser,
+                status: (window.state && window.state.user && window.state.user.status) || "ok",
+                chatId: chatId
+            });
+        }
+    });
+};
+
 const updateStatus = async function (event) {
     const statusElement = event.currentTarget.children;
+    let userStatus;
     if(statusElement && statusElement[0].id) {
-        const userStatus = document.getElementById(statusElement[0].id).innerHTML;
+        userStatus = document.getElementById(statusElement[0].id).innerHTML;
         if(userStatus) {
             window.state.user.status = userStatus;
             axios.post(`${SERVER_ADDRESS}${API_PREFIX}/updateStatus/`, {
@@ -98,12 +142,21 @@ const updateStatus = async function (event) {
             });
         }
     }
+    if(userStatus === "Emergency"){
+        sendConfrimStatusChangeMessage("Emergency");
+    } else if(userStatus === "Need Help"){
+        sendConfrimStatusChangeMessage("Need Help");
+    }
     StatusPopCard.close();
 };
 
+
+
 const me = {
     fetchData,
-    render
+    render,
+    // sendStatusConfirmMessage,
+    sendStatusConfirmMessageHelper
 };
 
 export default me;
