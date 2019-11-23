@@ -23,7 +23,8 @@ describe("Server Help Search Test", async () => {
             avatar: "#ffffff",
             status: "ok",
             statusUpdateTime: new Date(),
-            online: true
+            online: true,
+            isDoctor: false
         };
         const registerRes = await axios({
             method: "post",
