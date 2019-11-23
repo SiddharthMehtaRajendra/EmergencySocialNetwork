@@ -11,10 +11,12 @@ const addPrivateDoctor = require("./addPrivateDoctor");
 const removePrivateDoctor = require("./removePrivateDoctor");
 
 const postAnnouncement = require("./postAnnouncement");
-const helpSearch = require("./helpSearch")
-const saveHelpCenter = require("./saveHelpCenter")
-const uploadMedicalId = require("./uploadMedicalId")
-const preferredHelpCenters = require("./preferredHelpCenters")
+const helpSearch = require("./helpSearch");
+const saveHelpCenter = require("./saveHelpCenter");
+const uploadMedicalId = require("./uploadMedicalId");
+const preferredHelpCenters = require("./preferredHelpCenters");
+const updateinformation = require("./updateinformation");
+const info = require("./info");
 
 const controller = {
     join,
@@ -32,7 +34,9 @@ const controller = {
     uploadMedicalId,
     preferredHelpCenters,
     addPrivateDoctor,
-    removePrivateDoctor
+    removePrivateDoctor,
+    updateinformation,
+    info
 };
 
 module.exports = controller;

@@ -53,12 +53,19 @@ const renderStatusPopCard = async function () {
     StatusPopCard.show();
 };
 
+const addupdateInfoListener = function () {
+    document.getElementById("updateInfo").addEventListener("click", () => {
+        window.location.hash = "/information";
+    });
+};
+
 const render = async function () {
     const app = document.getElementById("app");
     app.innerHTML = Me;
     if(!window.state.user) {
         await fetchData();
     }
+    addupdateInfoListener();
     if(window.state.user) {
         addSearchOptionListener();
         const user = window.state.user;

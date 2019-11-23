@@ -26,9 +26,11 @@ module.exports = {
                 loader: "babel-loader"
             }]
         }),
+        /*
         new BundleAnalyzerPlugin({
             analyzerMode: "static"
         }),
+        */
         new CompressionPlugin()
     ],
     module: {

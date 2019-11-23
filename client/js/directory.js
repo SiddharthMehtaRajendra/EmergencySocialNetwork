@@ -86,6 +86,8 @@ const renderUsers = function (users, container) {
         userCard.className = "single-user common-list-item";
         userCard.addEventListener("click", () => {
             window.location.hash = "/profile/" + user.username;
+            // window.location.hash = "/chat/" + user.username;
+            // window.location.hash = "/infopage/" + user.username;
         });
         userName.className = "username";
         userAvatar.className = "avatar";

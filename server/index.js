@@ -98,6 +98,9 @@ app.post("/api/addPrivateDoctor", controller.addPrivateDoctor);
 
 app.post("/api/removePrivateDoctor", controller.removePrivateDoctor);
 
+app.post("/api/updateinformation", controller.updateinformation);
+
+app.get("/api/info/:username?", controller.info);
 
 http.listen(port, () => {
     console.log(`Express server start, listening on port:${port} ...`);
