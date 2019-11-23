@@ -9,6 +9,9 @@ import announcement from "../announcements";
 import { SERVER_ADDRESS } from "../constant/serverInfo";
 import Toast from "../lib/toast";
 import BottomPopCard from "../../components/bottomPopCard/index";
+const turf = require("@turf/turf");
+
+const ee = require("../lib/eventEmitter");
 
 const socket = io(SERVER_ADDRESS);
 
@@ -115,6 +118,22 @@ socket.on("UPDATE_CHAT", async (chat) => {
     }
     if(window.location.hash === "#/chats") {
         await chats.render();
+    }
+});
+
+socket.on("UPDATE_USER_LOCATION", (data) => {
+    if(window.state.user && data.username !== window.state.user.username) {
+        const user = window.state.userMap[data.username];
+        if(user) {
+            user.latitude = data.location.latitude;
+            user.longitude = data.location.longitude;
+            user.sharingLocationOpen = data.sharingLocationOpen;
+            const from = turf.point([window.state.user.longitude,window.state.user.latitude]);
+            const curCoord = [user.longitude, user.latitude];
+            const to = turf.point(curCoord);
+            user.distance = +turf.distance(from, to, { units: "miles" }).toFixed(2);
+        }
+        ee.emit("UPDATE_USER_LOCATION", data);
     }
 });
 

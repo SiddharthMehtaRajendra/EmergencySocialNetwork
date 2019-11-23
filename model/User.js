@@ -47,7 +47,19 @@ const UserSchema = new mongoose.Schema({
         type: Date
     },
     savedHelpCenters: [preferenceSchema],
-    associatedList: [{type: String}]
+    associatedList: [{type: String}],
+    latitude: {
+        type: Number
+    },
+    longitude: {
+        type: Number
+    },
+    locationUpdateTime: {
+        type: Date
+    },
+    sharingLocationOpen: {
+        type: Boolean
+    }
 });
 
 UserSchema.statics.exists = async function (username) {
@@ -171,19 +183,10 @@ UserSchema.statics.getAllUsers = async function () {
     let res = [];
     let success = true;
     try {
-        const rawResult = await this.find().sort({
+        res = await this.find().sort({
             online: -1,
             username: 1
         });
-        /* istanbul ignore next */
-        res = rawResult.map((item) => ({
-            username: item.username,
-            avatar: item.avatar || "#ccc",
-            status: item.status || "ok",
-            online: item.online || false,
-            isDoctor: item.isDoctor || false,
-            associatedList: item.associatedList || []
-        }));
     } catch (e) {
         success = false;
         res = e._message;
@@ -209,6 +212,16 @@ UserSchema.statics.updateOnline = async function (username, online) {
 
 UserSchema.statics.updateSocketId = async function (username, socketID) {
     const res = await this.updateOne({ username: username }, { socketID: socketID });
+    return res;
+};
+
+UserSchema.statics.updateLocation = async function (username, location, sharingLocationOpen) {
+    const res = await this.updateOne({ username: username }, {
+        latitude: location.latitude,
+        longitude: location.longitude,
+        locationUpdateTime: new Date(),
+        sharingLocationOpen: sharingLocationOpen
+    });
     return res;
 };
 

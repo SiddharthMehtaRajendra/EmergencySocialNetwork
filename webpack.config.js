@@ -37,6 +37,7 @@ module.exports = {
         rules: [
             {
                 test: /\.(js)$/,
+                exclude: [/node_modules/, /dist/],
                 loaders: ["happypack/loader"]
             },
             {
@@ -76,6 +77,7 @@ module.exports = {
                     "file-loader"
                 ]
             }
-        ]
+        ],
+        noParse: /(mapbox-gl)\.js$/
     }
 };

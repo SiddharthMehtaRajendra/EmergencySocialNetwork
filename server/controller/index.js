@@ -17,6 +17,7 @@ const uploadMedicalId = require("./uploadMedicalId");
 const preferredHelpCenters = require("./preferredHelpCenters");
 const updateinformation = require("./updateinformation");
 const info = require("./info");
+const updateLocation = require("./updateLocation");
 
 const controller = {
     join,
@@ -36,7 +37,8 @@ const controller = {
     addPrivateDoctor,
     removePrivateDoctor,
     updateinformation,
-    info
+    info,
+    updateLocation
 };
 
 module.exports = controller;

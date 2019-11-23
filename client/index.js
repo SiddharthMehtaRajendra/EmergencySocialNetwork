@@ -21,7 +21,7 @@ import shareList from "./js/shareList";
 import postAnnouncement from "./js/postAnnouncement";
 import profile from "./js/profile";
 import informationController from "./js/information";
-
+import locationSharing from "./js/locationSharing";
 import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";
 import BottomTab from "./components/bottomTab";
@@ -139,6 +139,10 @@ router.on("/infopage/:id", async () => {
 
 router.on("/shareList", async () => {
     await shareList.render();
+}).resolve();
+
+router.on("/locationSharing", async () => {
+    await locationSharing.render();
 }).resolve();
 
 router.notFound(() => {

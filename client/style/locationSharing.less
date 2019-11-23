@@ -1,0 +1,54 @@
+.page-location-sharing {
+    .navbar-header {
+        padding: 20px;
+        align-items: center;
+
+        .navbar-title {
+            flex-grow: 1;
+        }
+
+        .location-sharing-switch {
+            background-image: url("../resource/location-gray.svg");
+            background-size: cover;
+            width: 20px;
+            height: 20px;
+
+            &.open {
+                background-image: url("../resource/location-blue.svg");
+            }
+
+            &.close {
+                background-image: url("../resource/location-gray.svg");
+            }
+        }
+    }
+
+    .map-container {
+        position: absolute;
+        top: 65px;
+        left: 0;
+        width: 100%;
+        height: calc(100vh - 365px);
+
+        .mapbox {
+            height: calc(100vh - 365px);
+        }
+    }
+
+    .user-list-container {
+        position: absolute;
+        height: 300px;
+        width: 100%;
+        bottom: 0;
+
+        .user-list {
+            height: 300px;
+            position: absolute;
+            overflow-y: scroll;
+            width: 100%;
+            left: 0;
+            bottom: 0;
+            scroll-behavior: smooth;
+        }
+    }
+}

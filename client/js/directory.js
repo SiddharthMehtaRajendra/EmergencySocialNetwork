@@ -76,32 +76,51 @@ const resetDirectory = function () {
     document.getElementById("directory-list").innerHTML = "<div id='user-directory'></div>";
 };
 
+const addLocationSharingListener = function () {
+    document.getElementById("location-sharing-icon").addEventListener("click", () => {
+        window.location.hash = "/locationSharing";
+
+    });
+};
+
+const buildSingleUser = function (user, clickCallBack) {
+    const userCard = document.createElement("div");
+    const userName = document.createElement("div");
+    const userAvatar = document.createElement("div");
+    const userStatus = document.createElement("div");
+    userCard.className = "single-user common-list-item";
+    userCard.addEventListener("click", clickCallBack);
+    userName.className = "username";
+    userAvatar.className = "avatar";
+    userStatus.className = "status-circle";
+    userName.innerText = user.username;
+    userAvatar.innerText = user.username.charAt(0);
+    userAvatar.setAttribute("style", `background-color: ${user.avatar || "#CCC"};`);
+    Utils.renderStatusColor(user.status, userStatus);
+    if(!user.online) {
+        userCard.classList.add("offline");
+    }
+    userCard.addEventListener("click", () => {
+        window.location.hash = "/profile/" + user.username;
+    });
+    userCard.appendChild(userAvatar);
+    userCard.appendChild(userStatus);
+    userCard.appendChild(userName);
+    return userCard;
+};
+
+const buildBottomLine = function () {
+    const bottomThinLine = document.createElement("div");
+    bottomThinLine.className = "right-thin-line";
+    return bottomThinLine;
+};
+
 const renderUsers = function (users, container) {
     users.forEach((user, index) => {
-        const userCard = document.createElement("div");
-        const userName = document.createElement("div");
-        const userAvatar = document.createElement("div");
-        const userStatus = document.createElement("div");
-        const bottomThinLine = document.createElement("div");
-        userCard.className = "single-user common-list-item";
-        userCard.addEventListener("click", () => {
-            window.location.hash = "/profile/" + user.username;
-            // window.location.hash = "/chat/" + user.username;
+        const userCard = buildSingleUser(user, () => {
+            window.location.hash = "/chat/" + user.username;
         });
-        userName.className = "username";
-        userAvatar.className = "avatar";
-        userStatus.className = "status-circle";
-        bottomThinLine.className = "right-thin-line";
-        userName.innerText = user.username;
-        userAvatar.innerText = user.username.charAt(0);
-        userAvatar.setAttribute("style", `background-color: ${user.avatar || "#CCC"};`);
-        Utils.renderStatusColor(user.status, userStatus);
-        userCard.appendChild(userAvatar);
-        userCard.appendChild(userStatus);
-        userCard.appendChild(userName);
-        if(!user.online) {
-            userCard.classList.add("offline");
-        }
+        const bottomThinLine = buildBottomLine();
         if(index !== users.length - 1) {
             container.appendChild(userCard);
             container.appendChild(bottomThinLine);
@@ -226,6 +245,7 @@ const render = async function () {
     }
     addDisplayOptionListener();
     addSearchListener();
+    addLocationSharingListener();
     if(window.state.users && directory) {
         directory.innerHTML = null;
         const users = window.state.users;
@@ -236,7 +256,9 @@ const render = async function () {
 const directory = {
     fetchData,
     render,
-    renderUsers
+    renderUsers,
+    buildSingleUser,
+    buildBottomLine
 };
 
 export default directory;
