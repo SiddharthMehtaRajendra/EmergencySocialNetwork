@@ -19,11 +19,8 @@ import directory from "./js/directory";
 import search from "./js/search";
 import shareList from "./js/shareList";
 import postAnnouncement from "./js/postAnnouncement";
-<<<<<<< HEAD
 import profile from "./js/profile";
-=======
 import informationController from "./js/information";
->>>>>>> origin/emergencyInformation
 
 import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";

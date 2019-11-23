@@ -27,6 +27,9 @@ const renderCitizen = function () {
     document.getElementById("message-menu").addEventListener("click", () => {
         window.location.hash = "/chat/" + profileuser.username;
     });
+    document.getElementById("info-menu").addEventListener("click", () => {
+        window.location.hash = "/infopage/" + profileuser.username;
+    });
 };
 
 const searchInFriendList = function (user, profileuser) {
@@ -113,7 +116,9 @@ const renderDoctor = async function () {
     document.getElementById("message-menu").addEventListener("click", () => {
         window.location.hash = "/chat/" + profileuser.username;
     });
-
+    document.getElementById("info-menu").addEventListener("click", () => {
+        window.location.hash = "/infopage/" + profileuser.username;
+    });
     document.getElementById("private-doctor-menu").addEventListener("click", async () => {
         if(privateDoctorBtn.innerText === "Remove Private Doctor") {
             removePrivateDoctor(user, profileuser);
