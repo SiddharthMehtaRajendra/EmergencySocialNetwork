@@ -8,7 +8,7 @@ process.env.SERVER_TEST_DB = "server_history_test";
 
 let SERVER_ADDRESS = "";
 if(!process.env.PORT) {
-    process.env.PORT = 9003;
+    process.env.PORT = 9004;
     SERVER_ADDRESS = `http://localhost:${process.env.PORT}`;
 }
 

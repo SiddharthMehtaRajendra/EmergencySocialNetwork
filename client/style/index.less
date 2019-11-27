@@ -166,6 +166,13 @@
     .username {
         font-size: 16px;
         font-weight: 600;
+        flex-grow: 1;
+    }
+
+    .distance{
+        font-size: 14px;
+        color: #999999;
+        font-weight: 600;
     }
 }
 
@@ -220,6 +227,28 @@
     justify-content: space-between;
     margin-bottom: 12px;
     padding: 40px 20px 0 20px;
+    box-sizing: border-box;
+
+    .top-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-weight: 800;
+    }
+
+    .search-icon {
+        cursor: pointer;
+    }
+}
+
+.header-section-fixed {
+    z-index: 99;
+    width: 100%;
+    display: flex;
+    position: fixed;
+    justify-content: space-between;
+    background-color: white;
+    margin-bottom: 12px;
+    padding: 40px 20px 20px 20px;
     box-sizing: border-box;
 
     .top-title {

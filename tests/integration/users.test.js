@@ -8,7 +8,7 @@ process.env.SERVER_TEST_DB = "server_users_test";
 
 let SERVER_ADDRESS = "";
 if(!process.env.PORT) {
-    process.env.PORT = 9006;
+    process.env.PORT = 9008;
     SERVER_ADDRESS = `http://localhost:${process.env.PORT}`;
 }
 
@@ -22,7 +22,8 @@ describe("Server Users Test", async () => {
         avatar: "#ffffff",
         status: "ok",
         statusUpdateTime: new Date(),
-        online: false
+        online: false,
+        isDoctor: false
     };
     test("update status test", async () => {
         await User.addOneUser(userObject);
@@ -42,7 +43,7 @@ describe("Server Users Test", async () => {
         expect(res.data.success).toEqual(true);
     });
     test("get one user info test", async () => {
-        let res = await axios.get( `${SERVER_ADDRESS}${API_PREFIX}/user`, {
+        let res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user`, {
             params: {
                 username: testUser.username
             },
@@ -53,7 +54,7 @@ describe("Server Users Test", async () => {
         });
         expect(res.data.user.username).toEqual(testUser.username);
 
-        res = await axios.get( `${SERVER_ADDRESS}${API_PREFIX}/user/notExistName`, {
+        res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user/notExistName`, {
             headers: {
                 Cookie: "token=" + testUser.token
             },
@@ -61,14 +62,37 @@ describe("Server Users Test", async () => {
         });
         expect(res.data.user.username).toEqual(null);
     });
-
     test("get users info test", async () => {
-        const res = await axios.get( `${SERVER_ADDRESS}${API_PREFIX}/users`, {
+        const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`, {
             headers: {
                 Cookie: "token=" + testUser.token
             },
             withCredentials: true
         });
         expect(res.data.users.length).toEqual(1);
+    });
+
+    test("update user's location", async () => {
+        let res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/updateLocation`, {
+            location: {
+                latitude: 0,
+                longitude: 0
+            },
+            sharingLocationOpen: true
+        }, {
+            headers: {
+                Cookie: "token=" + testUser.token
+            },
+            withCredentials: true
+        });
+        expect(res.data.success).toEqual(true);
+        res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/updateLocation`, {
+            location: {
+                latitude: 0,
+                longitude: 0
+            },
+            sharingLocationOpen: true
+        });
+        expect(res.data.success).toEqual(false);
     });
 });

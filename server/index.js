@@ -11,7 +11,7 @@ const bodyParser = require("body-parser");
 const io = require("socket.io")(http);
 const cookieParser = require("cookie-parser");
 const { checkToken } = require("./auth/checkToken");
-const { verifyToken, onConnect, onDisconnect, onMessage } = require("./ioHandle");
+const { verifyToken, onConnect, onDisconnect, onMessage, onConfirmMessage, onDoctorConfirm, onRemoveDoctor, onStatusChangeMessage } = require("./ioHandle");
 const controller = require("./controller/index");
 require("./lib/connectdb");
 
@@ -40,6 +40,10 @@ io.use(verifyToken);
 io.on("connection", async (socket) => {
     await onConnect(socket, io);
     socket.on("MESSAGE", async (msg) => onMessage(socket, io, msg));
+    socket.on("CONFIRM_MESSAGE", async (msg) => onConfirmMessage(socket, io, msg));
+    socket.on("STATUS_CHANGE_MESSAGE", async (msg) => onStatusChangeMessage(socket, io, msg));
+    socket.on("CONFIRM_ADD_DOCTOR", async (pair) => onDoctorConfirm(socket, io, pair));
+    socket.on("REMOVE_DOCTOR", async (pair) => onRemoveDoctor(socket, io, pair));
     socket.on("disconnect", () => onDisconnect(socket, io));
 });
 
@@ -64,8 +68,17 @@ app.get("/api/chats", controller.chats);
 
 app.get("/api/announcement", controller.announcement);
 
+app.get("/api/helpSearch", controller.helpSearch);
+
+app.get("/api/preferredHelpCenters", controller.preferredHelpCenters);
+
 app.post("/api/updateStatus", async (req, res) => {
     const result = await controller.updateStatus(req, io);
+    res.status(200).json(result);
+});
+
+app.post("/api/updateLocation", async (req, res) => {
+    const result = await controller.updateLocation(req, io);
     res.status(200).json(result);
 });
 
@@ -74,7 +87,25 @@ app.post("/api/postAnnouncement", async (req, res) => {
     res.status(200).json(result);
 });
 
+app.post("/api/saveHelpCenter", async (req, res) => {
+    const result = await controller.saveHelpCenter(req);
+    res.status(200).json(result);
+});
+
+app.post("/api/uploadMedicalId", async (req, res) => {
+    const result = await controller.uploadMedicalId(req);
+    res.status(200).json(result);
+});
+
 app.get("/api/search", controller.search);
+
+app.post("/api/addPrivateDoctor", controller.addPrivateDoctor);
+
+app.post("/api/removePrivateDoctor", controller.removePrivateDoctor);
+
+app.post("/api/updateinformation", controller.updateinformation);
+
+app.get("/api/info/:username?", controller.info);
 
 http.listen(port, () => {
     console.log(`Express server start, listening on port:${port} ...`);

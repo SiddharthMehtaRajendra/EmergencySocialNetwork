@@ -50,12 +50,15 @@
     "webpack-dev-server": "^3.8.1"
   },
   "dependencies": {
+    "@google/maps": "^1.0.2",
+    "@turf/turf": "^5.1.6",
     "axios": "^0.19.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
     "crypto-js": "^3.1.9-1",
+    "events": "^3.0.0",
     "expect.js": "^0.3.1",
     "express": "^4.17.1",
     "express-static-gzip": "^2.0.5",
@@ -64,13 +67,16 @@
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.15",
+    "mapbox-gl": "^1.5.0",
     "mongoose": "^5.7.1",
     "mongoose-sequence": "^5.2.1",
     "mongoose-unique-validator": "^2.0.3",
     "navigo": "^7.1.2",
     "randomcolor": "^0.5.4",
     "socket.io": "^2.3.0",
-    "uuid": "^3.3.3"
+    "underscore": "^1.9.1",
+    "uuid": "^3.3.3",
+    "wolfy87-eventemitter": "^5.2.8"
   },
   "jest": {
     "setupFilesAfterEnv": [

@@ -7,6 +7,7 @@ import Me from "../view/me.html";
 import StatusPopCard from "../components/statusPopCard";
 import Utils from "./lib/appUtils";
 import directory from "./directory";
+import searchHelpCenters from "./searchHelpResults";
 
 const logout = function () {
     Cookie.remove("token");
@@ -22,10 +23,40 @@ const fetchData = async function () {
     }
 };
 
+const genSearchNodeEventListener = function (node, otherNodeOne, otherNodeTwo) {
+    return () => {
+        node.style.backgroundColor = "#000";
+        node.value = "selected";
+        otherNodeOne.style.backgroundColor = "#fff";
+        otherNodeTwo.style.backgroundColor = "#fff";
+        otherNodeOne.value = "unselected";
+        otherNodeTwo.value = "unselected";
+    };
+};
+
+const addSearchOptionListener = function () {
+    const hospitalSearchNode = document.getElementById("hospital-checkbox");
+    const policeSearchNode = document.getElementById("police-checkbox");
+    const fireStationSearchNode = document.getElementById("fire-station-checkbox");
+    hospitalSearchNode.addEventListener("click", genSearchNodeEventListener(hospitalSearchNode, policeSearchNode, fireStationSearchNode));
+    policeSearchNode.addEventListener("click", genSearchNodeEventListener(policeSearchNode, hospitalSearchNode, fireStationSearchNode));
+    fireStationSearchNode.addEventListener("click", genSearchNodeEventListener(fireStationSearchNode, hospitalSearchNode, policeSearchNode));
+};
+
+const newHelpCenterSearch = async function () {
+    await searchHelpCenters.searchHelpCenterData();
+};
+
 const renderStatusPopCard = async function () {
     // eslint-disable-next-line no-use-before-define
     StatusPopCard.init(updateStatus);
     StatusPopCard.show();
+};
+
+const addupdateInfoListener = function () {
+    document.getElementById("updateInfo").addEventListener("click", () => {
+        window.location.hash = "/information";
+    });
 };
 
 const render = async function () {
@@ -34,7 +65,9 @@ const render = async function () {
     if(!window.state.user) {
         await fetchData();
     }
+    addupdateInfoListener();
     if(window.state.user) {
+        addSearchOptionListener();
         const user = window.state.user;
         if(user.avatar.indexOf("#") === 0) {
             document.getElementById("page-me-avatar").style.backgroundColor = user.avatar;
@@ -48,13 +81,61 @@ const render = async function () {
         document.getElementById("user-guide-entrance").addEventListener("click", () => {
             window.location.hash = "/guide";
         });
+        document.getElementById("pref-help-center").addEventListener("click", () => {
+            window.location.hash = "/preferredHelpCenters";
+        });
+        document.getElementById("search-icon-help-center").addEventListener("click", newHelpCenterSearch);
     }
+};
+
+const sendStatusConfirmMessage = () => {
+    console.log("friend" + window.state.friend);
+    const currentUser = window.state.user;
+    const content = " I acknowledge.";
+    const toUser = window.state.friend;
+    const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === "public" ? -1 : null);
+    return () => {
+        socket.emit("MESSAGE", {
+            content: content,
+            type: 0,
+            from: currentUser.username,
+            to: toUser,
+            status: (window.state && window.state.user && window.state.user.status) || "ok",
+            chatId: chatId
+        });
+    };
+};
+
+const  sendStatusConfirmMessageHelper = (friend) => {
+    window.state.friend = friend;
+    return sendStatusConfirmMessage();
+};
+
+
+const sendConfrimStatusChangeMessage = (Info) => {
+    const currentUser = window.state.user;
+    const content = " I am in " + Info;
+    currentUser.associatedList.forEach((friend) => {
+        if(content && content.length > 0) {
+            const toUser = friend;
+            const chatId = (window.state.chatsMap[toUser] && window.state.chatsMap[toUser].chatId) || (toUser === "public" ? -1 : null);
+            socket.emit("STATUS_CHANGE_MESSAGE", {
+                content: content,
+                type: 0,
+                from: currentUser.username,
+                to: toUser,
+                status: (window.state && window.state.user && window.state.user.status) || "ok",
+                chatId: chatId
+            });
+        }
+    });
 };
 
 const updateStatus = async function (event) {
     const statusElement = event.currentTarget.children;
+    let userStatus;
     if(statusElement && statusElement[0].id) {
-        const userStatus = document.getElementById(statusElement[0].id).innerHTML;
+        userStatus = document.getElementById(statusElement[0].id).innerHTML;
         if(userStatus) {
             window.state.user.status = userStatus;
             axios.post(`${SERVER_ADDRESS}${API_PREFIX}/updateStatus/`, {
@@ -68,12 +149,21 @@ const updateStatus = async function (event) {
             });
         }
     }
+    if(userStatus === "Emergency"){
+        sendConfrimStatusChangeMessage("Emergency");
+    } else if(userStatus === "Need Help"){
+        sendConfrimStatusChangeMessage("Need Help");
+    }
     StatusPopCard.close();
 };
 
+
+
 const me = {
     fetchData,
-    render
+    render,
+    // sendStatusConfirmMessage,
+    sendStatusConfirmMessageHelper
 };
 
 export default me;

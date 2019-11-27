@@ -10,7 +10,7 @@ process.env.SERVER_TEST_DB = "server_search_test";
 
 let SERVER_ADDRESS = "";
 if(!process.env.PORT) {
-    process.env.PORT = 9005;
+    process.env.PORT = 9007;
     SERVER_ADDRESS = `http://localhost:${process.env.PORT}`;
 }
 
@@ -80,7 +80,8 @@ describe("Server Search Test", async () => {
                     avatar: "#ffffff",
                     status: "ok",
                     statusUpdateTime: new Date(),
-                    online: false
+                    online: false,
+                    isDoctor: false
                 });
             }
             for(let i = 0; i < userList.length; i++) {
