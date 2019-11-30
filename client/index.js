@@ -3,6 +3,7 @@ import "./style/welcome.less";
 import "./style/home.less";
 import "./style/information.less";
 import "./style/infopage.less";
+import "./style/updateUserProfile.less";
 
 import Navigo from "navigo";
 import Welcome from "./view/welcome.html";
@@ -10,6 +11,8 @@ import Home from "./view/home.html";
 import Error from "./view/error.html";
 import Information from "./view/information.html";
 import InfoPage from "./view/infopage.html";
+import UserProfile from "./view/userProfile.html";
+import updateUserProfile from "./view/updateUserProfile.html";
 import guide from "./js/guide";
 import chats from "./js/chats";
 import chat from "./js/chat";
@@ -20,10 +23,12 @@ import search from "./js/search";
 import shareList from "./js/shareList";
 import postAnnouncement from "./js/postAnnouncement";
 import profile from "./js/profile";
+import profileList from "./js/profileList";
 import informationController from "./js/information";
 import locationSharing from "./js/locationSharing";
 import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";
+import profileController from "./js/userProfile";
 import BottomTab from "./components/bottomTab";
 import preferredHelpCenters from "./js/preferredHelpCenter";
 
@@ -90,6 +95,11 @@ router.on("/directory", async () => {
     await directory.render();
 }).resolve();
 
+router.on("/profileList", async () => {
+    await profileList.render();
+    // await profileList.render();
+}).resolve();
+
 router.on("/announcements", async () => {
     await announcements.render();
 }).resolve();
@@ -127,9 +137,19 @@ router.on("/profile/:username", async () => {
     await profile.render();
 }).resolve();
 
+router.on("/userProfile/:username", async () => {
+    app.innerHTML = UserProfile;
+    await profileController.view();
+}).resolve();
+
 router.on("/information", async () => {
     app.innerHTML = Information;
     await informationController.update();
+}).resolve();
+
+router.on("/updateUserProfile", async () => {
+    app.innerHTML = updateUserProfile;
+    await profileController.update();
 }).resolve();
 
 router.on("/infopage/:id", async () => {

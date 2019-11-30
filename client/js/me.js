@@ -59,6 +59,10 @@ const addupdateInfoListener = function () {
     });
 };
 
+const administer = function () {
+    window.location.hash = "/profileList";
+};
+
 const render = async function () {
     const app = document.getElementById("app");
     app.innerHTML = Me;
@@ -76,6 +80,7 @@ const render = async function () {
         document.getElementById("page-me-username").innerText = user.username;
         document.getElementById("page-me-status").innerText = user.status;
         Utils.renderStatusColor(user.status, document.getElementById("page-me-status"));
+        document.getElementById("administer").addEventListener("click", administer);
         document.getElementById("logout-menu").addEventListener("click", logout);
         document.getElementById("user-status").addEventListener("click", renderStatusPopCard);
         document.getElementById("user-guide-entrance").addEventListener("click", () => {
