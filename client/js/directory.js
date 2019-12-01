@@ -19,12 +19,13 @@ const getDirectoryDisplayType = function () {
 const fetchData = async function () {
     let friendNameList;
     await me.fetchData();
-    if(!!window.state.user.associatedList) {
+    if(!window.state.user.associatedList) {
         friendNameList = window.state.user.associatedList;
     } else {
         friendNameList = [];
     }
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`);
+    console.log(res);
     if(res.status === 200 && res.data.success && res.data.users) {
         const users = res.data.users;
         window.state.users = users;

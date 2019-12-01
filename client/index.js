@@ -21,6 +21,7 @@ import me from "./js/me";
 import directory from "./js/directory";
 import search from "./js/search";
 import shareList from "./js/shareList";
+import profile from "./js/profile";
 import postAnnouncement from "./js/postAnnouncement";
 import profileList from "./js/profileList";
 import informationController from "./js/information";

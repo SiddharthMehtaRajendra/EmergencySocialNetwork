@@ -7,11 +7,14 @@ const exclude = function(url) {
         "/api/joinCheck": true,
         "/api/join": true,
         "/": true,
-        "/app": true
+        "/app": true,
     };
     if(urlTable[url]) {
         return true;
     }
+    if(url.indexOf("user") >= 0) {
+        return true;
+    }; 
     return url.indexOf("app") >= 0;
 };
 

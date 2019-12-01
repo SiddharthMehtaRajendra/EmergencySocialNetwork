@@ -25,7 +25,6 @@ const updateProfile = async function (req, res, next) {
                 adminStatus: req.body.params.accountType
             };
             const updateRes = await User.updateProfile(profileInfo);
-            console.log(updateRes);
             res.status(200).json({
                 success: true,
                 info: updateRes.res,

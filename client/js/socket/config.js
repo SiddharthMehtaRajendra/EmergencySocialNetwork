@@ -137,4 +137,12 @@ socket.on("UPDATE_USER_LOCATION", (data) => {
     }
 });
 
+socket.on("INACTIVE", (data) => {
+    if(data.username === window.state.user.username) {
+        window.location.hash === "#/join";
+        const notify = "Your accoount is set to inactive";
+        Toast(notify, null, null, 5000);
+    }
+});
+
 export default socket;

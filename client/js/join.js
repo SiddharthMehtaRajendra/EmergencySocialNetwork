@@ -88,6 +88,7 @@ const join = async () => {
     const usernameValidation = validateUserName(username);
     const passwordValidation = validatePassword(password);
     const adminStatusRes = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user/` + username);
+    console.log(adminStatusRes.data);
     if(usernameValidation.result && passwordValidation.result) {
         resetHint();
         axios({
@@ -107,6 +108,7 @@ const join = async () => {
                         Toast("Your account is inactive", "#F41C3B");
                         return;
                     }
+
                     reset();
                     setToken(res.data.token);
                     socket.open();

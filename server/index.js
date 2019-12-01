@@ -82,6 +82,11 @@ app.post("/api/updateLocation", async (req, res) => {
     res.status(200).json(result);
 });
 
+app.post("/api/inactiveNotify", async (req, res) => {
+    console.log(req);
+    io.emit("INACTIVE", { data: req.username });
+});
+
 app.post("/api/postAnnouncement", async (req, res) => {
     const result = await controller.postAnnouncement(req, io);
     res.status(200).json(result);

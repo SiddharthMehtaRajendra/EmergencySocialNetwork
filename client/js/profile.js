@@ -134,7 +134,7 @@ const render = async function () {
     document.getElementById("private-doctor-menu").style.display = "none";
     document.getElementById("single-profile-navbar-title").innerText = "Directory";
     document.getElementById("navbar-back-arrow").addEventListener("click", () => {
-        window.history.go(-1);
+        window.location.hash = "/directory";
     });
     await fetchData();
     const profileuser = window.state.profileuser;
