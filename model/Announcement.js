@@ -39,8 +39,8 @@ AnnouncementSchema.statics.insertOne = async function (announcement) {
 };
 
 AnnouncementSchema.statics.updateUsername = async function (oldUsername, newUsername) {
-    const res = await this.updateMany({ username: oldUsername }, {
-        username: newUsername
+    const res = await this.updateMany({ from: oldUsername }, {
+        from: newUsername
     });
     return res;
 };

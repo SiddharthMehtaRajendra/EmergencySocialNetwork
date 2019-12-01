@@ -83,7 +83,13 @@ app.post("/api/updateLocation", async (req, res) => {
 });
 
 app.get("/api/inactive/:username?", async (req, res, next) => {
-    io.emit("INACTIVE", { data: req.params.username });
+    io.emit("INACTIVE", { oldUsername: req.params.username, newUsername: req.query.newUsername});
+    const result = {"success": true};
+    res.status(200).json(result);
+});
+
+app.get("/api/refresh/:username?", async (req, res, next) => {
+    io.emit("REFRESH", { oldUsername: req.params.username, newUsername: req.query.newUsername});
     const result = {"success": true};
     res.status(200).json(result);
 });

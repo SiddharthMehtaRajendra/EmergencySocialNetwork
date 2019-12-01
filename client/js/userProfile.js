@@ -83,8 +83,18 @@ const updateInformation = async function () {
         success = await storeInformation(infos);
         if(success) {
             if(infos["accountType"] === "inactive"){
-                await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/inactive/` + infos["oldUsername"]);
-            };
+                await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/inactive/` + infos["oldUsername"], {
+                    params: {
+                        newUsername: newUsername
+                    }
+                });
+            } else {
+                await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/refresh/` + infos["oldUsername"], {
+                    params: {
+                        newUsername: newUsername
+                    }
+                });
+            }
             window.location.hash = "/userProfile/" + newUsername;
             clearHistory();      
             return;
