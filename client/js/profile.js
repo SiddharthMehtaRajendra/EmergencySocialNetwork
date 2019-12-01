@@ -96,6 +96,8 @@ const removePrivateDoctor = (user, profileuser) => {
     });
 };
 
+
+
 const renderDoctor = async function () {
     const profileuser = window.state.profileuser;
     const user = window.state.user;
