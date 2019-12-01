@@ -72,14 +72,12 @@ const addSearchListener = function () {
 };
 
 const resetDirectory = function () {
-    // document.getElementById("directory-list").innerHTML = "<div class='content' id='user-directory'></div>";
     document.getElementById("directory-list").innerHTML = "<div id='user-directory'></div>";
 };
 
 const addLocationSharingListener = function () {
     document.getElementById("location-sharing-icon").addEventListener("click", () => {
         window.location.hash = "/locationSharing";
-
     });
 };
 
