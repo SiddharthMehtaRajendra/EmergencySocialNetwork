@@ -20,17 +20,17 @@ npm install
 ```
 Start express server
 ```
-npm run watch
+npm run server
 ```
 Start front-end resource server (support hot module reload)
 ```
-npm start
+npm run watch
 ```
 Build front-end resource to deploy (no need when develop)
 ```
 npm run build
 ```
-Open localhost:3000 in browser
+Open localhost:3000/app/# in browser (We use hash route to build a single page app)
 
 ## Code Structure
 ```
