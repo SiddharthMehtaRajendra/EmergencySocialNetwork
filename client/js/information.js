@@ -1,13 +1,12 @@
 import axios from "axios";
 import { SERVER_ADDRESS, API_PREFIX } from "./constant/serverInfo";
-// import "../style/chat.less";
-// import Chat from "../view/chat.html";
+
 const getInformation = function () {
     const inputs = document.getElementsByClassName("info-input");
     const infos = [];
     for(let i = 0; i < inputs.length; i++) {
         infos.push(inputs[i].value);
-    };
+    }
     return infos;
 };
 
@@ -73,7 +72,8 @@ const showInfo = function (info) {
     infoList.push(info.selfIntro);
     for(let i = 0; i < infoContainers.length; i++) {
         infoContainers[i].innerHTML = infoList[i];
-    };
+    }
+    ;
 };
 
 const getUserInfo = async function () {
@@ -94,13 +94,13 @@ const addShareListListener = function () {
 };
 
 const recover = async function () {
-    if(!window.state.infoList){
+    if(!window.state.infoList) {
         return;
-    };
+    }
     const inputs = document.getElementsByClassName("info-input");
     for(let i = 0; i < inputs.length; i++) {
         inputs[i].value = window.state.infoList[i];
-    };
+    }
 };
 
 const update = async function () {
@@ -116,7 +116,7 @@ const render = async function () {
     console.log(window.state.user.username);
     if(res.data.success && res.data.info.shareList.indexOf(window.state.user.username) >= 0) {
         showInfo(res.data.info);
-    };
+    }
 };
 
 const view = async function () {
