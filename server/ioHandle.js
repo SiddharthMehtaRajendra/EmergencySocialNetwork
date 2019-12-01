@@ -141,13 +141,12 @@ const onConfirmMessage = async function (socket, io, msg) {
             otherUser: msg.from
         });
     }
+    await updateChat(socket, io, msg, socketIds);
     await updateConfrimMessage(socket, io, msg, socketIds);
 };
 
 const onStatusChangeMessage = async function (socket, io, msg) {
     msg = processMsg(msg);
-    console.log("msg" + msg);
-    console.log("msg.to" + msg.to);
     let toSocketId = null;
     if(msg.to !== "public") {
         toSocketId = (await User.getOneUserByUsername(msg.to)).res[0].socketID;
