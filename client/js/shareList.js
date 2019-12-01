@@ -77,8 +77,8 @@ const addBackListener = function () {
         backNode[0].addEventListener("click", () => {
             window.history.go(-1);
         });
-    };
-    document.getElementsByClassName("navbar-back-arrow")[0].addEventListener("click", () => {
+    }
+    document.getElementById("navbar-back-arrow").addEventListener("click", () => {
         window.history.go(-1);
     });
 };

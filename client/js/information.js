@@ -39,10 +39,10 @@ const addBackListener = function () {
     if(backNode.length > 0) {
         backNode[0].addEventListener("click", () => {
             window.history.go(-1);
-            clearHistory(); 
+            clearHistory();
         });
-    };
-    document.getElementsByClassName("navbar-back-arrow")[0].addEventListener("click", () => {
+    }
+    document.getElementById("navbar-back-arrow").addEventListener("click", () => {
         window.history.go(-1);
         clearHistory();
     });

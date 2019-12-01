@@ -16,7 +16,6 @@ const fetchData = async function () {
 
 const renderCitizen = function () {
     const profileuser = window.state.profileuser;
-    const user = window.state.user;
     if(profileuser.avatar.indexOf("#") === 0) {
         document.getElementById("page-me-avatar").style.backgroundColor = profileuser.avatar;
         document.getElementById("page-me-avatar").innerText = profileuser.username[0];
@@ -95,8 +94,6 @@ const removePrivateDoctor = (user, profileuser) => {
         console.log(err);
     });
 };
-
-
 
 const renderDoctor = async function () {
     const profileuser = window.state.profileuser;
