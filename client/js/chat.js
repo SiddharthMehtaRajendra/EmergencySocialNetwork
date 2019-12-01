@@ -122,7 +122,18 @@ const renderOneMessage = function (msg) {
     }
 };
 
-const renderMessages = function (msgList, container, beforeNode) {
+const getAdminStatus = async function (user1, user2) {
+    const user1AdminStatusRes = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/getAdminStatus/` + user1);
+    const user2AdminStatusRes = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/getAdminStatus/` + user2);
+    if(user1AdminStatusRes.data.user.adminStatus === "inactive" || user2AdminStatusRes.data.user.adminStatus === "inactive"){
+        return true;
+    } else {
+        return false;
+    }
+};
+
+const renderMessages = async function (msgList, container, beforeNode) {
+
     const smallestMessageId = window.state.smallestMessageId || Infinity;
     if(!container) {
         container = document.getElementById("bubble-wrap");
@@ -135,6 +146,10 @@ const renderMessages = function (msgList, container, beforeNode) {
         }
     }
     for(let i = 0; i < msgList.length; i++) {
+        let adminStatus = await getAdminStatus(msgList[i]["from"], msgList[i]["to"]);
+        if(adminStatus) {
+            continue;
+        }
         container.insertBefore(createSingleBubble(msgList[i]), beforeNode);
     }
     window.state.smallestMessageId = (msgList[0] && msgList[0].id) || 0;
