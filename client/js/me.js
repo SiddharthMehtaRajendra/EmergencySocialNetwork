@@ -63,6 +63,17 @@ const administer = function () {
     window.location.hash = "/profileList";
 };
 
+const privilegeCheck = async function (username) {
+    const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user/` + username);
+    const privilege = res.data.user.privilege;
+    console.log(privilege);
+    if(privilege === "administer") {
+        document.getElementById("administer").addEventListener("click", administer);
+    } else {
+        document.getElementById("administer").style.display = "none";
+    }
+};
+
 const render = async function () {
     const app = document.getElementById("app");
     app.innerHTML = Me;
@@ -80,8 +91,8 @@ const render = async function () {
         document.getElementById("page-me-username").innerText = user.username;
         document.getElementById("page-me-status").innerText = user.status;
         Utils.renderStatusColor(user.status, document.getElementById("page-me-status"));
-        document.getElementById("administer").addEventListener("click", administer);
         document.getElementById("logout-menu").addEventListener("click", logout);
+        privilegeCheck();
         document.getElementById("user-status").addEventListener("click", renderStatusPopCard);
         document.getElementById("user-guide-entrance").addEventListener("click", () => {
             window.location.hash = "/guide";
