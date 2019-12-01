@@ -113,7 +113,6 @@ const update = async function () {
 
 const render = async function () {
     const res = await getUserInfo();
-    console.log(window.state.user.username);
     if(res.data.success && res.data.info.shareList.indexOf(window.state.user.username) >= 0) {
         showInfo(res.data.info);
     };

@@ -1,6 +1,5 @@
 const wrapOne = function (user) {
     const newUser = JSON.parse(JSON.stringify(user));
-    console.log(newUser);
     delete newUser.password;
     delete newUser._id;
     delete newUser.__v;

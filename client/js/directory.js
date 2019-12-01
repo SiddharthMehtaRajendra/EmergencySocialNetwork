@@ -25,7 +25,6 @@ const fetchData = async function () {
         friendNameList = [];
     }
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`);
-    console.log(res);
     if(res.status === 200 && res.data.success && res.data.users) {
         const users = res.data.users;
         window.state.users = users;

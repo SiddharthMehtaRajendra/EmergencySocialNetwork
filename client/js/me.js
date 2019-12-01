@@ -66,7 +66,6 @@ const administer = function () {
 const privilegeCheck = async function (username) {
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user/` + username);
     const privilege = res.data.user.privilege;
-    console.log(privilege);
     if(privilege === "administer") {
         document.getElementById("administer").addEventListener("click", administer);
     } else {
@@ -105,7 +104,6 @@ const render = async function () {
 };
 
 const sendStatusConfirmMessage = () => {
-    console.log("friend" + window.state.friend);
     const currentUser = window.state.user;
     const content = " I acknowledge.";
     const toUser = window.state.friend;

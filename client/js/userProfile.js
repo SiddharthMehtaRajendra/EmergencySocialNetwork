@@ -23,7 +23,6 @@ const getPrivilegeType = function () {
 const getAccountStatus = function () {
     const activeNode = document.getElementById("active-checkbox");
     const inactiveNode = document.getElementById("inactive-checkbox");
-    console.log(activeNode["value"]);
     if(activeNode["value"] === "selected") {
         return "active";
     } else if(inactiveNode["value"] === "selected") {
@@ -62,18 +61,32 @@ const clearHistory = function () {
     window.state.shareList = null;
 };
 
+const updateUsername = async function (oldname, newname) {
+    const res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/updateUsername`, {
+        params: {
+            oldUsername: oldname,
+            newUsername: newname,
+        }
+    });
+};
+
 const updateInformation = async function () {
     const infos = getInformation();
     const newUsername = infos.newUsername;
+    const oldUsername = infos.oldUsername;
     const usernameValidation = validation.validateUserName(newUsername);
     const password = infos.password;
     const passwordValidation = validation.validatePassword(password);
     let success = true;
     if(usernameValidation.result && passwordValidation.result ) {
+        updateUsername(oldUsername, newUsername);
         success = await storeInformation(infos);
         if(success) {
+            if(infos["accountType"] === "inactive"){
+                await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/inactive/` + infos["oldUsername"]);
+            };
             window.location.hash = "/userProfile/" + newUsername;
-            clearHistory();
+            clearHistory();      
             return;
         }   
     }

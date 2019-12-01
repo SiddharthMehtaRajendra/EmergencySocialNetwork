@@ -12,9 +12,9 @@ const exclude = function(url) {
     if(urlTable[url]) {
         return true;
     }
-    if(url.indexOf("user") >= 0) {
+    if(url.indexOf("getAdminStatus") >= 0){
         return true;
-    }; 
+    }
     return url.indexOf("app") >= 0;
 };
 

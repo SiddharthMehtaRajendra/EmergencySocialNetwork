@@ -87,8 +87,7 @@ const join = async () => {
     const password = document.getElementById("password").value;
     const usernameValidation = validateUserName(username);
     const passwordValidation = validatePassword(password);
-    const adminStatusRes = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user/` + username);
-    console.log(adminStatusRes.data);
+    const adminStatusRes = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/getAdminStatus/` + username);
     if(usernameValidation.result && passwordValidation.result) {
         resetHint();
         axios({
@@ -102,7 +101,7 @@ const join = async () => {
         }).then((res) => {
             if(res.status === 200 && res.data) {
                 // user exists and isDoctor is set
-                if(res.data.success && res.data.exists && res.data.validationPass) {
+                if(res.data.success && res.data.exists && res.data.validationPass) {              
                     if(adminStatusRes.data.user.adminStatus === "inactive"){
                         resetHint();
                         Toast("Your account is inactive", "#F41C3B");

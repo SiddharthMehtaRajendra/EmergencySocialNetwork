@@ -65,9 +65,7 @@ const addPrivateDoctor = (user, profileuser) => {
             username1: doctor,
             username2: citizen
         }).then((res) => {
-            console.log(res);
         }).catch((err) => {
-            console.log(err);
         });
         BottomPopCard.close();
         socket.emit("CONFIRM_ADD_DOCTOR", {

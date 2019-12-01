@@ -38,6 +38,13 @@ AnnouncementSchema.statics.insertOne = async function (announcement) {
     };
 };
 
+AnnouncementSchema.statics.updateUsername = async function (oldUsername, newUsername) {
+    const res = await this.updateMany({ username: oldUsername }, {
+        username: newUsername
+    });
+    return res;
+};
+
 AnnouncementSchema.statics.announcementHistory = async function (smallestAnnouncementId, pageSize) {
     let res = [];
     let success = true;

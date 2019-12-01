@@ -52,6 +52,16 @@ ChatSchema.statics.getByChatId = async function (chatId) {
     };
 };
 
+ChatSchema.statics.updateUsername = async function (oldUsername, newUsername) {
+    const res = await this.updateMany({ from: oldUsername }, {
+        from: newUsername
+    });
+    await this.updateMany({ to: oldUsername }, {
+        to: newUsername
+    });
+    return res;
+};
+
 ChatSchema.statics.updateLatestMessage = async function (chatId, msg) {
     let res = {};
     let success = true;

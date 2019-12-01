@@ -19,6 +19,7 @@ const updateinformation = require("./updateinformation");
 const updateProfile = require("./updateProfile");
 const info = require("./info");
 const updateLocation = require("./updateLocation");
+const updateUsername = require("./updateUsername");
 
 const controller = {
     join,
@@ -39,6 +40,7 @@ const controller = {
     removePrivateDoctor,
     updateinformation,
     updateProfile,
+    updateUsername,
     info,
     updateLocation
 };

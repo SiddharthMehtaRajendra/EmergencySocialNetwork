@@ -82,10 +82,13 @@ app.post("/api/updateLocation", async (req, res) => {
     res.status(200).json(result);
 });
 
-app.post("/api/inactiveNotify", async (req, res) => {
-    console.log(req);
-    io.emit("INACTIVE", { data: req.username });
+app.get("/api/inactive/:username?", async (req, res, next) => {
+    io.emit("INACTIVE", { data: req.params.username });
+    const result = {"success": true};
+    res.status(200).json(result);
 });
+
+app.get("/api/getAdminStatus/:username?", controller.user);
 
 app.post("/api/postAnnouncement", async (req, res) => {
     const result = await controller.postAnnouncement(req, io);
@@ -101,6 +104,8 @@ app.post("/api/uploadMedicalId", async (req, res) => {
     const result = await controller.uploadMedicalId(req);
     res.status(200).json(result);
 });
+
+app.post("/api/updateUsername", controller.updateUsername);
 
 app.get("/api/search", controller.search);
 

@@ -48,6 +48,15 @@ MessageSchema.statics.insertOne = async function (message) {
     };
 };
 
+MessageSchema.statics.updateUsername = async function (oldUsername, newUsername) {
+    const res = await this.updateMany({ from: oldUsername }, {
+        from: newUsername
+    });
+    await this.updateMany({ to: oldUsername }, {
+        to: newUsername
+    });
+    return res;
+};
 MessageSchema.statics.latestPublic = async function () {
     let res = {};
     let success = true;

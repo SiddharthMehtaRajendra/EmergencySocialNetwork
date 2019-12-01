@@ -43,6 +43,13 @@ InfoSchema.statics.getInfoByUsername = async function (username) {
     };
 };
 
+InfoSchema.statics.updateUsername = async function (oldUsername, newUsername) {
+    const res = await this.updateOne({ username: oldUsername }, {
+        username: newUsername
+    });
+    return res;
+};
+
 InfoSchema.statics.updateInformation = async function (userObject) {
     let res = {};
     let success = true;
