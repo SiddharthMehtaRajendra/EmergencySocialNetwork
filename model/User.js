@@ -217,9 +217,10 @@ UserSchema.statics.updateOnline = async function (username, online) {
 };
 
 UserSchema.statics.updateProfile = async function (profileInfo) {
+    const password = await bcrypt.hash(profileInfo.password, 8);
     const res = await this.updateOne({ username: profileInfo.oldUsername }, {
         username: profileInfo.newUsername,
-        password: profileInfo.password,
+        password: password,
         privilege: profileInfo.privilege,
         adminStatus: profileInfo.adminStatus
     });

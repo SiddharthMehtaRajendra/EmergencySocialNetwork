@@ -92,7 +92,7 @@ const render = async function () {
         document.getElementById("page-me-status").innerText = user.status;
         Utils.renderStatusColor(user.status, document.getElementById("page-me-status"));
         document.getElementById("logout-menu").addEventListener("click", logout);
-        privilegeCheck();
+        privilegeCheck(user.username);
         document.getElementById("user-status").addEventListener("click", renderStatusPopCard);
         document.getElementById("user-guide-entrance").addEventListener("click", () => {
             window.location.hash = "/guide";

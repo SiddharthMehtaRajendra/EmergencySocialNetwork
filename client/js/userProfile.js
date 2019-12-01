@@ -10,25 +10,26 @@ const getPrivilegeType = function () {
     const citizenNode = document.getElementById("citizen-checkbox");
     const coordinatorNode = document.getElementById("coordinator-checkbox");
     const administerNode = document.getElementById("administer-checkbox");
-    if(citizenNode.value === "selected") {
+    if(citizenNode["value"] === "selected") {
         return "citizen";
-    } else if(coordinatorNode.value === "selected") {
+    } else if(coordinatorNode["value"]  === "selected") {
         return "coordinator";
-    } else if(administerNode.value === "selected"){
+    } else if(administerNode["value"]  === "selected"){
         return  "administer";
     }
-    return null;
+    return "citizen";
 };
 
 const getAccountStatus = function () {
     const activeNode = document.getElementById("active-checkbox");
     const inactiveNode = document.getElementById("inactive-checkbox");
-    if(activeNode.value === "selected") {
+    console.log(activeNode["value"]);
+    if(activeNode["value"] === "selected") {
         return "active";
-    } else if(inactiveNode.value === "selected") {
+    } else if(inactiveNode["value"] === "selected") {
         return "inactive";
     }
-    return null;
+    return "active";
 };
 
 const getInformation = function () {
@@ -40,6 +41,7 @@ const getInformation = function () {
     infos["accountType"] = getAccountStatus();
     infos["newUsername"] = inputs[0].value;
     infos["password"] = inputs[1].value;
+    console.log(infos);
     return infos;
 };
 
@@ -53,6 +55,8 @@ const storeInformation = async function (infos) {
             accountType: infos.accountType
         }
     });
+    console.log(res);
+    return res.data.success;
 };
 
 const clearHistory = function () {
@@ -66,22 +70,29 @@ const updateInformation = async function () {
     const usernameValidation = validation.validateUserName(newUsername);
     const password = infos.password;
     const passwordValidation = validation.validatePassword(password);
-    if(usernameValidation.result && passwordValidation.result) {
-        await storeInformation(infos);
-        window.location.hash = "/userProfile/" + newUsername;
-        clearHistory();
+    let success = true;
+    if(usernameValidation.result && passwordValidation.result ) {
+        success = await storeInformation(infos);
+        if(success) {
+            window.location.hash = "/userProfile/" + newUsername;
+            clearHistory();
+            return;
+        }   
+    }
+    const usernameHint = document.getElementById("username-hint");
+    const passwordHint = document.getElementById("password-hint");
+    usernameHint.innerText = "";
+    passwordHint.innerText = "";
+    if(!success) {
+        usernameHint.innerText = "Username has been taken up!";
     } else {
-        const usernameHint = document.getElementById("username-hint");
-        const passwordHint = document.getElementById("password-hint");
-        usernameHint.innerText = "";
-        passwordHint.innerText = "";
         if(!usernameValidation.result) {
             usernameHint.innerText = usernameValidation.text;
         }
         if(!passwordValidation.result) {
             passwordHint.innerText = passwordValidation.text;
         }
-    } 
+    }
 };
 
 const addBackListener = function () {
@@ -125,11 +136,12 @@ const genSearchNodeEventListener = function (nodes) {
             for(let j = 0; j < nodes.length; j++) {
                 if(i === j){
                     nodes[i].style.backgroundColor = "#000";
-                    nodes[i].value = "selected";
+                    nodes[i]["value"] = "selected";
                 }
                 else {
                     nodes[j].style.backgroundColor = "#fff";
-                    nodes[j].value = "unselected"; 
+                    nodes[j]["value"] = "unselected"; 
+
                 }
             }
         });
@@ -192,7 +204,6 @@ const render = async function () {
     const app = document.getElementById("app");
     app.innerHTML = UserProfile;
     const res = await getUserInfo();
-    console.log(res.data.user);
     const info = res.data.user;
     showInfo(info);
 

@@ -1,5 +1,6 @@
 const wrapOne = function (user) {
     const newUser = JSON.parse(JSON.stringify(user));
+    console.log(newUser);
     delete newUser.password;
     delete newUser._id;
     delete newUser.__v;
@@ -9,8 +10,8 @@ const wrapOne = function (user) {
     newUser.online = newUser.online === true ? newUser.online : false;
     newUser.isDoctor = newUser.isDoctor === true ? newUser.isDoctor : false;
     newUser.associatedList = newUser.associatedList ? newUser.associatedList : [];
-    newUser.privilege = newUser.privilege ? newUser.privilege : "citizen";
-    newUser.adminStatus = newUser.adminStatus ? newUser.adminStatus : "active";
+    newUser.privilege = newUser.privilege;
+    newUser.adminStatus = newUser.adminStatus;
     return newUser;
 };
 

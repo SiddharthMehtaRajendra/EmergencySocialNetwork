@@ -3,8 +3,13 @@ const User = require("../../model/User");
 const updateProfile = async function (req, res, next) {
     const updateRes = {success: false};
     const newUsername = req.body.params.newUsername;
-    try {
-        const userExisted = await User.exists(newUsername);
+    let userExisted;
+    try { 
+        if(newUsername === req.body.params.oldUsername){
+            userExisted = false;
+        } else {
+            userExisted = await User.exists(newUsername);
+        }
         if(userExisted){
             res.status(200).json({
                 success: false,

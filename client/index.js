@@ -12,7 +12,7 @@ import Error from "./view/error.html";
 import Information from "./view/information.html";
 import InfoPage from "./view/infopage.html";
 import UserProfile from "./view/userProfile.html";
-import updateUserProfile from "./view/updateUserProfile.html";
+
 import guide from "./js/guide";
 import chats from "./js/chats";
 import chat from "./js/chat";
@@ -22,7 +22,6 @@ import directory from "./js/directory";
 import search from "./js/search";
 import shareList from "./js/shareList";
 import postAnnouncement from "./js/postAnnouncement";
-import profile from "./js/profile";
 import profileList from "./js/profileList";
 import informationController from "./js/information";
 import locationSharing from "./js/locationSharing";
@@ -138,7 +137,6 @@ router.on("/profile/:username", async () => {
 }).resolve();
 
 router.on("/userProfile/:username", async () => {
-    app.innerHTML = UserProfile;
     await profileController.view();
 }).resolve();
 
@@ -148,7 +146,6 @@ router.on("/information", async () => {
 }).resolve();
 
 router.on("/updateUserProfile/:username", async () => {
-    app.innerHTML = updateUserProfile;
     await profileController.update();
 }).resolve();
 
