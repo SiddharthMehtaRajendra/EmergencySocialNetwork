@@ -152,19 +152,15 @@ socket.on("INACTIVE", async (data) => {
         window.location.hash = "#/join";
         const notify = "Your accoount is set to inactive";
         Toast(notify, null, null, 5000);
-        window.state.user.username = newUsername;
     }
 });
 
 socket.on("REFRESH", async (data) => {
-    console.log(123);
     const oldUsername = data.oldUsername;
     const newUsername = data.newUsername;
-    console.log(oldUsername);
-    console.log(window.state.user.username);
     if(oldUsername === window.state.user.username) {
-        // window.location.reload();
-        const notify = "Your profile is changed";
+        window.location.hash = "#/join";
+        const notify = "Your information is changed";
         Toast(notify, null, null, 5000);
     }
 });
