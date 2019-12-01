@@ -20,11 +20,11 @@ npm install
 ```
 Start express server
 ```
-npm run watch
+npm run server
 ```
 Start front-end resource server (support hot module reload)
 ```
-npm start
+npm run watch
 ```
 Build front-end resource to deploy (no need when develop)
 ```
