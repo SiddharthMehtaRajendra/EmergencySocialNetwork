@@ -41,7 +41,6 @@ const getInformation = function () {
     infos["accountType"] = getAccountStatus();
     infos["newUsername"] = inputs[0].value;
     infos["password"] = inputs[1].value;
-    console.log(infos);
     return infos;
 };
 
@@ -55,7 +54,6 @@ const storeInformation = async function (infos) {
             accountType: infos.accountType
         }
     });
-    console.log(res);
     return res.data.success;
 };
 

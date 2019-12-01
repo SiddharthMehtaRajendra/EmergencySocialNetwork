@@ -72,11 +72,11 @@ const registerAsCitizen = () => {
     register(isDoctor);
 };
 
-const doctorCheck = () => {
+const doctorCheck = async () => {
     BottomPopCard.init("Do you register as a doctor?", registerAsDoctor, registerAsCitizen);
 };
 
-const join = () => {
+const join = async () => {
     const usernameHint = document.getElementById("username-hint");
     const passwordHint = document.getElementById("password-hint");
     const resetHint = () => {
@@ -87,8 +87,8 @@ const join = () => {
     const password = document.getElementById("password").value;
     const usernameValidation = validateUserName(username);
     const passwordValidation = validatePassword(password);
+    const adminStatusRes = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user/` + username);
     if(usernameValidation.result && passwordValidation.result) {
-        console.log( `${SERVER_ADDRESS}${API_PREFIX}/joinCheck`);
         resetHint();
         axios({
             method: "post",
@@ -102,6 +102,11 @@ const join = () => {
             if(res.status === 200 && res.data) {
                 // user exists and isDoctor is set
                 if(res.data.success && res.data.exists && res.data.validationPass) {
+                    if(adminStatusRes.data.user.adminStatus === "inactive"){
+                        resetHint();
+                        Toast("Your account is inactive", "#F41C3B");
+                        return;
+                    }
                     reset();
                     setToken(res.data.token);
                     socket.open();
