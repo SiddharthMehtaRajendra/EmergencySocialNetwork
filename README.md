@@ -30,7 +30,7 @@ Build front-end resource to deploy (no need when develop)
 ```
 npm run build
 ```
-Open localhost:3000 in browser
+Open localhost:3000/app/# in browser (We use hash route to build a single page app)
 
 ## Code Structure
 ```
