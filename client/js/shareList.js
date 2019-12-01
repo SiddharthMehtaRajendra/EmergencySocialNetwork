@@ -1,7 +1,7 @@
 import axios from "axios";
 import { SERVER_ADDRESS, API_PREFIX } from "./constant/serverInfo";
 import "../style/shareList.less";
-import ShareList from "../view/ShareList.html";
+import ShareList from "../view/shareList.html";
 import Utils from "./lib/appUtils";
 
 const fetchData = async function () {
