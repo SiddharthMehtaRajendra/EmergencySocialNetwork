@@ -12,6 +12,7 @@
             <div class="input-container"> 
                 <input type="text" class="info-input"/>
             </div>
+            <div class="error-hint" id="username-hint"></div>
         </div>
         <div class="right-thin-line"></div>
 
@@ -20,6 +21,7 @@
             <div class="input-container">
                 <input type="text" class="info-input"/>
             </div>
+            <div class="error-hint" id="password-hint"></div>
         </div>
         <div class="right-thin-line"></div>
 
@@ -27,7 +29,7 @@
             <div class="menu-text">Privilege Level</div>
             <div class="privilege-options" id="privilege-options">
                 <div class="citizen privilege-class">
-                    <div class="privilege-checkbox checkbox" id="citizen-checkbox" value="unselected"></div>
+                    <div class="privilege-checkbox checkbox" id="citizen-checkbox" value="selected"></div>
                     <div class="citizen text">Citizen</div>
                 </div>
                 <div class="coordinator privilege-class">
@@ -46,7 +48,7 @@
             <div class="menu-text">Account Status</div>
             <div class="status-options" id="status-options">
                 <div class="active status-class">
-                    <div class="status-checkbox checkbox" id="active-checkbox" value="unselected"></div>
+                    <div class="status-checkbox checkbox" id="active-checkbox" value="selected"></div>
                     <div class="active text">Active</div>
                 </div>
                 <div class="inactive status-class">

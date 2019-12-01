@@ -96,7 +96,7 @@ const renderUsers = function (users, container) {
 
 const gobackListener = () => {
     document.getElementById("navbar-back-arrow").addEventListener("click", () => {
-        window.history.go(-1);
+        window.location.hash = "/me";
     });
 };
 

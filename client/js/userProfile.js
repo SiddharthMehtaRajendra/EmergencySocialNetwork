@@ -1,15 +1,10 @@
 import axios from "axios";
 import { SERVER_ADDRESS, API_PREFIX } from "./constant/serverInfo";
+import validation from "./lib/validation";
+import updateUserProfile from "../view/updateUserProfile.html";
+import UserProfile from "../view/userProfile.html";
 // import "../style/chat.less";
 // import Chat from "../view/chat.html";
-const getInformation = function () {
-    const inputs = document.getElementsByClassName("info-input");
-    const infos = [];
-    for(let i = 0; i < inputs.length; i++) {
-        infos.push(inputs[i].value);
-    };
-    return infos;
-};
 
 const getPrivilegeType = function () {
     const citizenNode = document.getElementById("citizen-checkbox");
@@ -36,27 +31,57 @@ const getAccountStatus = function () {
     return null;
 };
 
-const storeInformation = async function (infos) {
-    const privilegeType = getPrivilegeType();
-    const accountType = getAccountStatus();
-    const res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/updateProfile`, {
-        params: {
-            username: infos[0],
-            password: infos[1],
-            getPrivilegeType: privilegeType,
-            contactNumber: accountType
-        }
-    });
+const getInformation = function () {
+    const inputs = document.getElementsByClassName("info-input");
+    const infos = {};
+    const oldUsername = window.location.hash.split("/").pop();
+    infos["oldUsername"] = oldUsername;
+    infos["privilegeType"] = getPrivilegeType();
+    infos["accountType"] = getAccountStatus();
+    infos["newUsername"] = inputs[0].value;
+    infos["password"] = inputs[1].value;
+    return infos;
 };
 
-const updateInformation = async function () {
-    const infos = getInformation();
-    await storeInformation(infos);
+const storeInformation = async function (infos) { 
+    const res = await axios.post(`${SERVER_ADDRESS}${API_PREFIX}/updateProfile`, {
+        params: {
+            oldUsername: infos.oldUsername,
+            newUsername: infos.newUsername,
+            password: infos.password,
+            privilegeType: infos.privilegeType,
+            accountType: infos.accountType
+        }
+    });
 };
 
 const clearHistory = function () {
     window.state.infoList = null;
     window.state.shareList = null;
+};
+
+const updateInformation = async function () {
+    const infos = getInformation();
+    const newUsername = infos.newUsername;
+    const usernameValidation = validation.validateUserName(newUsername);
+    const password = infos.password;
+    const passwordValidation = validation.validatePassword(password);
+    if(usernameValidation.result && passwordValidation.result) {
+        await storeInformation(infos);
+        window.location.hash = "/userProfile/" + newUsername;
+        clearHistory();
+    } else {
+        const usernameHint = document.getElementById("username-hint");
+        const passwordHint = document.getElementById("password-hint");
+        usernameHint.innerText = "";
+        passwordHint.innerText = "";
+        if(!usernameValidation.result) {
+            usernameHint.innerText = usernameValidation.text;
+        }
+        if(!passwordValidation.result) {
+            passwordHint.innerText = passwordValidation.text;
+        }
+    } 
 };
 
 const addBackListener = function () {
@@ -67,36 +92,34 @@ const addBackListener = function () {
             clearHistory();
         });
     };
-  
+
     document.getElementsByClassName("navbar-back-arrow")[0].addEventListener("click", () => {
-        window.history.go(-1);
+        window.location.hash = "/profileList";
+        window.location.reload();
         clearHistory();
     });
 
 };
 
-const addMessageListener = function () {
+const addModifyListener = function () {
     document.getElementsByClassName("message-button")[0].addEventListener("click", () => {
         const username = window.location.hash.split("/").pop();
-        window.location.hash = "/updateUserProfile";
+        window.location.hash = "/updateUserProfile/" + username;
     });
 };
 
 const showInfo = function (info) {
     const infoContainers = document.getElementsByClassName("info-container");
     const infoList = [];
-    infoList.push(info.name);
-    infoList.push(info.phoneNumber);
-    infoList.push(info.address);
-    infoList.push(info.contactNumber);
-    infoList.push(info.selfIntro);
+    infoList.push(info.username);
+    infoList.push(info.privilege);
+    infoList.push(info.adminStatus);
     for(let i = 0; i < infoContainers.length; i++) {
         infoContainers[i].innerHTML = infoList[i];
     };
 };
 
 const genSearchNodeEventListener = function (nodes) {
-    console.log(nodes);
     for(let i = 0; i < nodes.length; i++){
         nodes[i].addEventListener("click", () => {
             for(let j = 0; j < nodes.length; j++) {
@@ -130,7 +153,7 @@ const addStatusOptionListener = function () {
 
 const getUserInfo = async function () {
     const username = window.location.hash.split("/").pop();
-    const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/info/` + username);
+    const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user/` + username);
     return res;
 };
 
@@ -138,18 +161,9 @@ const storeRecord = async function () {
     window.state.infoList = getInformation();
 };
 
-const addShareListListener = function () {
-    document.getElementsByClassName("select-button")[0].addEventListener("click", () => {
-        storeRecord();
-        window.location.hash = "/shareList";
-    });
-};
-
 const addUpdateListener = function () {
     document.getElementsByClassName("update-button choice")[0].addEventListener("click", () => {
         updateInformation();
-        window.history.go(-1);
-        clearHistory();
     });
 };
 
@@ -164,6 +178,8 @@ const recover = async function () {
 };
 
 const update = async function () {
+    const app = document.getElementById("app");
+    app.innerHTML = updateUserProfile;
     addBackListener();
     addUpdateListener();
     addStatusOptionListener();
@@ -173,17 +189,19 @@ const update = async function () {
 };
 
 const render = async function () {
+    const app = document.getElementById("app");
+    app.innerHTML = UserProfile;
     const res = await getUserInfo();
-    console.log(window.state.user.username);
-    if(res.data.success && res.data.info.shareList.indexOf(window.state.user.username) >= 0) {
-        showInfo(res.data.info);
-    };
+    console.log(res.data.user);
+    const info = res.data.user;
+    showInfo(info);
+
 };
 
 const view = async function () {
-    addBackListener();
-    addMessageListener();
     render();
+    addBackListener();
+    addModifyListener(); 
 };
 
 const profileController = {

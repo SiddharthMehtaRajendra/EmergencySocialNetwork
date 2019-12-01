@@ -107,7 +107,7 @@ app.post("/api/updateinformation", controller.updateinformation);
 
 app.get("/api/info/:username?", controller.info);
 
-app.get("/api/updateProfile", controller.updateProfile);
+app.post("/api/updateProfile", controller.updateProfile);
 
 http.listen(port, () => {
     console.log(`Express server start, listening on port:${port} ...`);

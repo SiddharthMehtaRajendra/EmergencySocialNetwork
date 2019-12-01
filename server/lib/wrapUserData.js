@@ -7,8 +7,10 @@ const wrapOne = function (user) {
     newUser.status = newUser.status ? newUser.status : "ok";
     newUser.username = newUser.username ? newUser.username : null;
     newUser.online = newUser.online === true ? newUser.online : false;
-    newUser.isDoctor = newUser.isDoctor === true ? newUser.isDoctor : false,
+    newUser.isDoctor = newUser.isDoctor === true ? newUser.isDoctor : false;
     newUser.associatedList = newUser.associatedList ? newUser.associatedList : [];
+    newUser.privilege = newUser.privilege ? newUser.privilege : "citizen";
+    newUser.adminStatus = newUser.adminStatus ? newUser.adminStatus : "active";
     return newUser;
 };
 

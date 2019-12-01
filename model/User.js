@@ -59,6 +59,12 @@ const UserSchema = new mongoose.Schema({
     },
     sharingLocationOpen: {
         type: Boolean
+    },
+    privilege: {
+        type: String
+    },
+    adminStatus: {
+        type: String
     }
 });
 
@@ -207,6 +213,16 @@ UserSchema.statics.updateStatus = async function (username, status) {
 
 UserSchema.statics.updateOnline = async function (username, online) {
     const res = await this.updateOne({ username: username }, { online: online });
+    return res;
+};
+
+UserSchema.statics.updateProfile = async function (profileInfo) {
+    const res = await this.updateOne({ username: profileInfo.oldUsername }, {
+        username: profileInfo.newUsername,
+        password: profileInfo.password,
+        privilege: profileInfo.privilege,
+        adminStatus: profileInfo.adminStatus
+    });
     return res;
 };
 

@@ -147,7 +147,7 @@ router.on("/information", async () => {
     await informationController.update();
 }).resolve();
 
-router.on("/updateUserProfile", async () => {
+router.on("/updateUserProfile/:username", async () => {
     app.innerHTML = updateUserProfile;
     await profileController.update();
 }).resolve();

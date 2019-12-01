@@ -16,7 +16,10 @@ const join = async function(req,res,next){
         status: "ok",
         statusUpdateTime: new Date(),
         online: true,
-        isDoctor: req.body.isDoctor
+        isDoctor: req.body.isDoctor,
+        privilege: "citizen",
+        shareList: [req.body.username],
+        adminStatus: "active"
     };
     if(validate(user.username, user.password)) {
         const result = await User.addOneUser(user);
