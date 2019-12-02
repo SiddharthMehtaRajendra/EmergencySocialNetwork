@@ -19,7 +19,7 @@ const getDirectoryDisplayType = function () {
 const fetchData = async function () {
     let friendNameList;
     await me.fetchData();
-    if(!!window.state.user.associatedList) {
+    if(!window.state.user.associatedList) {
         friendNameList = window.state.user.associatedList;
     } else {
         friendNameList = [];

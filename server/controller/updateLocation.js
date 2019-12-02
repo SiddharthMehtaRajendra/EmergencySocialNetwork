@@ -3,7 +3,6 @@ const User = require("../../model/User");
 const updateLocation = async function (req, io) {
     try {
         await User.updateLocation(req.username, req.body.location, req.body.sharingLocationOpen);
-        console.log(req.body);
         io.emit("UPDATE_USER_LOCATION",{
             username: req.username,
             location: req.body.location,

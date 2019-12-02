@@ -6,9 +6,10 @@ import profile from "../profile";
 import chats from "../chats";
 import me from "../me";
 import announcement from "../announcements";
-import { SERVER_ADDRESS } from "../constant/serverInfo";
 import Toast from "../lib/toast";
 import BottomPopCard from "../../components/bottomPopCard/index";
+import axios from "axios";
+import { API_PREFIX, SERVER_ADDRESS } from "../constant/serverInfo";
 const turf = require("@turf/turf");
 
 const ee = require("../lib/eventEmitter");
@@ -134,6 +135,33 @@ socket.on("UPDATE_USER_LOCATION", (data) => {
             user.distance = +turf.distance(from, to, { units: "miles" }).toFixed(2);
         }
         ee.emit("UPDATE_USER_LOCATION", data);
+    }
+});
+
+const fetchData = async function (username) {
+    const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user/username`);
+    if(res.status === 200 && res.data.success && res.data.user) {
+        window.state.user = res.data.user;
+    }
+};
+
+socket.on("INACTIVE", async (data) => {
+    const oldUsername = data.oldUsername;
+    const newUsername = data.newUsername;
+    if(oldUsername === window.state.user.username) {
+        window.location.hash = "#/join";
+        const notify = "Your accoount is set to inactive";
+        Toast(notify, null, null, 5000);
+    }
+});
+
+socket.on("REFRESH", async (data) => {
+    const oldUsername = data.oldUsername;
+    const newUsername = data.newUsername;
+    if(oldUsername === window.state.user.username) {
+        window.location.hash = "#/join";
+        const notify = "Your information is changed";
+        Toast(notify, null, null, 5000);
     }
 });
 

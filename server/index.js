@@ -82,6 +82,20 @@ app.post("/api/updateLocation", async (req, res) => {
     res.status(200).json(result);
 });
 
+app.get("/api/inactive/:username?", async (req, res, next) => {
+    io.emit("INACTIVE", { oldUsername: req.params.username, newUsername: req.query.newUsername});
+    const result = {"success": true};
+    res.status(200).json(result);
+});
+
+app.get("/api/refresh/:username?", async (req, res, next) => {
+    io.emit("REFRESH", { oldUsername: req.params.username, newUsername: req.query.newUsername});
+    const result = {"success": true};
+    res.status(200).json(result);
+});
+
+app.get("/api/getAdminStatus/:username?", controller.user);
+
 app.post("/api/postAnnouncement", async (req, res) => {
     const result = await controller.postAnnouncement(req, io);
     res.status(200).json(result);
@@ -97,6 +111,8 @@ app.post("/api/uploadMedicalId", async (req, res) => {
     res.status(200).json(result);
 });
 
+app.post("/api/updateUsername", controller.updateUsername);
+
 app.get("/api/search", controller.search);
 
 app.post("/api/addPrivateDoctor", controller.addPrivateDoctor);
@@ -106,6 +122,8 @@ app.post("/api/removePrivateDoctor", controller.removePrivateDoctor);
 app.post("/api/updateinformation", controller.updateinformation);
 
 app.get("/api/info/:username?", controller.info);
+
+app.post("/api/updateProfile", controller.updateProfile);
 
 http.listen(port, () => {
     console.log(`Express server start, listening on port:${port} ...`);

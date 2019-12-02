@@ -16,8 +16,10 @@ const saveHelpCenter = require("./saveHelpCenter");
 const uploadMedicalId = require("./uploadMedicalId");
 const preferredHelpCenters = require("./preferredHelpCenters");
 const updateinformation = require("./updateinformation");
+const updateProfile = require("./updateProfile");
 const info = require("./info");
 const updateLocation = require("./updateLocation");
+const updateUsername = require("./updateUsername");
 
 const controller = {
     join,
@@ -37,6 +39,8 @@ const controller = {
     addPrivateDoctor,
     removePrivateDoctor,
     updateinformation,
+    updateProfile,
+    updateUsername,
     info,
     updateLocation
 };

@@ -35,7 +35,16 @@ const fetchData = async function () {
     }
 };
 
-const renderAnnouncements = function (announcements, container, beforeNode) {
+const getAdminStatus = async function (userName) {
+    const userAdminStatusRes = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/getAdminStatus/` + userName);
+    if(userAdminStatusRes.data.user.adminStatus === "inactive"){
+        return true;
+    } else {
+        return false;
+    }
+};
+
+const renderAnnouncements = async function (announcements, container, beforeNode) {
     if(!announcements) {
         announcements = window.state.announcements;
     }
@@ -43,7 +52,12 @@ const renderAnnouncements = function (announcements, container, beforeNode) {
         beforeNode = document.getElementById("blank-announcement");
     }
     if(container) {
-        announcements.forEach((announcement, index) => {
+        for(let i = 0; i < announcements.length; i++){
+            let announcement = announcements[i];
+            let adminStatus = await getAdminStatus(announcement["from"]);
+            if(adminStatus) {
+                continue;
+            };         
             const announcementItem = document.createElement("div");
             const citizenName = document.createElement("div");
             const announcementTitle = document.createElement("div");
@@ -69,7 +83,18 @@ const renderAnnouncements = function (announcements, container, beforeNode) {
             announcementItem.appendChild(announcementInfo);
             container.insertBefore(announcementItem, beforeNode);
             container.insertBefore(bottomThinLine, beforeNode);
-        });
+        };
+    }
+};
+
+const privilegeCheck = async function (username) {
+    const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/user/` + username);
+    const privilege = res.data.user.privilege;
+    console.log(privilege);
+    if(privilege === "administer" || privilege === "coordinator") {
+        addPostEventListener();
+    } else {
+        document.getElementById("post-btn").style.display = "none";
     }
 };
 
@@ -86,7 +111,7 @@ const render = async function () {
         await renderAnnouncements(null, allAnnouncementsDom);
     }
     addSearchListener();
-    addPostEventListener();
+    await privilegeCheck(window.state.user.username);
 };
 
 const announcements = {
