@@ -2,8 +2,8 @@ import axios from "axios";
 import { SERVER_ADDRESS, API_PREFIX } from "./constant/serverInfo";
 import "../style/shareList.less";
 import ShareList from "../view/shareList.html";
-import Utils from "./lib/appUtils";
 import directory from "./directory";
+import checkIcon from "../resource/checkIcon.svg";
 
 const fetchData = async function () {
     const res = await axios.get(`${SERVER_ADDRESS}${API_PREFIX}/users`);
@@ -31,9 +31,27 @@ const addButtonListener = function (node) {
 
 };
 
+const buildCheckIcon = function () {
+    const img = document.createElement("img");
+    img.src = checkIcon;
+    img.className = "check-icon";
+    return img;
+};
+
 const renderUsers = function (users, container) {
     users.forEach((user, index) => {
-        const userCard = directory.buildSingleUser(user, () => {});
+        const userCard = directory.buildSingleUser(user, () => {
+            if(window.state.shareMap[user.username]){
+                delete window.state.shareMap[user.username];
+                document.getElementById("u_" + user.username).classList.remove("check");
+            } else {
+                window.state.shareMap[user.username] = true;
+                document.getElementById("u_" + user.username).classList.add("check");
+            }
+        });
+        userCard.appendChild(buildCheckIcon());
+        userCard.classList.add("un-check");
+        userCard.id = "u_" + user.username;
         const bottomThinLine = directory.buildBottomLine();
         if(index !== users.length - 1) {
             container.appendChild(userCard);
@@ -56,20 +74,13 @@ const addBackListener = function () {
     });
 };
 
-const getshareList = function () {
-    const nodes = document.getElementsByClassName("userContainer");
-    const newList = [];
-    for(let i = 0; i < nodes.length; i++) {
-        if(nodes[i].getElementsByClassName("selectedButton")[0].getAttribute("selected") === "yes") {
-            newList.push(nodes[i].getElementsByClassName("username")[0].innerHTML);
-        }
-    }
-    return newList;
+const getShareList = function () {
+    return Object.keys(window.state.shareMap);
 };
 
 const addSubmitListener = function () {
     document.getElementsByClassName("update-button")[0].addEventListener("click", () => {
-        window.state.shareList = getshareList();
+        window.state.shareList = getShareList();
         window.history.go(-1);
     });
 };
@@ -79,6 +90,7 @@ const render = async function () {
     app.innerHTML = ShareList;
     addBackListener();
     const directory = document.getElementById("user-directory");
+    window.state.shareMap = {};
     if(!window.state.users) {
         await fetchData();
     }

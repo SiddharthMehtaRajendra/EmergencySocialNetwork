@@ -88,6 +88,11 @@ const buildSingleUser = function (user, clickCallBack) {
     const userStatus = document.createElement("div");
     userCard.className = "single-user common-list-item";
     userCard.addEventListener("click", clickCallBack);
+    if(!clickCallBack) {
+        userCard.addEventListener("click", () => {
+            window.location.hash = "/profile/" + user.username;
+        });
+    }
     userName.className = "username";
     userAvatar.className = "avatar";
     userStatus.className = "status-circle";
@@ -98,9 +103,6 @@ const buildSingleUser = function (user, clickCallBack) {
     if(!user.online) {
         userCard.classList.add("offline");
     }
-    userCard.addEventListener("click", () => {
-        window.location.hash = "/profile/" + user.username;
-    });
     userCard.appendChild(userAvatar);
     userCard.appendChild(userStatus);
     userCard.appendChild(userName);

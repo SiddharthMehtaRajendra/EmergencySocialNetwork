@@ -1,10 +1,22 @@
 .page-shareList {
-    #user-directory{
+    #user-directory {
         margin-top: 65px;
         margin-bottom: 40px;
     }
 
-    .selectedButton{
+    .single-user {
+        &.check {
+            .check-icon {
+                visibility: visible;
+            }
+        }
+        .check-icon {
+            visibility: hidden;
+        }
+
+    }
+
+    .selectedButton {
         width: 35px;
         height: 22px;
         background-color: #D8D8D8;
@@ -13,14 +25,14 @@
         margin-right: 46px;
     }
 
-    .submit-choice{
+    .submit-choice {
         display: flex;
         justify-content: space-between;
         font-size: 20px;
         font-weight: 600;
     }
 
-    .choice{
+    .choice {
         width: 50%;
         text-align: center;
         height: 60px;
