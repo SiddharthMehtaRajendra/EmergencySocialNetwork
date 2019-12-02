@@ -59,6 +59,7 @@ const renderPreferredHelpCenters = async function () {
             const nearbySearchItem = document.createElement("div");
             const searchItemName = document.createElement("div");
             const searchItemAddress = document.createElement("div");
+            const content = document.createElement("div");
             const medicalIdIcon = document.createElement("span");
             const bottomThinLine = document.createElement("div");
             nearbySearchItem.className = "single-search-item";
@@ -68,11 +69,14 @@ const renderPreferredHelpCenters = async function () {
             medicalIdIcon.className = "add-medical-id";
             medicalIdIcon.id = "add-medical-id-" + i;
             nearbySearchItem.id = "search-item-" + i;
+            content.id = "search-content-" + i;
             searchItemName.innerText = preferredHelpCenters[i].helpCenterName;
             searchItemAddress.innerText = preferredHelpCenters[i].helpCenterAddress;
-            nearbySearchItem.appendChild(searchItemName);
-            nearbySearchItem.appendChild(searchItemAddress);
+            content.appendChild(searchItemName);
+            content.appendChild(searchItemAddress);
+            nearbySearchItem.appendChild(content);
             if(preferredHelpCenters[i].medicalIdUploaded === false) {
+                content.className = "preferred-help-content";
                 addMedicalIdListener(medicalIdIcon);
                 nearbySearchItem.appendChild(medicalIdIcon);
             }
