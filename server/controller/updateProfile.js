@@ -4,11 +4,13 @@ const updateProfile = async function (req, res, next) {
     const updateRes = {success: false};
     const newUsername = req.body.params.newUsername;
     let userExisted;
-    try { 
+    try {
         if(newUsername === req.body.params.oldUsername){
             userExisted = false;
+            console.log("test1");
         } else {
             userExisted = await User.exists(newUsername);
+            console.log(userExisted);
         }
         if(userExisted){
             res.status(200).json({
@@ -16,6 +18,7 @@ const updateProfile = async function (req, res, next) {
                 err: "username exsiteed",
                 info: null,
             });
+            console.log("test3");
         } else {
             const profileInfo = {
                 oldUsername: req.body.params.oldUsername,
@@ -29,6 +32,7 @@ const updateProfile = async function (req, res, next) {
                 success: true,
                 info: updateRes.res,
             });
+            console.log("test4");
         }  
     } catch (e) {
         res.status(200).json({
