@@ -43,7 +43,6 @@ const render = async function () {
     }
     addupdateInfoListener();
     if(window.state.user) {
-        
         const user = window.state.user;
         if(user.avatar.indexOf("#") === 0) {
             document.getElementById("page-me-avatar").style.backgroundColor = user.avatar;
