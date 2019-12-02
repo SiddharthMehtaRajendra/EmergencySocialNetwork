@@ -39,20 +39,24 @@ const renderNearbySearchResults = function (nearbySearchItems, beforeNode) {
             const nearbySearchItem = document.createElement("div");
             const searchItemName = document.createElement("div");
             const searchItemAddress = document.createElement("div");
-            const preferredIcon = document.createElement("span");
+            const content = document.createElement("div");
+            const preferredIcon = document.createElement("div");
             const bottomThinLine = document.createElement("div");
             nearbySearchItem.className = "single-search-item";
             searchItemAddress.className = "nearby-item-address";
             searchItemName.className = "entity-name";
             bottomThinLine.className = "right-thin-line";
+            content.className = "nearby-search-content";
             preferredIcon.className = "add-pref-btn";
             preferredIcon.id = "add-pref-btn-" + index;
             nearbySearchItem.id = "search-item-" + index;
+            content.id = "search-content-" + index;
             addPreferredIconListener(preferredIcon);
             searchItemName.innerText = nearbySearchNode.name;
             searchItemAddress.innerText = nearbySearchNode.vicinity;
-            nearbySearchItem.appendChild(searchItemName);
-            nearbySearchItem.appendChild(searchItemAddress);
+            content.appendChild(searchItemName);
+            content.appendChild(searchItemAddress);
+            nearbySearchItem.appendChild(content);
             nearbySearchItem.appendChild(preferredIcon);
             allNearbyPlaces.insertBefore(nearbySearchItem, beforeNode);
             allNearbyPlaces.insertBefore(bottomThinLine, beforeNode);
@@ -81,9 +85,31 @@ const setupNavBar = function () {
 };
 
 const renderSearchResult = function (data) {
+    document.getElementById("nearby-search-block").style.display = "none";
+    document.getElementById("nearby-center-label").style.display = "block";
     document.getElementById("all-help-centers").innerHTML = "<div class='_blank_80height' id='blank-help-center'></div>";
     const beforeNode = document.getElementById("blank-help-center");
     renderNearbySearchResults(data, beforeNode);
+};
+
+const genSearchNodeEventListener = function (node, otherNodeOne, otherNodeTwo) {
+    return () => {
+        node.style.backgroundColor = "#000";
+        node.value = "selected";
+        otherNodeOne.style.backgroundColor = "#fff";
+        otherNodeTwo.style.backgroundColor = "#fff";
+        otherNodeOne.value = "unselected";
+        otherNodeTwo.value = "unselected";
+    };
+};
+
+const addSearchOptionListener = function () {
+    const hospitalSearchNode = document.getElementById("hospital-checkbox");
+    const policeSearchNode = document.getElementById("police-checkbox");
+    const fireStationSearchNode = document.getElementById("fire-station-checkbox");
+    hospitalSearchNode.addEventListener("click", genSearchNodeEventListener(hospitalSearchNode, policeSearchNode, fireStationSearchNode));
+    policeSearchNode.addEventListener("click", genSearchNodeEventListener(policeSearchNode, hospitalSearchNode, fireStationSearchNode));
+    fireStationSearchNode.addEventListener("click", genSearchNodeEventListener(fireStationSearchNode, hospitalSearchNode, policeSearchNode));
 };
 
 const searchHelpCenterData = async function () {
@@ -93,14 +119,19 @@ const searchHelpCenterData = async function () {
             keywords: keywords
         }
     });
-    const app = document.getElementById("app");
-    app.innerHTML = SearchHelpResults;
-    setupNavBar();
     renderSearchResult(res.data.results);
 };
 
+const renderSearchHelpCenters = async function() {
+    const app = document.getElementById("app");
+    app.innerHTML = SearchHelpResults;
+    document.getElementById("search-icon-help-center").addEventListener("click", searchHelpCenterData);
+    addSearchOptionListener();
+    setupNavBar();
+};
+
 const searchHelpCenters = {
-    searchHelpCenterData
+    renderSearchHelpCenters
 };
 
 export default searchHelpCenters;

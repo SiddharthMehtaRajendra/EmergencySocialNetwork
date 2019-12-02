@@ -26,6 +26,7 @@ import initRouter from "./js/initRouter";
 import initJoinPage from "./js/join";
 import BottomTab from "./components/bottomTab";
 import preferredHelpCenters from "./js/preferredHelpCenter";
+import searchHelpCenters from "./js/searchHelpResults";
 
 import axios from "axios";
 import Cookie from "js-cookie";
@@ -121,6 +122,10 @@ router.on("/postAnnouncement", async () => {
 
 router.on("/preferredHelpCenters", async () => {
     await preferredHelpCenters.renderPreferredHelpCenters();
+}).resolve();
+
+router.on("/nearbyHelpCenters", async () => {
+    await searchHelpCenters.renderSearchHelpCenters();
 }).resolve();
 
 router.on("/profile/:username", async () => {

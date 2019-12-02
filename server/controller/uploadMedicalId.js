@@ -6,7 +6,6 @@ const uploadMedicaID = async function (req){
     const medicalIdUploaded = true;
     const isSuccess = await User.uploadMedicalID(username, helpCenterName, medicalIdUploaded);
     /* istanbul ignore else */
-    console.log(isSuccess);
     return isSuccess;
 }
 
