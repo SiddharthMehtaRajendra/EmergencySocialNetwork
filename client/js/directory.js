@@ -117,7 +117,7 @@ const buildBottomLine = function () {
 
 const renderUsers = function (users, container) {
     users.forEach((user, index) => {
-        const userCard = buildSingleUser(user, () => {});
+        const userCard = buildSingleUser(user);
         const bottomThinLine = buildBottomLine();
         if(index !== users.length - 1) {
             container.appendChild(userCard);
