@@ -10,8 +10,8 @@ const setupNavBar = function () {
     });
 };
 
-const uploadMedicalId = function (e) {
-    const preference = e.path[1].innerText.split("\n");
+const uploadMedicalId = function (event) {
+    const preference = event.target.parentElement.innerText.split("\n");
     const preferenceName = preference[0];
     if(preferenceName) {
         axios.post(`${SERVER_ADDRESS}${API_PREFIX}/uploadMedicalId/`, {
@@ -70,6 +70,7 @@ const renderPreferredHelpCenters = async function () {
             medicalIdIcon.id = "add-medical-id-" + i;
             nearbySearchItem.id = "search-item-" + i;
             content.id = "search-content-" + i;
+            content.style = "width:240px;";
             searchItemName.innerText = preferredHelpCenters[i].helpCenterName;
             searchItemAddress.innerText = preferredHelpCenters[i].helpCenterAddress;
             content.appendChild(searchItemName);

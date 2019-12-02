@@ -4,8 +4,8 @@ import Toast from "./lib/toast";
 import SearchHelpResults from "../view/searchHelpResults.html";
 import "../style/searchHelpResults.less";
 
-const storePreferenceDetails = function (e) {
-    const preference = e.path[1].innerText.split("\n");
+const storePreferenceDetails = function (event) {
+    const preference = event.target.parentElement.innerText.split("\n");
     const preferenceName = preference[0];
     const preferenceAddress = preference[1] || "101 Parkway Mountain View";
     if(preferenceName && preferenceAddress) {
